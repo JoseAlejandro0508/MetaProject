@@ -1,0 +1,181 @@
+<!-- REGISTRO -->
+<div *ngIf="activeTab === 'registro'" class="form-content active">
+  <form class="form-grid" [formGroup]="regForm" (ngSubmit)="onRegisterSubmit()">
+
+    <!-- Teléfono Móvil -->
+    <div class="input-group full-width">
+      <span class="label-vip">Teléfono Móvil</span>
+      <div class="prefix-wrap">
+        <div class="prefix-box">🇨🇴 +57</div>
+        <input
+          type="tel"
+          formControlName="phone"
+          inputmode="numeric"
+          (keypress)="allowOnlyNumbers($event)"
+          placeholder="300 000 0000"
+          [ngClass]="{
+            'match-success': isRegFieldValid('phone'),
+            'match-error': isRegFieldInvalid('phone')
+          }" />
+      </div>
+      <small *ngIf="regForm.get('phone')?.errors?.['required'] && regForm.get('phone')?.touched" class="error-hint">Teléfono requerido</small>
+      <small *ngIf="regForm.get('phone')?.errors?.['minlength'] && regForm.get('phone')?.touched" class="error-hint">Mínimo 10 dígitos</small>
+    </div>
+
+    <!-- Nombre Completo -->
+    <div class="input-group full-width">
+      <span class="label-vip">Nombre Completo</span>
+      <input
+        type="text"
+        formControlName="name"
+        placeholder="Mínimo 5 caracteres"
+        [ngClass]="{
+          'match-success': isRegFieldValid('name'),
+          'match-error': isRegFieldInvalid('name')
+        }" />
+      <small *ngIf="regForm.get('name')?.errors?.['required'] && regForm.get('name')?.touched" class="error-hint">Nombre requerido</small>
+      <small *ngIf="regForm.get('name')?.errors?.['minlength'] && regForm.get('name')?.touched" class="error-hint">Mínimo 5 caracteres</small>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="input-group">
+      <span class="label-vip">Contraseña</span>
+      <div class="password-wrap">
+        <input
+          [type]="passwordFieldType"
+          formControlName="password"
+          placeholder="••••••"
+          [ngClass]="{
+            'match-success': isRegFieldValid('password'),
+            'match-error': isRegFieldInvalid('password')
+          }" />
+        <span class="eye-toggle" (click)="togglePasswordVisibility()">
+          <img [src]="passwordFieldType === 'password' ? 'assets/icons/eye.svg' : 'assets/icons/eyeblock.svg'" alt="Ver contraseña" class="eye-icon">
+        </span>
+      </div>
+      <small *ngIf="regForm.get('password')?.errors?.['minlength'] && regForm.get('password')?.touched" class="error-hint">Mínimo 6 caracteres</small>
+    </div>
+
+    <!-- Repetir Contraseña -->
+    <div class="input-group">
+      <span class="label-vip">Repetir</span>
+      <input
+        [type]="passwordFieldType"
+        formControlName="confirmPassword"
+        placeholder="••••••"
+        [ngClass]="{
+          'match-success': isRegFieldValid('confirmPassword') && regForm.get('password')?.value === regForm.get('confirmPassword')?.value,
+          'match-error': regForm.get('confirmPassword')?.value && regForm.get('password')?.value !== regForm.get('confirmPassword')?.value
+        }" />
+      <small *ngIf="regForm.errors?.['mismatch'] && regForm.get('confirmPassword')?.touched" class="error-hint">Las contraseñas no coinciden</small>
+    </div>
+
+    <!-- Captcha -->
+    <div class="input-group">
+      <span class="label-vip">Verificación</span>
+      <div class="captcha-mini-box">
+        <div class="captcha-q">{{ getCaptchaText('reg') }}</div>
+      </div>
+    </div>
+    <div class="input-group">
+      <span class="label-vip">Respuesta</span>
+      <input
+        type="number"
+        formControlName="captchaInput"
+        placeholder="?"
+        inputmode="numeric"
+        (keypress)="allowOnlyNumbers($event)"
+        [ngClass]="{
+          'match-success': isRegCaptchaValid(),
+          'match-error': isRegCaptchaInvalid()
+        }" />
+    </div>
+
+    <!-- Submit -->
+    <div class="full-width">
+      <button
+        type="submit"
+        class="btn-submit"
+        [class.ready]="isRegFormValid()"
+        [class.shimmer-vip]="isRegFormValid()"
+        [disabled]="!isRegFormValid() || isSubmitting">
+        {{ isSubmitting ? 'Procesando...' : 'Registrarse' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- LOGIN -->
+<div *ngIf="activeTab === 'login'" class="form-content active">
+  <form class="form-grid" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+
+    <!-- Teléfono VIP -->
+    <div class="input-group full-width">
+      <span class="label-vip">Teléfono VIP</span>
+      <div class="prefix-wrap">
+        <div class="prefix-box">🇨🇴 +57</div>
+        <input
+          type="tel"
+          formControlName="phone"
+          inputmode="numeric"
+          (keypress)="allowOnlyNumbers($event)"
+          placeholder="300 000 0000"
+          [ngClass]="{
+            'match-success': isLogFieldValid('phone'),
+            'match-error': loginForm.get('phone')?.value && loginForm.get('phone')?.invalid && loginForm.get('phone')?.touched
+          }" />
+      </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="input-group full-width">
+      <span class="label-vip">Contraseña</span>
+      <div class="password-wrap">
+        <input
+          [type]="passwordFieldType"
+          formControlName="password"
+          placeholder="••••••••"
+          [ngClass]="{
+            'match-success': loginForm.get('password')?.value && loginForm.get('password')?.valid,
+            'match-error': loginForm.get('password')?.value && loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+          }" />
+        <span class="eye-toggle" (click)="togglePasswordVisibility()">
+          <img [src]="passwordFieldType === 'password' ? 'assets/icons/eye.svg' : 'assets/icons/eyeblock.svg'" alt="Ver contraseña" class="eye-icon">
+        </span>
+      </div>
+    </div>
+
+    <!-- Captcha -->
+    <div class="input-group">
+      <span class="label-vip">Verificación</span>
+      <div class="captcha-mini-box">
+        <div class="captcha-q">{{ getCaptchaText('log') }}</div>
+      </div>
+    </div>
+    <div class="input-group">
+      <span class="label-vip">Respuesta</span>
+      <input
+        type="number"
+        formControlName="captchaInput"
+        placeholder="?"
+        inputmode="numeric"
+        (keypress)="allowOnlyNumbers($event)"
+        [ngClass]="{
+          'match-success': isLogCaptchaValid(),
+          'match-error': isLogCaptchaInvalid()
+        }" />
+    </div>
+
+    <!-- Submit -->
+    <div class="full-width">
+      <button
+        type="submit"
+        class="btn-submit"
+        [class.ready]="isLoginFormValid()"
+        [class.shimmer-vip]="isLoginFormValid()"
+        [disabled]="!isLoginFormValid() || isSubmitting">
+        {{ isSubmitting ? 'Procesando...' : 'Iniciar Sección' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,31 @@
+<div class="background-container">
+  <img src="/assets/others/indexverse.webp" class="background-image">
+  <div class="deep-overlay"></div>
+</div>
+
+<div class="split-viewport">
+  <div class="image-spacer"></div>
+
+  <div class="form-area">
+    <div class="tab-wrapper">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'registro'"
+        [class.shimmer-vip]="activeTab === 'registro'"
+        (click)="showForm('registro')">
+        Registro
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'login'"
+        [class.shimmer-vip]="activeTab === 'login'"
+        (click)="showForm('login')">
+        Sección
+      </button>
+    </div>
+
+    <app-form [activeTab]="activeTab"></app-form>
+
+    <div class="form-footer">VIP Access Secure | 2026</div>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+@Meta_xi_HostAddress = http://localhost:5071
+
+GET {{Meta_xi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
