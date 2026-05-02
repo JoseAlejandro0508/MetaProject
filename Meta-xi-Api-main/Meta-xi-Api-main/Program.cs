@@ -31,13 +31,19 @@ builder.Services.AddSwaggerGen(c =>{
     });
 });
 
-// Connection string desde variable de entorno (docker-compose .env)
-// Fallback al hardcoded solo para desarrollo local sin Docker
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Host=autorack.proxy.rlwy.net;Port=56967;Username=postgres;Password=ZMnnjLFsLhKgshApPZQbgEASgGhUUQOC;Database=railway";
+// SQLite: archivo local, sin configuración externa necesaria
+var dbPath = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? Path.Combine(builder.Environment.ContentRootPath, "Data", "metaxi.db");
 
-builder.Services.AddDbContext<DBContext>(options => 
-    options.UseNpgsql(connectionString));
+// Asegurar que el directorio Data/ existe
+var dbDir = Path.GetDirectoryName(dbPath);
+if (!string.IsNullOrEmpty(dbDir) && !Directory.Exists(dbDir))
+{
+    Directory.CreateDirectory(dbDir);
+}
+
+builder.Services.AddDbContext<DBContext>(options =>
+    options.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddTransient<UserService, UserService>();
 builder.Services.AddScoped<IGeneratedJwt, GeneratedJwt>();

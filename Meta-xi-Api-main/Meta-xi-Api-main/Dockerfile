@@ -1,5 +1,5 @@
 # =============================================
-# Multi-stage Dockerfile para .NET 8
+# Multi-stage Dockerfile para .NET 8 + SQLite
 # =============================================
 
 # Stage 1: Build
@@ -20,6 +20,10 @@ WORKDIR /app
 
 # Seguridad: correr como usuario no-root
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+# Crear directorio de datos y dar permisos al usuario
+RUN mkdir -p /app/Data && chown -R appuser:appgroup /app/Data
+
 COPY --from=build /app/publish .
 RUN chown -R appuser:appgroup /app
 USER appuser

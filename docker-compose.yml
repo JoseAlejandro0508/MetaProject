@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   # ==========================================
-  # Backend .NET 8
+  # Backend .NET 8 con SQLite
   # ==========================================
   api:
     build:
@@ -13,15 +13,16 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - ASPNETCORE_URLS=${ASPNETCORE_URLS:-http://+:5071}
-      - ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=${DB_PORT};Username=${DB_USERNAME};Password=${DB_PASSWORD};Database=${DB_DATABASE}
-      - JwtSettings__Secret=${JWT_SECRET}
+      - JwtSettings__Secret=${JWT_SECRET:-super secret key for new project with the 512 bytes patreon , thanks for user my app}
+    volumes:
+      - sqlite-data:/app/Data
     ports:
       - "5071:5071"
     networks:
       - meta-xi-net
 
   # ==========================================
-  # Frontend Angular + Nginx
+  # Frontend Angular + Nginx (reverse proxy)
   # ==========================================
   client:
     build:
@@ -30,7 +31,7 @@ services:
     container_name: meta-xi-client
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8443:80"
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
@@ -38,6 +39,9 @@ services:
       - api
     networks:
       - meta-xi-net
+
+volumes:
+  sqlite-data:
 
 networks:
   meta-xi-net:
