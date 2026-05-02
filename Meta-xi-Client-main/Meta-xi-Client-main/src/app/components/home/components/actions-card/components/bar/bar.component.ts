@@ -1,7 +1,7 @@
 import { Component, inject , } from '@angular/core';
 import { HttpClient , HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../../../../environments/environment';
+import { environment } from '../../../../../../../environments/environment';
 
 @Component({
   selector: 'app-bar',

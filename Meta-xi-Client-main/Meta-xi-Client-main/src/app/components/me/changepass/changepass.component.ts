@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient , HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { NotificationService } from '../../../services/products/notification.service';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-changepass',

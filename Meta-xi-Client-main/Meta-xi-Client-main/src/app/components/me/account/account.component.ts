@@ -2,7 +2,7 @@ import { Component} from '@angular/core';
 import { BackHomeComponent } from '../../../shared/back-home/back-home.component';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-account',

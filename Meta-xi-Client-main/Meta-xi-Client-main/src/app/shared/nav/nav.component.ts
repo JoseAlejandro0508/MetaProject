@@ -4,7 +4,7 @@ import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { NotificationService } from '../../services/products/notification.service';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-nav',

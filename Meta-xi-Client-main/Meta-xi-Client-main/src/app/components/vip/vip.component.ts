@@ -3,7 +3,7 @@ import { NavComponent } from './components/nav/nav.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { NotificationService } from '../../services/products/notification.service';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-vip',

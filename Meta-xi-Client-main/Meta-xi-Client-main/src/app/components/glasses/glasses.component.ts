@@ -4,7 +4,7 @@ import { CardComponent } from './card/card.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NotificationService } from '../../services/products/notification.service';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { RouterLink } from '@angular/router';
 
 @Component({

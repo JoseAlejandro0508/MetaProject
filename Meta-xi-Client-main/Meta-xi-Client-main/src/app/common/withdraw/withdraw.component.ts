@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/products/notification.service';
 import { TelegramService } from '../../services/products/Telegram.service';
 import { CommonModule } from '@angular/common';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-withdraw',
