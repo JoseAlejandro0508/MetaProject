@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 :host ::ng-deep .form-content {
   &.active {
     display: block;
@@ -40,20 +44,26 @@
 
 .prefix-wrap {
   display: flex;
-  gap: 6px;
+  align-items: stretch;
 }
 
 .prefix-box {
-  padding: 0 8px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 0 10px;
+  background: rgba(212, 175, 55, 0.08);
   border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 10px;
+  border-right: none;
+  border-radius: 10px 0 0 10px;
   display: flex;
   align-items: center;
   font-size: 12px;
   color: #d4af37;
   font-family: 'Poppins', sans-serif;
   white-space: nowrap;
+}
+
+.prefix-wrap input {
+  border-radius: 0 10px 10px 0;
+  border-left: none;
 }
 
 input {
@@ -67,6 +77,14 @@ input {
   font-size: 13px;
   transition: 0.3s;
   font-family: 'Poppins', sans-serif;
+
+  // Quitar spin buttons de input[type=number]
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
 
   &::placeholder {
     color: rgba(255, 255, 255, 0.3);
@@ -90,6 +108,24 @@ input {
   }
 }
 
+// Cuando el input está dentro de prefix-wrap y tiene validación, 
+// propagar el color al prefix-box también
+.prefix-wrap input.match-success + .prefix-box,
+.prefix-wrap:has(input.match-success) .prefix-box {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.prefix-wrap:has(input.match-error) .prefix-box {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.prefix-wrap:has(input:focus) .prefix-box {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.08);
+}
+
 .password-wrap {
   position: relative;
   display: flex;
@@ -97,6 +133,7 @@ input {
 
   input {
     padding-right: 40px;
+    width: 100%;
   }
 
   .eye-toggle {
@@ -104,6 +141,9 @@ input {
     right: 10px;
     cursor: pointer;
     z-index: 2;
+    background: none;
+    border: none;
+    padding: 0;
 
     .eye-icon {
       width: 20px;
