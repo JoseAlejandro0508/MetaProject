@@ -1,0 +1,311 @@
+// =========================================================
+// TEAM COMPONENT — Premium Liquid Glass Theme
+// =========================================================
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #1c1f21;
+  background-image:
+    radial-gradient(circle at 15% 50%, rgba(244, 208, 63, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+  padding: 16px;
+  padding-bottom: 100px; // space for bottom nav
+
+  --gold-primary: #F4D03F;
+  --gold-glow: rgba(244, 208, 63, 0.4);
+  --green-primary: #2ECC71;
+  --green-glow: rgba(46, 204, 113, 0.4);
+  --white-pure: #FFFFFF;
+  --white-glow: rgba(255, 255, 255, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --text-dim: #94a3b8;
+
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--white-pure);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// ─── Container ──────────────────────────────
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+// ─── Glass Panel ─────────────────────────────
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-top: 1px solid var(--glass-highlight);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 40%);
+    pointer-events: none;
+  }
+}
+
+// ─── Referral Section ────────────────────────
+.referral-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ref-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--gold-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.copy-pill {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 10px 12px 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.98);
+    border-color: var(--gold-primary);
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #e2e8f0;
+  }
+}
+
+.btn-icon {
+  background: var(--gold-primary);
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #000;
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &.copied {
+    background: var(--green-primary) !important;
+    color: #fff !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--green-glow);
+  }
+}
+
+// ─── Stats Section ───────────────────────────
+.stats-header {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white-pure);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 16px;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+
+  small {
+    font-size: 10px;
+    color: var(--gold-primary);
+    font-weight: 700;
+  }
+}
+
+// ─── Levels Section ───────────────────────────
+.levels-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  position: relative;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.gold {
+    border-left: 4px solid var(--gold-primary);
+
+    .level-name { color: var(--gold-primary); }
+    .svg-icon { stroke: var(--gold-primary); filter: drop-shadow(0 0 4px var(--gold-glow)); }
+    &:hover { border-color: var(--gold-primary); box-shadow: 0 0 20px rgba(244, 208, 63, 0.1); }
+  }
+
+  &.white {
+    border-left: 4px solid var(--white-pure);
+
+    .level-name { color: var(--white-pure); }
+    .svg-icon { stroke: var(--white-pure); filter: drop-shadow(0 0 4px var(--white-glow)); }
+    &:hover { border-color: var(--white-pure); box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+  }
+
+  &.green {
+    border-left: 4px solid var(--green-primary);
+
+    .level-name { color: var(--green-primary); }
+    .svg-icon { stroke: var(--green-primary); filter: drop-shadow(0 0 4px var(--green-glow)); }
+    &:hover { border-color: var(--green-primary); box-shadow: 0 0 20px rgba(46, 204, 113, 0.1); }
+  }
+}
+
+.level-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.level-name {
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.svg-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.level-stats {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.l-stat {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  b {
+    color: #fff;
+    font-weight: 700;
+  }
+}
+
+.commission-badge {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.comm-val {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 4px;
+}

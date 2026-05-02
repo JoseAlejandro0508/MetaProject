@@ -1,58 +1,105 @@
-@if(!isLogined){<nav class="fixed bottom-0 z-50 w-full flex text-sm font-thin leading-none items-center justify-between box-border py-2 px-5 bg-blue-950 rounded-t-[2rem]">
-    <!-- Botón de Inicio -->
-    <button
-      (click)="changeIcon('home')"
-      [routerLink]="['../home']"
-      routerLinkActive="active-home"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center sm:w-12 w-8">
-      <img [src]="homeIcon" alt="home" class="w-6">
-      Inicio
-    </button>
-  
-    <!-- Botón de Artículos -->
-    <button
-      (click)="changeIcon('article')"
-      [routerLink]="['../tasks']"
-      routerLinkActive="active-article"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center sm:w-12 w-8 p-0 m-0">
-      <img [src]="articleIcon" alt="articulos" class="w-10 h-10 p-0 m-0 -mt-2">
-      <p class="text-white">Artículos</p>
-    </button>
-  
-    <!-- Botón de Referidos -->
-    <button
-      (click)="changeIcon('team')"
-      [routerLink]="['../team']"
-      routerLinkActive="active-team"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center sm:w-12 w-8">
-      <img [src]="teamIcon" alt="team" class="w-6">
-      Referidos
-    </button>
-  
-    <!-- Botón de Misiones -->
-    <button
-      (click)="changeIcon('vip')"
-      [routerLink]="['../vip']"
-      routerLinkActive="active-vip"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center sm:w-12 w-8">
-      <img [src]="vipIcon" alt="vip" class="w-6">
-      Misiones
-    </button>
-  
-    <!-- Botón de Yo -->
-    <button
-      (click)="changeIcon('me')"
-      [routerLink]="['../me']"
-      routerLinkActive="active-me"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center sm:w-12 w-8">
-      <img [src]="meIcon" alt="me" class="w-6">
-      Yo
-    </button>
-  </nav>
+<!-- SVG Gradient Definition (hidden, referenced by active icons) -->
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <linearGradient id="gold-gradient-svg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bf953f" />
+      <stop offset="45%" stop-color="#fcf6ba" />
+      <stop offset="70%" stop-color="#b38728" />
+      <stop offset="100%" stop-color="#fbf5b7" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- Bottom Navigation Bar -->
+@if (!isLogined) {
+<nav class="bottom-nav">
+  <!-- Casa (Home) -->
+  <a
+    class="nav-item"
+    [class.active]="isActive('/home')"
+    [routerLink]="['/home']"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }">
+    <div class="icon-wrapper">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </div>
+    <span>Casa</span>
+    <div class="active-indicator"></div>
+  </a>
+
+  <!-- Invertir (Tasks) -->
+  <a
+    class="nav-item"
+    [class.active]="isActive('/tasks')"
+    [routerLink]="['/tasks']"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }">
+    <div class="icon-wrapper">
+      <svg viewBox="0 0 24 24">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        <polyline points="17 6 23 6 23 12"></polyline>
+      </svg>
+    </div>
+    <span>Invertir</span>
+    <div class="active-indicator"></div>
+  </a>
+
+  <!-- Misiones (VIP) -->
+  <a
+    class="nav-item"
+    [class.active]="isActive('/vip')"
+    [routerLink]="['/vip']"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }">
+    <div class="icon-wrapper">
+      <div class="notification-dot"></div>
+      <svg viewBox="0 0 24 24">
+        <path d="M22 9H2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9z"></path>
+        <path d="M22 9V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v4"></path>
+        <path d="M12 12v3"></path>
+        <path d="M9 12a3 3 0 0 0 6 0"></path>
+      </svg>
+    </div>
+    <span>Misiones</span>
+    <div class="active-indicator"></div>
+  </a>
+
+  <!-- Referidos (Team) -->
+  <a
+    class="nav-item"
+    [class.active]="isActive('/team')"
+    [routerLink]="['/team']"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }">
+    <div class="icon-wrapper">
+      <svg viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="8.5" cy="7" r="4"></circle>
+        <polyline points="17 8 19 10 23 6"></polyline>
+      </svg>
+    </div>
+    <span>Referidos</span>
+    <div class="active-indicator"></div>
+  </a>
+
+  <!-- Perfil (Me) -->
+  <a
+    class="nav-item"
+    [class.active]="isActive('/me')"
+    [routerLink]="['/me']"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }">
+    <div class="icon-wrapper">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+    <span>Perfil</span>
+    <div class="active-indicator"></div>
+  </a>
+</nav>
 }
-  

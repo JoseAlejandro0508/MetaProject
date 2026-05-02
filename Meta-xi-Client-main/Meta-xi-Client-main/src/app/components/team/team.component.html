@@ -1,5 +1,124 @@
-<section class="w-full flex flex-col items-center gap-4">
-    <app-invitation class="w-full" />
-    <app-selection class="w-full" />
-    <app-level class="w-full" />
-</section>
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════
+       REFERRAL SECTION (Código + Enlace)
+       ═══════════════════════════════════════════ -->
+  <div class="glass-panel referral-stack">
+    <div class="ref-box">
+      <label>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Código VIP
+      </label>
+      <div class="copy-pill">
+        <span>{{ referralCode }}</span>
+        <button class="btn-icon" [class.copied]="codeCopied" (click)="copyCode()">
+          <svg *ngIf="!codeCopied" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <svg *ngIf="codeCopied" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ref-box">
+      <label>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        Enlace de invitación
+      </label>
+      <div class="copy-pill">
+        <span>{{ referralLink }}</span>
+        <button class="btn-icon" [class.copied]="linkCopied" (click)="copyLink()">
+          <svg *ngIf="!linkCopied" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <svg *ngIf="linkCopied" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       STATS SECTION
+       ═══════════════════════════════════════════ -->
+  <div class="glass-panel">
+    <div class="stats-header">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px var(--gold-glow));"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      Resumen del Equipo
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-label">Tamaño Total</span>
+        <div class="stat-value">{{ teamSize }}</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Nuevos (Hoy)</span>
+        <div class="stat-value" style="color: var(--green-primary);">+{{ newTeamToday }}</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Recargas</span>
+        <div class="stat-value">{{ teamRecharge | number:'1.0-0':'es' }} <small>COP</small></div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Retiros</span>
+        <div class="stat-value">{{ teamWithdraw | number:'1.0-0':'es' }} <small>COP</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       LEVELS SECTION
+       ═══════════════════════════════════════════ -->
+  <div class="levels-container">
+
+    <!-- Nivel VIP 1 — Dorado -->
+    <a [routerLink]="['/lvl/1']" class="level-row gold">
+      <div class="level-info">
+        <div class="level-name">
+          <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Nivel VIP 1
+        </div>
+        <div class="level-stats">
+          <span class="l-stat">Registros: <b>{{ lvl1Register }}</b></span>
+          <span class="l-stat">Ganancia: <b>{{ lvl1Income | number:'1.0-0':'es' }}</b> <small style="color:var(--gold-primary); font-size:9px; margin-left:2px;">COP</small></span>
+        </div>
+      </div>
+      <div class="commission-badge">
+        <span class="l-stat">Comisión</span>
+        <span class="comm-val" style="color: var(--gold-primary);">8%</span>
+      </div>
+    </a>
+
+    <!-- Nivel VIP 2 — Blanco -->
+    <a [routerLink]="['/lvl/2']" class="level-row white">
+      <div class="level-info">
+        <div class="level-name">
+          <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Nivel VIP 2
+        </div>
+        <div class="level-stats">
+          <span class="l-stat">Registros: <b>{{ lvl2Register }}</b></span>
+          <span class="l-stat">Ganancia: <b>{{ lvl2Income | number:'1.0-0':'es' }}</b> <small style="color:var(--white-pure); font-size:9px; margin-left:2px;">COP</small></span>
+        </div>
+      </div>
+      <div class="commission-badge">
+        <span class="l-stat">Comisión</span>
+        <span class="comm-val">5%</span>
+      </div>
+    </a>
+
+    <!-- Nivel VIP 3 — Verde -->
+    <a [routerLink]="['/lvl/3']" class="level-row green">
+      <div class="level-info">
+        <div class="level-name">
+          <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Nivel VIP 3
+        </div>
+        <div class="level-stats">
+          <span class="l-stat">Registros: <b>{{ lvl3Register }}</b></span>
+          <span class="l-stat">Ganancia: <b>{{ lvl3Income | number:'1.0-0':'es' }}</b> <small style="color:var(--green-primary); font-size:9px; margin-left:2px;">COP</small></span>
+        </div>
+      </div>
+      <div class="commission-badge">
+        <span class="l-stat">Comisión</span>
+        <span class="comm-val" style="color: var(--green-primary);">2%</span>
+      </div>
+    </a>
+
+  </div>
+</div>

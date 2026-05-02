@@ -65,4 +65,29 @@ public class WalletController : ControllerBase
         }
         return Ok(wallet.Balance);
     }
+
+    //Obtener balance en COP y USD
+    [HttpGet("GetBalanceUsdAndCop/{username}")]
+    public async Task<IActionResult> GetBalanceUsdAndCop(string username){
+        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == username);
+        if(wallet == null){
+            return NotFound(new { message = "El usuario no posee ninguna cartera"});
+        }
+
+        float balanceInCop = wallet.Balance;
+        float balanceInUsd = 0;
+
+        try {
+            GetMoneyValues getMoneyValues = new GetMoneyValues();
+            decimal usdToCop = await getMoneyValues.GetMoneyValueAsync("cop");
+            if(usdToCop > 0){
+                balanceInUsd = (float)Math.Round(balanceInCop / (float)usdToCop, 2);
+            }
+        } catch (Exception) {
+            // Si no se puede obtener la tasa, devolver 0
+            balanceInUsd = 0;
+        }
+
+        return Ok(new { balanceInCop, balanceInUsd });
+    }
 }

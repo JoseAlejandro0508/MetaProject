@@ -29,8 +29,7 @@ export class AppComponent implements OnInit {
   products: any[] = [];
 
   ngOnInit(): void {
-    this.init();
-    this.animate();
+
   }
 
   init() {

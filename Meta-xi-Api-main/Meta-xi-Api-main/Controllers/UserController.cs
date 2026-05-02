@@ -245,4 +245,71 @@ public async Task<IActionResult> UserRegister(UserRegister userRegister)
         await context.SaveChangesAsync();
         return Ok(new { message = "Contraseña actualizada correctamente" });
     }
+
+    //Endpoint para actualizar número de teléfono
+    [HttpPatch("UpdatePhoneNumber")]
+    public async Task<IActionResult> UpdatePhoneNumber(UpdatePhoneNumber updatePhoneNumber)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(option => option.Email == updatePhoneNumber.Username || option.PhoneNumber == updatePhoneNumber.Username);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        // Verificar que el número anterior coincida
+        string currentUserPhone = user.PhoneNumber ?? "";
+        if (currentUserPhone != updatePhoneNumber.OldPhoneNumber)
+        {
+            return BadRequest(new { message = "El número anterior no coincide" });
+        }
+
+        // Verificar que el nuevo número no esté registrado
+        var existingPhone = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == updatePhoneNumber.NewPhoneNumber);
+        if (existingPhone != null)
+        {
+            return BadRequest(new { message = "Ese número de teléfono ya está registrado" });
+        }
+
+        // Validar formato del nuevo número
+        PhoneNumberValidator phoneNumberValidator = new PhoneNumberValidator();
+        if (!phoneNumberValidator.IsValidPhoneNumber(updatePhoneNumber.NewPhoneNumber))
+        {
+            return BadRequest(new { message = "El formato del nuevo número no es válido" });
+        }
+
+        // Actualizar el número de teléfono
+        string oldPhoneNumber = user.PhoneNumber;
+        user.PhoneNumber = updatePhoneNumber.NewPhoneNumber;
+        context.Entry(user).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+
+        // Actualizar la cartera si existe y usa el número anterior como email
+        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == oldPhoneNumber);
+        if (wallet != null)
+        {
+            wallet.Email = updatePhoneNumber.NewPhoneNumber;
+            context.Entry(wallet).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+        }
+
+        return Ok(new { message = "Número de teléfono actualizado correctamente" });
+    }
+
+    //Endpoint para cerrar sesión
+    [HttpGet("Logout/{username}")]
+    public async Task<IActionResult> Logout(string username)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(option => option.Email == username || option.PhoneNumber == username);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        // Invalidar el token
+        user.Token = string.Empty;
+        context.Entry(user).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+
+        return Ok(new { message = "Sesión cerrada correctamente" });
+    }
 }
