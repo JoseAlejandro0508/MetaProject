@@ -29,14 +29,7 @@ export const routes: Routes = [
       import('./components/team/team.component').then((m) => m.TeamComponent),
     canActivate: [authGuard]
   },
-  {
-    path: 'lvl/:lvl',
-    loadComponent: () =>
-      import(
-        './components/team/components/level/account/account.component'
-      ).then((c) => c.AccountComponent),
-      canActivate: [authGuard]
-  },
+  
   {
     path: 'vip',
     loadComponent: () =>

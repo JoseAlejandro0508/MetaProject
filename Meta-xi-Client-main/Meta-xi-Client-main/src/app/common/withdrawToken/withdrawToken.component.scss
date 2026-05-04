@@ -1,0 +1,186 @@
+:host {
+  --bg-slate: #1c1f21;
+  --gold: #d4af37;
+  --red-vip: #ff3e3e;
+  --green-vip: #00ffa3;
+  --blue-vip: #3e92ff;
+  --binance-yellow: #f3ba2f;
+  --white-vip: #ffffff;
+}
+
+.vip-container {
+  background-color: var(--bg-slate);
+  min-height: 100vh;
+  padding: 30px 15px;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-header {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.back-link {
+  background: none;
+  border: none;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.gold-icon {
+  width: 24px;
+  fill: var(--gold);
+}
+
+.options-grid {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.glass-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 18px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-right: 15px;
+  background: #111;
+}
+
+.icon-box img {
+  width: 60%;
+  height: auto;
+  z-index: 1;
+  position: relative;
+}
+
+.inner-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Clases de Borde y Resplandor */
+.border-gold .icon-box {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+.glow-gold {
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(212, 175, 55, 0.4) 100%
+  );
+}
+
+.border-red .icon-box {
+  border: 2px solid var(--red-vip);
+  box-shadow: 0 0 15px rgba(255, 62, 62, 0.3);
+}
+.glow-red {
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(255, 62, 62, 0.4) 100%
+  );
+}
+
+.border-green .icon-box {
+  border: 2px solid var(--green-vip);
+  box-shadow: 0 0 15px rgba(0, 255, 163, 0.3);
+}
+.glow-green {
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(0, 255, 163, 0.4) 100%
+  );
+}
+
+.border-blue .icon-box {
+  border: 2px solid var(--blue-vip);
+  box-shadow: 0 0 15px rgba(62, 146, 255, 0.3);
+}
+.glow-blue {
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(62, 146, 255, 0.4) 100%
+  );
+}
+
+.border-binance .icon-box {
+  border: 2px solid var(--binance-yellow);
+  box-shadow: 0 0 15px rgba(243, 186, 47, 0.3);
+}
+.glow-binance {
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(243, 186, 47, 0.4) 100%
+  );
+}
+
+/* Nuevo: Detg Blanco */
+.border-white .icon-box {
+  border: 2px solid var(--white-vip);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+.glow-white {
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+}
+
+.method-name {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.chevron-gold {
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--gold);
+  border-right: 2px solid var(--gold);
+  transform: rotate(45deg);
+  opacity: 0.6;
+}
+
+.glass-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.02);
+}

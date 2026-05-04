@@ -1,254 +1,156 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@300&display=swap');
+// =========================================================
+// CAROUSEL — VIP Minimalist Carousel with Gold Border
+// =========================================================
 
-:root {
-    --img: url('/assets/images/movil/3.jpg');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&family=Playfair+Display:wght@700&display=swap');
+
+:host {
+  display: block;
+  width: 100%;
 }
 
-html {
-    background-color: #fff;
+// ─── Container with Rotating Gold Border ────
+.vip-card-container {
+  position: relative;
+  width: 92%;
+  max-width: 550px;
+  aspect-ratio: 18 / 9;
+  background: #25282a;
+  border-radius: 16px;
+  padding: 2px; // space for the gold line
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
 }
 
-.body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-size: cover;
-    background-position: center center;
-    background-image: var(--img, url('/assets/images/movil/3.jpg'));
-    transition: background 0.5s ease 0s;
-    font-family: 'Londrina Solid', cursive;
-    border-radius: 15px;
+.vip-card-container::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 10%,
+    #d4af37 15%,
+    #f9f295 17%,
+    #d4af37 19%,
+    transparent 25%
+  );
+  animation: goldRotate 5s linear infinite;
 }
 
-.body:before {
-    border-radius: 15px;
-    content: "";
-    position: absolute;
+@keyframes goldRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// ─── Inner Wrapper ────
+.inner-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #1c1f21;
+  border-radius: 14px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+// ─── Edge Shading (depth frame) ────
+.edge-shading {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 14px;
+}
+
+// ─── Progress Bar ────
+.progress-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 12;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #d4af37;
+  box-shadow: 0 0 10px #d4af37;
+}
+
+// ─── Track ────
+.track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+// ─── Slide ────
+.slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+
+  img {
     width: 100%;
     height: 100%;
-    background: #000000c9;
-    z-index: 0;
+    object-fit: cover;
+    filter: brightness(0.7);
+  }
 }
 
+// ─── Content Overlay ────
 .content {
-    width: 70vmin;
-    height: 60vmin;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-size: cover;
-    background-position: center center;
-    background-image: var(--img, url('/assets/images/movil/3.jpg'));
-    transition: background 0.5s ease 0s;
-    max-width: 500px;
-    max-height: 500px;
-    box-shadow: 0 0 0vmin 1vmin #fff, 0 0 10vmin 5vmin #000;
-    border-radius: 2px;
-    z-index: 0;
-    background-color: #fff;
-} */
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 11;
+  color: white;
 
-/* .content:before {
-	content: "cuadernodeescaladas.com";
-	position: absolute;
-	width: 100%;
-	text-align: center;
-	margin-bottom: -55vmin;
-	text-shadow: -1px -1px 0 #0007;
-	color: #fff4;
-	font-size: 18px;
-} */
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
 
-/* CONTROLS */
-/* .controls {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: row;
-    flex-wrap: wrap;
-    position: absolute;
+  p {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 5px 0 0 0;
+    color: #d4af37;
+    font-family: 'Montserrat', sans-serif;
+  }
 }
 
-input[type=radio] {
-    display: none;
-}
+// ─── Responsive ────
+@media (max-width: 600px) {
+  .vip-card-container {
+    width: 96%;
+  }
 
-label {
-    width: 50vw;
-    height: 100vh;
-    position: relative;
-    cursor: pointer;
-    opacity: 0.15;
-}
+  .content {
+    bottom: 14px;
+    left: 14px;
 
-label:hover {
-    opacity: 1;
-}
-
-input:first-child:checked~.content .controls label:first-child,
-input:last-of-type:checked~.content .controls label:last-of-type {
-    cursor: default;
-    opacity: 0.025;
-} */
-
-
-/* HIDE LABELS */
-/* #b2:checked~.content .controls label[for=b2],
-#b3:checked~.content .controls label[for=b3],
-#b4:checked~.content .controls label[for=b4],
-
-
-#b3:checked~.content .controls label[for=b1],
-#b4:checked~.content .controls label[for=b1],
-#b4:checked~.content .controls label[for=b2] {
-    display: none;
-} */
-
-
-/* ARROWS */
-/* label:before {
-	content: "";
-	position: absolute;
-	background: 
-		linear-gradient(30deg, #fff0 60%, #fff calc(60% + 1px)), 
-		linear-gradient(-30deg, #fff 40%, #fff0 calc(40% + 1px)), 
-		linear-gradient(-90deg, #fff0 70%, #fff calc(70% + 1px));
-	width: 6vmin;
-	height: 6vmin;
-	border-radius: 5px;
-	right: 7vmin;
-	top: calc(50% - 3vmin);
-}*/
-
-/* LEFT ARROW 
-#b1:checked ~ .content .controls label[for=b1]:before,
-#b2:checked ~ .content .controls label[for=b1]:before,
-#b3:checked ~ .content .controls label[for=b2]:before,
-#b4:checked ~ .content .controls label[for=b3]:before{
-	left: 7vmin;
-	transform: rotate(180deg);
-} */
-
-
-
-
-/* TITLES  */
-/* .body:after {
-    content: "MetaBox";
-    position: absolute;
-    top: 2vh;
-    color: #fff;
-    font-size: 35px;
-    transition: all 0.5s ease 0s;
-    text-shadow: 0px 1px 0 #000000d9;
-    white-space: pre-wrap;
-    text-align: center;
-    width: 90vw;
-    padding: 1vmin;
-    font-weight: 300;
-}
-
-.body:has(input#b1:checked):after {
-    content: "Nuevos mundos con cada mirada.";
-}
-
-.body:has(input#b2:checked):after {
-    content: "Realidad o fantasía.";
-}
-
-.body:has(input#b3:checked):after {
-    content: "Explora lo imposible.";
-}
-
-.body:has(input#b4:checked):after {
-    content: "El futuro en 360 grados.";
-} */
-
-/*** THUMBNAILS ***/
-/* .thumbnails {
-    position: absolute;
-    width: 100vw;
-    bottom: 0vh;
-    text-align: center;
-    padding: 1vmin;
-}
-
-.thumbnails label {
-    background-color: #0008;
-    position: relative;
-    width: 8vmin;
-    height: 8vmin;
-    display: inline-block;
-    margin-left: 1vw;
-    background-image: var(--img);
-    background-size: cover;
-    background-position: center;
-    opacity: 0.5;
-    border-radius: 2px;
-} */
-
-/* IMAGES / THUMBNAILS 
-.body:has(input#b1:checked),
-.thumbnails label[for=b1] {
-    --img: url('/assets/images/movil/1.jpg');
-}
-
-.body:has(input#b2:checked),
-.thumbnails label[for=b2] {
-    --img: url('/assets/images/movil/2.jpg');
-}
-
-.body:has(input#b3:checked),
-.thumbnails label[for=b3] {
-    --img: url('/assets/images/movil/3.jpg');
-}
-
-.body:has(input#b4:checked),
-.thumbnails label[for=b4] {
-    --img: url('/assets/images/movil/4.jpg');
-}
-
-.thumbnails label:before {
-    display: none;
-}
-
-.thumbnails label:hover {
-    opacity: 1;
-}
-
-.thumbnails label:first-child {
-    margin-left: 0;
-}
-
-#b1:checked~.content .thumbnails label[for=b1],
-#b2:checked~.content .thumbnails label[for=b2],
-#b3:checked~.content .thumbnails label[for=b3],
-#b4:checked~.content .thumbnails label[for=b4] {
-    opacity: 1;
-    box-shadow: 0 0 0.01vmin 0.5vmin #fff;
-}
-
-
-*/
-
-/* MEDIA QUERIES 
-@media only screen and (max-width:767px) {
-    .body:after {
-        top: 2vh;
-        font-size: 20px;
-        white-space: initial;
+    h3 {
+      font-size: 16px;
     }
-}
 
-@media only screen and (max-width:580px) {
-    .body:after {
-        font-size: 25px;
-        white-space: pre-wrap;
+    p {
+      font-size: 8px;
+      letter-spacing: 1.5px;
     }
-}*/
+  }
+}
