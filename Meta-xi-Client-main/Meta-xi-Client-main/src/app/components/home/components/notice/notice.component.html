@@ -1,15 +1,14 @@
-<section class="w-full py-2 bg-[#0E2954] rounded-xl overflow-hidden flex items-center">
-    <button (click)="openModal()" class="bg-[#0E2954] px-3 w-[5%] z-10 flex-shrink-0 left-0">
-        <div class="bg-black w-9 py-1 px-2 rounded-xl">
-            <img src="assets/icons/announcement.svg" alt="announcement" class="w-10">
+<section class="w-full py-2 rounded-xl overflow-hidden flex items-center notice-container">
+
+    <div class="info-ticker-container" (click)="openModal()">
+        <div class="ticker-icon">
+            <svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.07,19.86 21,16.28 21,12C21,7.72 18.07,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.03C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
         </div>
-    </button>
-    <p class="text-white whitespace-nowrap animate-marquee">
-        Recibe 2,500 COP como regalo de bienvenida, es gratis. Puedes retirar plata sin invertir completando las misiones. IndexVerse es un proyecto único y legítimo.
-        Puedes comunicarte con atención al cliente mediante "Telegram" utilizando los contactos al final de la página. 
-        En nuestro canal de Youtube puedes encontrar tutoriales que te ayudarán a mejorar tu experiencia en IndexVerse. 
-        La comisión de retiro es de tan solo un 6%. El mínimo de depósito es de 25,000 COP. El mínimo de retiro es de 15,000 COP. 
-        Compra ahora gafas VR y aumenta tu rango de ganancias.
-    </p>
+        <div class="ticker-wrap">
+            <div class="ticker-content" id="tickerText">
+                Recibe <span class="highlight-green">2,500 COP</span> como regalo de bienvenida • Retira plata sin invertir completando misiones • MetaBox proyecto único y legítimo • Mínimo de depósito: <span class="highlight-gold">25,000 COP</span> • Comisión de retiro: 6% • ¡Compra gafas VR y aumenta tus ganancias!
+            </div>
+        </div>
+    </div>
     <!-- <div class="bg-[#0E2954] text-[#0E2954] px-3 w-2 h-full z-50 flex-shrink-0 right-0">i</div> -->
 </section>

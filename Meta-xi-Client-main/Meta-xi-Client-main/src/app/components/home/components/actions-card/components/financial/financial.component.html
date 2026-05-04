@@ -1,10 +1,36 @@
-<div class="flex justify-between items-center">
-    <button [routerLink]="['/recharge']" class="flex items-center sm:gap-2 bg-[#301E67] sm:px-10 px-3 py-2 rounded-xl sm:w-[40%]">
-        <img src="assets/icons/recargar.png" alt="recargar" class="sm:w-16 w-14">
-        <p class="sm:w-[80%] font-semibold text-sm sm:text-base md:text-lg">Recargar</p>
-    </button>
-    <button [routerLink]="['/withdrawToken']" class="flex items-center gap-2 bg-[#301E67] sm:px-10 px-3 py-2 rounded-xl sm:w-[40%]">
-        <img src="assets/icons/retirar.png" alt="retirar" class="sm:w-16 w-14">
-        <p class="sm:w-[80%] font-semibold text-sm sm:text-base md:text-lg">Retirar</p>
-    </button>
+<div >
+
+  <div class="action-hub">
+    <div class="neo-btn btn-deposit" [routerLink]="['/recharge']">
+      <div class="neo-btn-surface">
+        <span
+          class="symbol"
+          style="filter: drop-shadow(0 0 8px rgba(0, 255, 170, 0.4))"
+          >+</span
+        >
+        <span class="btn-tag">Depósito</span>
+      </div>
+    </div>
+
+    <div class="neo-btn btn-withdraw"  [routerLink]="['/withdrawToken']">
+      <div class="neo-btn-surface">
+        <span
+          class="symbol"
+          style="filter: drop-shadow(0 0 8px rgba(255, 51, 102, 0.4))"
+          >−</span
+        >
+        <span class="btn-tag">Retiro</span>
+      </div>
+    </div>
+
+    <div class="neo-btn btn-long btn-gold">
+      <div class="neo-btn-surface">
+        <div
+          class="icon-svg icon-invest"
+          style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3))"
+        ></div>
+        <span class="btn-tag" style="font-size: 11px">Invertir</span>
+      </div>
+    </div>
+  </div>
 </div>

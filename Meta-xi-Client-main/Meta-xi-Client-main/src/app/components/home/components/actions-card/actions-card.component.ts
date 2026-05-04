@@ -10,6 +10,7 @@ const components = [BarComponent, FinancialComponent, AppComponent];
   standalone: true,
   imports: [components],
   templateUrl: './actions-card.component.html',
-  styleUrl: './actions-card.component.scss',
+  styleUrl: './actions-card.component.scss'
+
 })
 export class ActionsCardComponent {}

@@ -1,0 +1,165 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap");
+
+:host {
+  --bg-obsidian: #1c1f21;
+  --electric-green: #00ffaa;
+  --electric-red: #ff3366;
+  --gold-glow: #ffd700;
+  --gold-gradient: linear-gradient(
+    135deg,
+    #ffd700 0%,
+    #fff8dc 45%,
+    #b8860b 100%
+  );
+  --inner-bevel: inset 2px 2px 5px rgba(255, 255, 255, 0.03),
+    inset -3px -3px 7px rgba(0, 0, 0, 0.4);
+}
+
+/* --- LIMPIEZA DE INTERFAZ MÓVIL --- */
+* {
+  -webkit-tap-highlight-color: transparent; /* Elimina el cuadro azul en móvil */
+  outline: none; /* Elimina bordes de selección */
+}
+
+
+
+.vip-panel {
+  width: 310px;
+  padding: 20px 15px;
+  background: #1c1f21;
+  border-radius: 35px;
+  box-shadow: 10px 10px 30px #121415, -4px -4px 15px rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  text-align: center;
+}
+
+.balance-master {
+  margin-bottom: 15px;
+}
+
+.currency-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  background: var(--gold-gradient);
+  border-radius: 20px;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.amount {
+  font-size: 38px;
+  font-weight: 700;
+  background: linear-gradient(180deg, #ffffff 60%, #a1a1a1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.action-hub {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.neo-btn {
+  position: relative;
+  height: 85px;
+  border-radius: 22px;
+  background: #1c1f21;
+  box-shadow: var(--inner-bevel);
+  cursor: pointer;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: none;
+}
+
+.btn-long {
+  grid-column: span 2;
+  height: 55px;
+  border-radius: 30px;
+}
+
+.neo-btn-surface {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #222629, #191c1e);
+  box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.4),
+    -1px -1px 2px rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: all 0.15s ease;
+}
+
+.btn-long .neo-btn-surface {
+  border-radius: 26px;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.symbol {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #b0b0b0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.icon-svg {
+  width: 22px;
+  height: 22px;
+  background: var(--gold-gradient);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.icon-invest {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='23 6 13.5 15.5 8.5 10.5 1 18'%3E%3C/polyline%3E%3Cpolyline points='17 6 23 6 23 12'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+.btn-deposit .neo-btn-surface {
+  border-bottom: 2px solid var(--electric-green);
+}
+.btn-withdraw .neo-btn-surface {
+  border-bottom: 2px solid var(--electric-red);
+}
+.btn-gold .neo-btn-surface {
+  border-bottom: 2px solid var(--gold-glow);
+}
+
+.btn-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-gold .btn-tag {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- EFECTO DE PRESIÓN MEJORADO --- */
+.neo-btn:active {
+  transform: scale(0.96);
+}
+
+.neo-btn:active .neo-btn-surface {
+  background: #1a1d1f;
+  box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.8),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.01);
+  filter: brightness(0.7);
+}

@@ -1,12 +1,207 @@
 @keyframes marquee {
-    0% {
-        transform: translateX(100%);
-    }
-    100% {
-        transform: translateX(-100%); /* Ajusta este valor para crear espacio */
-    }
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%); /* Ajusta este valor para crear espacio */
+  }
 }
 
 .animate-marquee {
-    animation: marquee 55s linear infinite;
+  animation: marquee 55s linear infinite;
+}
+
+:host {
+  --bg-color: #1c1f21;
+  --gold: #d4af37;
+  --gold-light: #f9e29c;
+  --green: #2ecc71;
+  --white: #ffffff;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(212, 175, 55, 0.3);
+}
+
+.notice-container {
+  background-color: var(--bg-color);
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+
+  color: var(--white);
+}
+
+/* --- PASARELA DE INFORMACIÓN (TICKER) --- */
+.info-ticker-container {
+
+  
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 0 10px rgba(212, 175, 55, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.info-ticker-container:hover {
+  transform: scale(1.02);
+  border-color: var(--gold);
+}
+
+.ticker-icon {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.ticker-icon svg {
+  fill: var(--bg-color);
+  width: 20px;
+}
+
+.ticker-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.ticker-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: ticker 25s linear infinite;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--white);
+}
+
+@keyframes ticker {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+/* --- MODAL PREMIUM --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-card {
+  background: linear-gradient(145deg, #25282a, #1c1f21);
+  width: 85%;
+  max-width: 400px;
+  border-radius: 24px;
+  border: 1px solid var(--gold);
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1);
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  color: var(--gold);
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.close-x {
+  color: var(--white);
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.close-x:hover {
+  opacity: 1;
+  color: var(--gold);
+}
+
+.modal-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+.highlight-green {
+  color: var(--green);
+  font-weight: bold;
+}
+.highlight-gold {
+  color: var(--gold);
+  font-weight: bold;
+}
+
+.modal-footer {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.btn-cerrar {
+  background: linear-gradient(135deg, var(--gold), #b38f1d);
+  color: var(--bg-color);
+  border: none;
+  padding: 12px 40px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-cerrar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  filter: brightness(1.1);
 }

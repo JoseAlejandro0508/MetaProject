@@ -1,0 +1,116 @@
+:host {
+  --bg-color: #1c1f21;
+  --gold: #d4af37;
+  --gold-light: #f9e29c;
+  --green: #2ecc71;
+  --white: #ffffff;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(212, 175, 55, 0.3);
+}
+
+.modal-overlay {
+
+  width: 100%;
+  height: 100%;
+
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.1;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+  opacity: 1;                      /* Estado final: visible */
+}
+
+
+.modal-card {
+  background: linear-gradient(145deg, #25282a, #1c1f21);
+  width: 100%;
+  max-width: 400px;
+  border-radius: 24px;
+  border: 1px solid var(--gold);
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1);
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  color: var(--gold);
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.close-x {
+  color: var(--white);
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.close-x:hover {
+  opacity: 1;
+  color: var(--gold);
+}
+
+.modal-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+.highlight-green {
+  color: var(--green);
+  font-weight: bold;
+}
+.highlight-gold {
+  color: var(--gold);
+  font-weight: bold;
+}
+
+.modal-footer {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.btn-cerrar {
+  background: linear-gradient(135deg, var(--gold), #b38f1d);
+  color: var(--bg-color);
+  border: none;
+  padding: 12px 40px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-cerrar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  filter: brightness(1.1);
+}

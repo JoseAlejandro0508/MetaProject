@@ -1,0 +1,288 @@
+// =========================================================
+// VIP COMPONENT — Premium Liquid Glass Theme
+// =========================================================
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #1c1f21;
+  padding: 20px;
+  padding-bottom: 100px;
+  color: #ffffff;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --premium-gold: linear-gradient(145deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+  --gold-solid: #d4af37;
+  --glass-blue: rgba(23, 32, 42, 0.85);
+  --success-green: #00ff88;
+  --vip-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// ─── Container ──────────────────────────────
+.app-container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ─── Stats Card ─────────────────────────────
+.stats-card {
+  background: var(--glass-blue);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 25px;
+  box-shadow: var(--vip-shadow);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+}
+
+.stat-val {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  display: block;
+}
+
+.stat-lbl {
+  font-size: 10px;
+  color: #8e9aaf;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
+}
+
+.currency-display {
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--success-green);
+  margin: 10px 0;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+}
+
+.btn-claim {
+  background: var(--premium-gold);
+  border: none;
+  border-radius: 18px;
+  width: 100%;
+  padding: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(186, 149, 63, 0.3);
+  color: #111;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(186, 149, 63, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Tab System ──────────────────────────────
+.tab-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 5px;
+  margin-bottom: 25px;
+  display: flex;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px 5px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s;
+  font-family: inherit;
+
+  &.active {
+    color: #fff;
+  }
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  height: 4px;
+  width: calc(33.33% - 7px);
+  background: var(--premium-gold);
+  border-radius: 10px;
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1;
+}
+
+// ─── Mission Content ─────────────────────────
+.mission-content {
+  display: none;
+  flex-direction: column;
+  gap: 15px;
+
+  &.active {
+    display: flex;
+    animation: slideUp 0.4s ease;
+  }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mission-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 18px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+
+  // Gold vertical bar
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    height: 70%;
+    width: 4px;
+    background: var(--premium-gold);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 2px 0 10px rgba(186, 149, 63, 0.5);
+  }
+
+  &.completed {
+    opacity: 0.6;
+
+    &::before {
+      background: var(--success-green);
+      box-shadow: 2px 0 10px rgba(0, 255, 136, 0.3);
+    }
+  }
+
+  &:hover:not(.completed) {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.m-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 4px;
+
+  h4 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.m-reward {
+  color: var(--success-green);
+  font-weight: 800;
+  font-size: 13px;
+  margin-top: 5px;
+
+  &.completed-text {
+    color: var(--success-green);
+  }
+}
+
+.m-progress-pill {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(252, 246, 186, 0.1);
+  text-align: center;
+  min-width: 80px;
+  flex-shrink: 0;
+
+  &.claimable {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: var(--success-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(0, 255, 136, 0.2);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &.completed-pill {
+    border-color: var(--success-green);
+  }
+}
+
+.p-num {
+  color: var(--gold-solid);
+  font-weight: 800;
+  font-size: 14px;
+  display: block;
+}
+
+.p-txt {
+  font-size: 9px;
+  color: #64748b;
+  text-transform: uppercase;
+  display: block;
+}
+
+// ─── Empty State ─────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}

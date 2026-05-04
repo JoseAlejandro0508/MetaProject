@@ -14,5 +14,5 @@
 </section>
 
 @if(modal){
-<app-modal (closeModal)="toggleModal($event)" />
+<app-modal [isOpen]="modal" (closeModal)="toggleModal($event)" />
 }

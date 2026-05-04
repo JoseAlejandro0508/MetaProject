@@ -1,4 +1,4 @@
-<app-back-home />
+<!--<app-back-home />
 <div class="w-[80%] bg-blue-950 flex flex-col items-center justify-center mx-auto px-4 py-2 rounded-xl">
     <button [routerLink]="['/deposit', 'nequi']" class=" w-full flex justify-between items-center border-b-[1px] border-dashed mb-2 py-2">
         <span class="flex items-center gap-2">
@@ -28,4 +28,72 @@
         </span>
         <img src="assets/icons/next.svg" alt="next" class="w-6">
     </button>
+</div>
+-->
+<div class="vip-container">
+
+  <nav class="nav-header">
+    <button class="back-link"  [routerLink]="['/home']">
+      <svg viewBox="0 0 24 24" class="gold-icon"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      <span>Atrás</span>
+    </button>
+  </nav>
+
+  <div class="options-grid">
+    
+    <div class="glass-item border-gold" [routerLink]="['/deposit','nequi']">
+      <div class="icon-box">
+        <div class="inner-glow glow-gold"></div>
+        <img  src="assets/token/nequi-account.png" alt="Nequi">
+      </div>
+      <span class="method-name">Nequi</span>
+      <div class="chevron-gold"></div>
+    </div>
+
+    <div class="glass-item border-red" [routerLink]="['/deposit','trx']">
+      <div class="icon-box">
+        <div class="inner-glow glow-red"></div>
+        <img src="assets/token/trx.webp" alt="TRX">
+      </div>
+      <span class="method-name">TRX (Tron)</span>
+      <div class="chevron-gold"></div>
+    </div>
+
+    <div class="glass-item border-green" [routerLink]="['/deposit','usdt-trc20']">
+      <div class="icon-box">
+        <div class="inner-glow glow-green"></div>
+        <img src="assets/token/usdt-trc20.png" alt="USDT">
+      </div>
+      <span class="method-name">USDT-TRC20</span>
+      <div class="chevron-gold"></div>
+    </div>
+
+    <div class="glass-item border-blue" [routerLink]="['/deposit','paypal']">
+      <div class="icon-box">
+        <div class="inner-glow glow-blue"></div>
+        <img src="assets/token/paypal.png" alt="Paypal">
+      </div>
+      <span class="method-name">Paypal</span>
+      <div class="chevron-gold"></div>
+    </div>
+
+    <div class="glass-item border-binance" [routerLink]="['/deposit','binance']">
+      <div class="icon-box">
+        <div class="inner-glow glow-binance"></div>
+        <img src="assets/token/binance.png" alt="Binance">
+      </div>
+      <span class="method-name">Binance Pay</span>
+      <div class="chevron-gold"></div>
+    </div>
+
+    <div class="glass-item border-white" [routerLink]="['/deposit','detg']">
+      <div class="icon-box">
+        <div class="inner-glow glow-white"></div>
+        <svg viewBox="0 0 24 24" fill="white" width="24" style="z-index: 1;"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      </div>
+      <span class="method-name">Detg</span>
+      <div class="chevron-gold"></div>
+    </div>
+
+  </div>
 </div>

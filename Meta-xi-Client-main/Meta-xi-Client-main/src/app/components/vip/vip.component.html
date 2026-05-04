@@ -1,21 +1,119 @@
-<div class="w-full bg-blue-950 flex justify-center flex-col gap-3 items-center px-8 py-4 rounded-lg">
-    <div class="w-full flex items-center gap-3 border-b-[0.1px] border-gray-500 pb-2 text-base">
-        <button class="w-1/2 flex flex-col items-center">
-            <p class="text-slate-100">Misiones completadas hoy</p>
-            <span class="text-2xl">{{todayMission}}</span>
-        </button>
-        <button class="w-1/2 flex flex-col items-center">
-            <p class="text-slate-100">Misiones completadas en total </p>
-            <span class="text-2xl">{{missions}}</span>
-        </button>
+<div class="app-container">
+
+  <!-- ═══════════════════════════════════════════
+       STATS CARD — Ganancias VIP
+       ═══════════════════════════════════════════ -->
+  <div class="stats-card">
+    <div class="stats-grid">
+      <div>
+        <span class="stat-val">{{ todayMission }}</span>
+        <span class="stat-lbl">Misiones Hoy</span>
+      </div>
+      <div>
+        <span class="stat-val">{{ totalMissions }}</span>
+        <span class="stat-lbl">Total Éxito</span>
+      </div>
     </div>
-    <div class="w-full flex items-center">
-        <article class="w-full flex flex-col ">
-            {{cliam}} COP
-            <p class="text-slate-400">Disponible para reclamar</p>
-        </article>
-        
-    </div>
-    <button (click)="Claim()" class="p-2 grad w-full text-black font-semibold rounded-lg shadow">Reclamar</button>
+    <div class="divider"></div>
+    <span class="stat-lbl">Balance Acumulado</span>
+    <div class="currency-display">{{ availableBalance | number:'1.2-2':'es' }} COP</div>
+    <button class="btn-claim" (click)="claimBalance()" [disabled]="claiming">
+      {{ claiming ? 'RECLAMANDO...' : 'RECLAMAR AHORA' }}
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB SYSTEM — Misiones / Tendencia / Terminadas
+       ═══════════════════════════════════════════ -->
+  <div class="tab-container">
+    <div class="tab-indicator" [style.transform]="'translateX(' + (activeTabIndex * 100) + '%)'"></div>
+    <button class="tab-btn" [class.active]="activeTab === 'missions'" (click)="switchTab('missions', 0)">Misiones</button>
+    <button class="tab-btn" [class.active]="activeTab === 'trend'" (click)="switchTab('trend', 1)">Tendencia 🔥</button>
+    <button class="tab-btn" [class.active]="activeTab === 'completed'" (click)="switchTab('completed', 2)">Terminadas</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB: MISIONES
+       ═══════════════════════════════════════════ -->
+  <div class="mission-content" [class.active]="activeTab === 'missions'" [@slideIn]>
+    @for (mission of missions; track mission.id) {
+      <div class="mission-item" [class.completed]="mission.progress >= mission.goal">
+        <div class="m-text">
+          <h4>{{ mission.title }}</h4>
+          <span class="m-reward">+ {{ mission.reward | number:'1.0-0':'es' }} COP</span>
+        </div>
+        @if (mission.progress >= mission.goal && !mission.claimed) {
+          <button class="m-progress-pill claimable" (click)="claimMission(mission.id)">
+            <span class="p-txt">Listo</span>
+            <span class="p-num">Reclamar</span>
+          </button>
+        } @else if (mission.claimed) {
+          <div class="m-progress-pill completed-pill">
+            <span class="p-num">✓</span>
+          </div>
+        } @else {
+          <div class="m-progress-pill">
+            <span class="p-txt">Progreso</span>
+            <span class="p-num">{{ mission.progress }}/{{ mission.goal }}</span>
+          </div>
+        }
+      </div>
+    }
+    @if (missions.length === 0) {
+      <div class="empty-state">No hay misiones disponibles</div>
+    }
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB: TENDENCIA
+       ═══════════════════════════════════════════ -->
+  <div class="mission-content" [class.active]="activeTab === 'trend'" [@slideIn]>
+    @for (t of trends; track t.id) {
+      <div class="mission-item" [class.completed]="t.progress >= t.goal">
+        <div class="m-text">
+          <h4>{{ t.title }}</h4>
+          <span class="m-reward">+ {{ t.reward | number:'1.0-0':'es' }} COP</span>
+        </div>
+        @if (t.progress >= t.goal && !t.claimed) {
+          <button class="m-progress-pill claimable" (click)="claimTrend(t.id)">
+            <span class="p-txt">Listo</span>
+            <span class="p-num">Reclamar</span>
+          </button>
+        } @else if (t.claimed) {
+          <div class="m-progress-pill completed-pill">
+            <span class="p-num">✓</span>
+          </div>
+        } @else {
+          <div class="m-progress-pill">
+            <span class="p-txt">Progreso</span>
+            <span class="p-num">{{ t.progress }}/{{ t.goal }}</span>
+          </div>
+        }
+      </div>
+    }
+    @if (trends.length === 0) {
+      <div class="empty-state">No hay misiones en tendencia</div>
+    }
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB: TERMINADAS
+       ═══════════════════════════════════════════ -->
+  <div class="mission-content" [class.active]="activeTab === 'completed'" [@slideIn]>
+    @for (c of completedMissions; track c.id) {
+      <div class="mission-item completed">
+        <div class="m-text">
+          <h4>{{ c.title }}</h4>
+          <span class="m-reward completed-text">Completado ✓</span>
+        </div>
+        <div class="m-progress-pill completed-pill">
+          <span class="p-num">✓</span>
+        </div>
+      </div>
+    }
+    @if (completedMissions.length === 0) {
+      <div class="empty-state">Aún no has completado misiones</div>
+    }
+  </div>
+
 </div>
-<app-nav/>

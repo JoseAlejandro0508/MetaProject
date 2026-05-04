@@ -1,4 +1,5 @@
 <div class="fixed inset-0 flex items-center justify-center z-50">
+  <!--
     <div class="absolute inset-0 bg-black opacity-50" (click)="close()"></div>
     <div class=" relative w-11/12 bg-blue-950 rounded-lg p-6 z-10">
         <button
@@ -19,4 +20,57 @@
                 <button (click)="close()" class="mt-4 px-4 py-2 bg-[#301E67] text-white rounded">Cerrar</button>
             </div>
     </div>
+     -->
+  <div class="absolute inset-0  opacity-50" (click)="close()"></div>
+  <div class="relative w-11/12 rounded-lg p-6 z-10">
+    <div class="modal-overlay"  [class.active]="isOpen">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 class="modal-title">Anuncio VIP</h2>
+          <span class="close-x" (click)="close()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p>
+            Recibe <span class="highlight-green">2,500 COP</span> como regalo de
+            bienvenida, ¡es totalmente gratis!
+          </p>
+          <p>
+            Puedes retirar dinero sin invertir completando las misiones diarias.
+            <strong>MetaBox</strong> es un proyecto único y legítimo.
+          </p>
+          <p>
+            Soporte técnico mediante
+            <span class="highlight-gold">Telegram</span> disponible al final de
+            la página y tutoriales en nuestro canal de YouTube.
+          </p>
+          <hr
+            style="
+              border: 0;
+              border-top: 1px solid rgba(212, 175, 55, 0.2);
+              margin: 15px 0;
+            "
+          />
+          <ul style="list-style: none; padding: 0">
+            <li>
+              • Comisión de retiro: <span class="highlight-gold">6%</span>
+            </li>
+            <li>
+              • Mínimo de depósito:
+              <span class="highlight-gold">25,000 COP</span>
+            </li>
+            <li>
+              • Mínimo de retiro: <span class="highlight-gold">15,000 COP</span>
+            </li>
+          </ul>
+          <p style="text-align: center; font-style: italic">
+            Adquiere tus <strong>gafas VR</strong> ahora y escala tu rango de
+            ganancias.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cerrar" (click)="close()">CERRAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
