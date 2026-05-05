@@ -1,36 +1,64 @@
-<section class="w-full bg-blue-950 rounded flex items-center py-2">
-    <div class="w-full flex flex-col items-center justify-between gap-2 py-1.5">
-        <div class="bg-gray-900 w-11/12 text-2xl font-medium py-5 text-center rounded relative">
-            $ {{ saldo | number:'1.0-0' }}
-            <div class="absolute top-2 left-2 text-xs font-light">Saldo actual</div>
-        </div>
+<div class="deposit-wrap">
+    <!-- Back Nav -->
+    <a routerLink="/home" class="back-nav">
+        <div class="arrow-gold"></div>
+        <span class="nav-label">Volver</span>
+    </a>
 
-        <input type="number" placeholder="Seleccione cantidad" class="p-3 rounded w-11/12 text-black"
-            [(ngModel)]="cantidadSeleccionada" />
+    <!-- Gold Master Card Frame -->
+    <div class="master-card">
+        <div class="inner-container">
 
-        <div class="grid grid-cols-3 gap-2 p-1">
-            @for (cantidad of cantidades; track $index) {
-            <button class="bg-black p-1.5 rounded" (click)="seleccionarCantidad(cantidad)" >
-                ${{ cantidad | number:'1.0-0' }}
+            <!-- Balance -->
+            <div class="balance-header">
+                <span class="balance-title">Balance de cuenta</span>
+                <span class="balance-val">$ {{ displayBalance }}</span>
+            </div>
+
+            <!-- Input -->
+            <input type="text"
+                   class="input-box"
+                   placeholder="0"
+                   [ngModel]="displayAmount"
+                   (ngModelChange)="onAmountInput($event)">
+
+            <!-- Preset Amounts -->
+            <div class="amounts-grid">
+                @for (amt of presets; track amt.value) {
+                    <button class="amount-btn"
+                            [class.selected]="rawAmount === amt.value"
+                            (click)="selectAmount(amt.value)">
+                        ${{ amt.label }}
+                    </button>
+                }
+            </div>
+
+            <!-- Payment Method (Nequi fijo) -->
+            <div class="payment-method-row">
+                <div class="icon-box-vip">
+                    <div class="inner-glow-emu"></div>
+                    <img src="assets/token/nequi.png" class="method-img" alt="Nequi">
+                </div>
+                <span class="method-name-text">Nequi Digital</span>
+                <div class="chevron-gold"></div>
+            </div>
+
+            <!-- Confirm Button -->
+            <button class="btn-confirm"
+                    [class.active]="rawAmount >= MIN_AMOUNT"
+                    [disabled]="rawAmount < MIN_AMOUNT"
+                    [routerLink]="['/nequi', 'nequi']"
+                    [queryParams]="{cantidad: rawAmount}">
+                Confirmar Recarga
             </button>
-            }
-        </div>
 
-        <div class="w-11/12 px-2 py-1.5 flex flex-col justify-start bg-slate-950 border-2 border-[#7d18ca]">
-            <p class="w-full">Tipo de pago:</p>
-            <span class="w-full flex gap-2 -mt-3 justify-center">
-                <img src="assets\token\nequi.png" alt="check" class="w-5 h-5">
-                Nequi</span>
         </div>
-        <button class="bg-[#301E67] w-11/12 p-2.5 rounded" [routerLink]="['/nequi','nequi']" [queryParams]="{cantidad: cantidadSeleccionada}"> Recargar Ahora </button>
     </div>
-</section>
 
-<article class="p-2 sm:p-4 md:p-6 bg-blue-950 mt-2 rounded text-base">
-    <p>1. El monto mínimo de recarga es de 25,000 COP, si recargas menos de esa cifra no se le acreditará a su balance.</p>
-    <p>2. Luego de colocar el monto de su recarga haga click en "Recargar ahora".</p>
-    <p>3. Realice captura del código QR que posteriormente le aparecerá en pantalla y siga los pasos que se mostrarán a continuación.</p>
-    <p>4. La recarga demora entre 1 Minuto a 10 Minutos en mostrarse en su balance principal.</p>
-    <p>5. Si luego de haber pasado mucho tiempo no recibe la recarga comuníquese con atención al cliente de inmediato.
-    </p>
-</article>
+    <!-- Legal Info -->
+    <div class="legal-info">
+        1. Recarga mínima: <b class="emerald">50,000 COP</b> para activar botón.<br>
+        2. Al confirmar, capture su Código QR generado.<br>
+        3. Acreditación automática en <b class="emerald">1-10 minutos</b>.
+    </div>
+</div>

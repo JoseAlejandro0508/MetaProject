@@ -1,42 +1,106 @@
-<app-back-home />
+<!-- Ambient Background Orbs -->
+<div class="ambient-orb orb-gold"></div>
+<div class="ambient-orb orb-green"></div>
 
-<section class="w-full gap-4 flex flex-col items-center px-8 py-4 bg-blue-950 rounded-xl pb-20">
-    <div class="w-full flex justify-between items-center">
-        <article>
-            <h4 class="font-medium">Tiempo de retiro</h4>
-            <p class="text-xs text-red-400">retiro 24 horas</p>
-        </article>
-        <img *ngIf="token === 'nequi'" src="assets/token/nequi.png" alt="nequi" class="w-8 rounded-full">
-        <img *ngIf="token !== 'nequi'" src="assets/token/usdt-trc20.png" alt="nequi" class="w-8 rounded-full">
-    </div>
-    <div class="w-full flex flex-col items-start justify-center bg-[#0D254B] p-5 rounded-lg">
-        <p class="text-base">Balance total</p>
-        <p class="text-base"><span class="text-2xl font-semibold">{{balance}} </span>COP</p>
-    </div>
-    <div class="w-full flex items-start justify-start gap-1">
-        <p>Método de retiro: </p>
-        <button *ngIf="token ==='nequi'" class="bg-[#301E67] py-2 px-4 rounded-lg">Nequi </button>
-        <button *ngIf="token !=='nequi'" class="bg-[#301E67] py-2 px-4 rounded-lg">USDT </button>
-    </div>
+<div class="app-container">
+  <!-- Header -->
+  <div class="nav-header">
+    <a routerLink="/home" class="back-btn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      VOLVER
+    </a>
+    <div class="security-badge">NODE: SECURE</div>
+  </div>
 
-    <input *ngIf="token ==='nequi'" type="number" placeholder="Monto 15.000 - 10,000.000" class="w-full p-3 text-black rounded-lg" [(ngModel)]="amount" (input)="CalculateFees()">
-    <input *ngIf="token !=='nequi'" type="number" placeholder="Monto 6 - 500" class="w-full p-3 text-black rounded-lg" [(ngModel)]="amount" (input)="CalculateFees()">
-
-    <textarea *ngIf="token ==='nequi'" class="w-full p-3 text-black rounded-lg" placeholder="Número de cuenta" [(ngModel)]="accountNumber"></textarea>
-    <textarea *ngIf="token !=='nequi'" class="w-full p-3 text-black rounded-lg" placeholder="Dirección USDT-TRC20" [(ngModel)]="accountNumber"></textarea>
-    <input placeholder="Contraseña" class="w-full p-3 text-black rounded-lg" type="password" [(ngModel)]="password">
-    <div class="w-full flex items-center justify-between">
-        <span class="text-sm text-gray-500">Comisión de retiro</span>
-        <div class="text-right text-sm">
-            <div *ngIf="token ==='nequi'" class="">{{withdrawalFee || 0}}COP</div>
-            <div *ngIf="token !=='nequi'" class="">{{withdrawalFee || 0}}USDT</div>
-        </div>
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <div class="balance-info">
+      <span class="balance-label">Capital Disponible</span>
+      <span class="balance-amount">{{ displayBalance }} <span class="currency">{{ currency }}</span></span>
     </div>
+    <div class="status-pill">⚡ RETIRO 24H</div>
+  </div>
 
-    <div class="w-full flex items-center justify-between"><span class="text-sm text-gray-500">Cantidad a recibir</span>
-        <div *ngIf="token ==='nequi'" class="text-sm">{{AmountToReceive || 0}} COP</div>
-        <div *ngIf="token !=='nequi'" class="text-sm">{{AmountToReceive || 0}} USDT</div>
+  <!-- Amount Input -->
+  <div class="input-wrapper">
+    <label class="input-label">
+      Monto a retirar
+      <span [style.color]="amountHintColor">Min. 20.000</span>
+
+    </label>
+    <span [style.color]="amountHintColor" *ngIf="insuficient">Fondos insuficientes</span>
+    <input type="number"
+           class="apex-input"
+           [class.valid]="amountValid"
+           [class.invalid]="amountInvalid"
+           placeholder="0 COP"
+           [(ngModel)]="amount"
+           (input)="validate()">
+  </div>
+
+  <!-- Account Number -->
+  <div class="input-wrapper">
+    <label class="input-label">Cuenta Destino</label>
+    <div class="combo-row">
+      <div class="method-block">{{ methodName }}</div>
+      <div style="position: relative; flex: 1;">
+        <input [type]="isNequi ? 'tel' : 'text'"
+               class="apex-input"
+               [ngStyle]="{ 'padding-right': '75px' }"
+               [placeholder]="isNequi ? '300 000 0000' : 'Dirección USDT-TRC20'"
+               [(ngModel)]="accountNumber"
+               (input)="validate()">
+        <button type="button" class="paste-btn" (click)="pasteFromClipboard()">PEGAR</button>
+      </div>
     </div>
+  </div>
 
-    <button class="bg-[#301E67] w-full rounded-lg py-4 shadow-2xl font-bold" (click)="RequestWithdrawal()">Confirmar</button>
-</section>
+  <!-- Password -->
+  <div class="input-wrapper">
+    <label class="input-label">Firma de Seguridad</label>
+    <input type="password"
+           class="apex-input"
+           placeholder="••••••••"
+           [(ngModel)]="password"
+           (input)="validate()">
+  </div>
+
+  <!-- Captcha -->
+  <div class="input-wrapper">
+    <label class="input-label">Autenticación Anti-Bot</label>
+    <div class="captcha-container">
+      <div class="captcha-plate"
+           [class.refreshing]="captchaFlipping"
+           (click)="regenerateCaptcha()">
+        {{ activeCaptcha }}
+      </div>
+      <input type="text"
+             class="apex-input captcha-input"
+             placeholder="Código"
+             [(ngModel)]="captchaInput"
+             (input)="validate()"
+             maxlength="4">
+    </div>
+  </div>
+
+  <!-- Ledger -->
+  <div class="ledger-box">
+    <div class="ledger-row">
+      <span>Comisión de Red ({{ feePercent }}%)</span>
+      <span class="ledger-val">{{ displayFee }} {{ currency }}</span>
+    </div>
+    <div class="ledger-divider"></div>
+    <div class="ledger-row highlight-row">
+      <span>Acreditación Final</span>
+      <span class="ledger-val">{{ displayNet }} {{ currency }}</span>
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <button class="btn-apex"
+          [class.unlocked]="canSubmit"
+          [disabled]="submitting || !canSubmit"
+          (click)="requestWithdrawal()">
+    {{ submitting ? 'ENCRIPTANDO...' : 'Confirmar Transacción' }}
+  </button>
+</div>

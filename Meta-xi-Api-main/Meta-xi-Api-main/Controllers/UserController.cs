@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Meta_xi.Application;
+
 [ApiController]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
@@ -20,104 +21,50 @@ public class UserController : ControllerBase
         registeredToReferLevel = registeredToRefer;
     }
     //Endpoint para registrar un usuario
-[HttpPost("UserRegister")]
-public async Task<IActionResult> UserRegister(UserRegister userRegister)
-{
-    string code;
-    bool isUnique;
-    do
+    [HttpPost("UserRegister")]
+    public async Task<IActionResult> UserRegister(UserRegister userRegister)
     {
-        code = userRegister.GeneratedReferCode();
-        isUnique = !await context.Users.AnyAsync(option => option.Code == code);
-    } while (!isUnique);
+        string code;
+        bool isUnique;
+        do
+        {
+            code = userRegister.GeneratedReferCode();
+            isUnique = !await context.Users.AnyAsync(option => option.Code == code);
+        } while (!isUnique);
 
-    if (userRegister.Email != null)
-    {
-        var user = await context.Users.FirstOrDefaultAsync(option => option.Email == userRegister.Email);
-        if (user != null)
+        if (userRegister.Email != null)
         {
-            return BadRequest(new { message = "Ese correo ya ha sido usado " });
-        }
-
-        string emailPattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$";
-        Match emailMatch = Regex.Match(userRegister.Email, emailPattern);
-        if (!emailMatch.Success)
-        {
-            return NotFound(new { message = "Por favor entre un correo valido" });
-        }
-
-        if (userRegister.Password.Length < 6)
-        {
-            return BadRequest(new { message = "La contraseña debe tener al menos 6 caracteres" });
-        }
-
-        User userToRegister = new User
-        {
-            Email = userRegister.Email,
-            Password = userService.GeneratePassword(userRegister.Password),
-            PhoneNumber = null,
-            Token = generatedJwt.GeneratedToken(userRegister.Email, userRegister.Password),
-            Code = code,
-            referLevel1s = null,
-            referLevel2s = null,
-            referLevel3s = null,
-            Wallet = null
-        };
-        await context.Users.AddAsync(userToRegister);
-        await context.SaveChangesAsync();
-
-        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == userRegister.Email);
-        if (wallet != null)
-        {
-            return NotFound(new { message = "El usuario ya tiene una cartera" });
-        }
-
-        Wallet wallet1 = new Wallet
-        {
-            Email = userRegister.Email,
-            Balance = 0,
-        };
-        await context.Wallets.AddAsync(wallet1);
-        await context.SaveChangesAsync();
-    }
-    else
-    {
-        var phoneNumber = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == userRegister.PhoneNumber);
-        if (phoneNumber != null)
-        {
-            return BadRequest(new { message = "Ese número de telefono ya ha sido usado" });
-        }
-
-        PhoneNumberValidator phoneNumberValidator = new PhoneNumberValidator();
-        if (userRegister.PhoneNumber != null)
-        {
-            if (phoneNumberValidator.IsValidPhoneNumber(userRegister.PhoneNumber))
+            var user = await context.Users.FirstOrDefaultAsync(option => option.Email == userRegister.Email);
+            if (user != null)
             {
-                var phoneIsRegistered = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == userRegister.PhoneNumber);
-                if (phoneIsRegistered != null)
-                {
-                    return NotFound(new { message = "Ese número de telefono ya ha sido usado" });
-                }
-
-                if (userRegister.Password.Length < 6)
-                {
-                    return BadRequest(new { message = "La contraseña debe tener al menos 6 caracteres" });
-                }
+                return BadRequest(new { message = "Ese correo ya ha sido usado " });
             }
 
-            User user = new User
+            string emailPattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$";
+            Match emailMatch = Regex.Match(userRegister.Email, emailPattern);
+            if (!emailMatch.Success)
             {
-                Email = null,
+                return NotFound(new { message = "Por favor entre un correo valido" });
+            }
+
+            if (userRegister.Password.Length < 6)
+            {
+                return BadRequest(new { message = "La contraseña debe tener al menos 6 caracteres" });
+            }
+
+            User userToRegister = new User
+            {
+                Email = userRegister.Email,
                 Password = userService.GeneratePassword(userRegister.Password),
-                PhoneNumber = userRegister.PhoneNumber,
-                Token = generatedJwt.GeneratedToken(userRegister.PhoneNumber, userRegister.Password),
+                PhoneNumber = null,
+                Token = generatedJwt.GeneratedToken(userRegister.Email, userRegister.Password),
                 Code = code,
                 referLevel1s = null,
                 referLevel2s = null,
                 referLevel3s = null,
                 Wallet = null
             };
-            await context.Users.AddAsync(user);
+            await context.Users.AddAsync(userToRegister);
             await context.SaveChangesAsync();
 
             var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == userRegister.Email);
@@ -128,31 +75,115 @@ public async Task<IActionResult> UserRegister(UserRegister userRegister)
 
             Wallet wallet1 = new Wallet
             {
-                Email = userRegister.PhoneNumber,
-                Balance = 0
+                Email = userRegister.Email,
+                Balance = 0,
             };
             await context.Wallets.AddAsync(wallet1);
             await context.SaveChangesAsync();
         }
+        else
+        {
+            var phoneNumber = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == userRegister.PhoneNumber);
+            if (phoneNumber != null)
+            {
+                return BadRequest(new { message = "Ese número de telefono ya ha sido usado" });
+            }
+
+            PhoneNumberValidator phoneNumberValidator = new PhoneNumberValidator();
+            if (userRegister.PhoneNumber != null)
+            {
+                if (phoneNumberValidator.IsValidPhoneNumber(userRegister.PhoneNumber))
+                {
+                    var phoneIsRegistered = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == userRegister.PhoneNumber);
+                    if (phoneIsRegistered != null)
+                    {
+                        return NotFound(new { message = "Ese número de telefono ya ha sido usado" });
+                    }
+
+                    if (userRegister.Password.Length < 6)
+                    {
+                        return BadRequest(new { message = "La contraseña debe tener al menos 6 caracteres" });
+                    }
+                }
+
+                User user = new User
+                {
+                    Email = null,
+                    Password = userService.GeneratePassword(userRegister.Password),
+                    PhoneNumber = userRegister.PhoneNumber,
+                    Token = generatedJwt.GeneratedToken(userRegister.PhoneNumber, userRegister.Password),
+                    Code = code,
+                    referLevel1s = null,
+                    referLevel2s = null,
+                    referLevel3s = null,
+                    Wallet = null
+                };
+                await context.Users.AddAsync(user);
+                await context.SaveChangesAsync();
+
+                var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == userRegister.Email);
+                if (wallet != null)
+                {
+                    return NotFound(new { message = "El usuario ya tiene una cartera" });
+                }
+
+                Wallet wallet1 = new Wallet
+                {
+                    Email = userRegister.PhoneNumber,
+                    Balance = 0
+                };
+                await context.Wallets.AddAsync(wallet1);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        if (userRegister.CodeReferrer != null)
+        {
+            var father = await context.ReferLevel1s.FirstOrDefaultAsync(option => option.UniqueCodeReFerred == userRegister.CodeReferrer);
+            if (father != null)
+            {
+                var grandfather = await context.ReferLevel1s.FirstOrDefaultAsync(option => option.UniqueCodeReFerred == father.UniqueCodeReferrer);
+                if (grandfather != null)
+                {
+                    await registeredToReferLevel.VerifyToReferLevel3(grandfather.UniqueCodeReferrer, code);
+                }
+                await registeredToReferLevel.VerifyToReferLevel2(father.UniqueCodeReferrer, code);
+            }
+            await registeredToReferLevel.VerifyToReferLevel1(userRegister.CodeReferrer, code);
+        }
+
+        return Ok(new { message = "Usuario registrado correctamente" });
     }
 
-    if (userRegister.CodeReferrer != null)
+    [HttpPost("VerifyPassword")]
+    public async Task<IActionResult> VerifyPassword(UserLogin userLogin)
     {
-        var father = await context.ReferLevel1s.FirstOrDefaultAsync(option => option.UniqueCodeReFerred == userRegister.CodeReferrer);
-        if (father != null)
+        // Try email first, then phone number — same logic as Login
+        User? user = null;
+
+        if (userLogin.Email != null)
         {
-            var grandfather = await context.ReferLevel1s.FirstOrDefaultAsync(option => option.UniqueCodeReFerred == father.UniqueCodeReferrer);
-            if (grandfather != null)
-            {
-                await registeredToReferLevel.VerifyToReferLevel3(grandfather.UniqueCodeReferrer, code);
-            }
-            await registeredToReferLevel.VerifyToReferLevel2(father.UniqueCodeReferrer, code);
+            user = await context.Users.FirstOrDefaultAsync(option => option.Email == userLogin.Email);
         }
-        await registeredToReferLevel.VerifyToReferLevel1(userRegister.CodeReferrer, code);
+
+        if (user == null && userLogin.PhoneNumber != null)
+        {
+            user = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == userLogin.PhoneNumber);
+        }
+
+        if (user == null)
+        {
+            return NotFound("Usuario no encontrado");
+        }
+
+        if (!userService.verifyPassword(userLogin.Password, user.Password))
+        {
+            return BadRequest("Contraseña incorrecta");
+        }
+
+        return Ok(new { message = "Correcto" });
     }
-    
-    return Ok(new { message = "Usuario registrado correctamente" });
-}
+
 
     //Endpoint para loguear un usuario 
     [HttpPost("Login")]
@@ -165,7 +196,7 @@ public async Task<IActionResult> UserRegister(UserRegister userRegister)
             {
                 return NotFound("Usuario no encontrado");
             }
-            Console.WriteLine(user.Password);
+
             if (!userService.verifyPassword(userLogin.Password, user.Password))
             {
                 return BadRequest("Contraseña incorrecta");
@@ -192,15 +223,19 @@ public async Task<IActionResult> UserRegister(UserRegister userRegister)
         await context.SaveChangesAsync();
         return Ok(username.Token);
     }
+
+
     //Obtener el link para el código de referido
     [HttpGet("GetLink/{username}")]
-    public async Task<IActionResult> GetLink(string username){
+    public async Task<IActionResult> GetLink(string username)
+    {
         var user = await context.Users.FirstOrDefaultAsync(option => option.Email == username || option.PhoneNumber == username);
-        if(user == null){
+        if (user == null)
+        {
             return NotFound(new { message = "Usuario no encontrado" });
         }
         string link = $"http://localhost:4200/login?code={user.Code}";
-        return Ok(new {link});
+        return Ok(new { link });
     }
     //Endpoint para actualizar contraseña
     [HttpPatch("UpdatePassword")]

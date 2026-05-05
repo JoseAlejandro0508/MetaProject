@@ -2,8 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FileuploadComponent } from './fileupload/fileupload.component';
 import { CommonModule, NgStyle, UpperCasePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { TelegramService } from '../../../services/products/Telegram.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-address',
@@ -15,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 export class AddressComponent implements OnInit {
   btnText: string = 'Recarga completada';
   link: string = 'TThr4nZA59XZ5MC8ZPkUdjPa7QAtpAx692';
-  newLink: string = '';
   username: string = localStorage.getItem('username') || '';
   @Input('token') token: string = '';
   format: string = 'png';
@@ -23,8 +20,7 @@ export class AddressComponent implements OnInit {
   ring = 'green';
   currency = 'USDT';
   title='Dirección'
-  constructor(private router: ActivatedRoute,
-    private telegramService: TelegramService
+  constructor(private router: ActivatedRoute
   ){}
 
   ngOnInit() {
@@ -38,15 +34,6 @@ export class AddressComponent implements OnInit {
       this.ring = 'blue';
       this.currency='USD'
       this.title='Correo de Recarga'
-    }
-    else if(this.token === "nequi"){
-      this.currency = "nequi";
-      this.router.queryParams.subscribe(params => {
-        this.minimo = +params['cantidad'] || 0; // Convertir a número
-      });
-      this.ring = 'green';
-      this.btnText = 'Enviar Referencia';
-      this.title = 'QR';
     }
   }
 
@@ -63,23 +50,12 @@ export class AddressComponent implements OnInit {
         console.error('Error al copiar al portapapeles:', err);
       });
   }
-  onInputChange(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    this.newLink = inputElement.value;
-    console.log('Nuevo valor ingresado:', this.newLink); // Debug
-  }
   complete() {
     if (this.btnText === 'Recarga completada') {
       this.btnText = 'Confirmar';
     } else if (this.btnText === 'Confirmar') {
       alert('Check picture');
       this.btnText = 'Recarga completada';
-    }else if(this.btnText === 'Enviar Referencia'){
-      this.EnviarReferencia();
     }
-  }
-  EnviarReferencia() {
-    const mensaje = `Nueva referencia enviada:\nUsuario: ${this.username}\nEnlace: ${this.newLink}\nMonto: ${this.minimo} ${this.currency}`;
-    this.telegramService.sendMessage(mensaje);
   }
 }

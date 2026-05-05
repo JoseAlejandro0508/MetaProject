@@ -1,23 +1,57 @@
-<section class="w-full">
-    <app-back-home />
-    <section class="w-full flex flex-col gap-4 pb-10">
-        <!-- Contenedor del QR y Address -->
-        <div class="w-full flex flex-col sm:flex-row gap-4 py-4">
-            <!-- Componente QR -->
-            <app-qr 
-                [token]="'Imagen de WhatsApp'" 
-                class="w-2/4 sm:w-1/2 md:w-1/3 lg:w-3/4 h-auto mx-auto" 
-            />
-            <!-- Componente Address -->
-            <app-address 
-                [token]='token' 
-                class="w-full sm:w-1/2 mt-4 sm:mt-0"
-            ></app-address>
-        </div>
-        <!-- Información adicional -->
-        <div class="bg-blue-950 p-4 sm:p-6 md:p-8 rounded">
-            <app-info [token]='token' />
-        </div>
-    </section>
-</section>
+<!-- Background -->
+<div class="bg-container">
+  <div class="bg-yellow-diagonal"></div>
+  <div class="bg-red-diamond"></div>
+</div>
 
+<!-- Payment View -->
+<div class="main-content" [style.display]="showSuccess ? 'none' : 'flex'">
+  <div class="logo-container">
+    <div class="dot"></div>
+    <span class="logo-text">Nequi</span>
+  </div>
+
+  <p class="info-text">Número de orden:</p>
+  <p class="order-id">{{ orderNumber }}</p>
+  <p class="amount">{{ displayAmount }}</p>
+
+  <div class="qr-box">
+    <img [src]="qrUrl" alt="Código QR Nequi" (error)="handleQrError($event)">
+  </div>
+
+  <p class="qr-footer-text">Código QR de NEQUI</p>
+
+  <input type="text"
+         class="input-ref"
+         placeholder="Por favor ingrese una referencia"
+         [(ngModel)]="reference">
+
+  <div class="instructions">
+    <b>1. Scan the QR code to make payment</b>
+    <b>2. Enter the transaction serial number after the transaction is completed.</b>
+  </div>
+
+  <button class="btn btn-blue"
+          [disabled]="!canConfirm"
+          [attr.aria-busy]="submitting"
+          [attr.aria-disabled]="!canConfirm"
+          (click)="onConfirm()">
+    <span *ngIf="!submitting">Confirmar</span>
+    <span *ngIf="submitting">Enviando...</span>
+  </button>
+</div>
+
+<!-- Success Screen -->
+<div class="success-screen" [style.display]="showSuccess ? 'flex' : 'none'">
+  <div class="logo-container">
+    <div class="dot"></div>
+    <span class="logo-text">Nequi</span>
+  </div>
+
+  <div class="check-icon"></div>
+
+  <p class="final-text">El pedido está en revisión,<br>espere</p>
+  <p class="final-text" style="font-size: 20px; margin-top: 10px;">Por favor cierre esta pagina</p>
+
+  <button class="btn btn-white" (click)="closePage()">Cerrar</button>
+</div>

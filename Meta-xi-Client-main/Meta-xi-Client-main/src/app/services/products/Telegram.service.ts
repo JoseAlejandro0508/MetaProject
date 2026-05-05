@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { NotificationService } from './notification.service';
 
 @Injectable({
@@ -36,13 +37,17 @@ export class TelegramService {
     });
   }
 
-  sendMessage(message: string): void {
+  sendMessage$(message: string): Observable<any> {
     const payload = {
       chat_id: this.chatId,
       text: message,
     };
 
-    this.http.post(`${this.telegramApiUrl}/sendMessage`, payload).subscribe({
+    return this.http.post(`${this.telegramApiUrl}/sendMessage`, payload);
+  }
+
+  sendMessage(message: string): void {
+    this.sendMessage$(message).subscribe({
       next: (response) => {
         console.log('Message sent successfully:', response);
         this.notificationService.correct('Mensaje enviado correctamente.');

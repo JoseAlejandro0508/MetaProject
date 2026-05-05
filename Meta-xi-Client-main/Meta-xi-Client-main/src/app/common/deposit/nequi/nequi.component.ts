@@ -1,44 +1,77 @@
-import { DecimalPipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
+interface PresetAmount {
+  value: number;
+  label: string;
+}
 
 @Component({
   selector: 'app-nequi',
   standalone: true,
-  imports: [DecimalPipe,FormsModule ,RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './nequi.component.html',
-  styleUrl: './nequi.component.scss'
+  styleUrl: './nequi.component.scss',
 })
-export class NequiComponent {
-  saldo:number = 100000; 
-  cantidadSeleccionada: number = 0;
-  username: string = localStorage.getItem('username') || '';
-  constructor(private http: HttpClient) { }
-  cantidades = [25000,50000, 120000, 250000, 500000, 1000000, 1500000, 3000000, 5000000, 10000000];
+export class NequiComponent implements OnInit {
+  readonly MIN_AMOUNT = 50000;
 
-  seleccionarCantidad(cantidad: number): void {
-    this.cantidadSeleccionada = cantidad;
-  }
-  ngOnInit() {
+  saldo = 0;
+  username: string = localStorage.getItem('username') || '';
+
+  // Raw numeric amount (what we send to API/navigation)
+  rawAmount = 0;
+  // Display value in input (formatted with commas)
+  displayAmount = '';
+
+  presets: PresetAmount[] = [
+    { value: 50000, label: '50,000' },
+    { value: 120000, label: '120,000' },
+    { value: 250000, label: '250,000' },
+    { value: 500000, label: '500,000' },
+    { value: 1000000, label: '1,000,000' },
+    { value: 1500000, label: '1,500,000' },
+  ];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
     this.getSaldo();
   }
 
-    async getSaldo() {
-      const url = `${environment.apiUrl}/Wallet/GetBalance/${this.username}`;
-      try {
-        const response: any = await firstValueFrom(this.http.get(url));
-        console.log('Respuesta completa de la API:', response);
-        this.saldo = response;
-      } catch (error: any) {
-        console.error('Error al obtener el balance: ', error);
-      }
+  get displayBalance(): string {
+    return this.saldo.toLocaleString('es-CO');
+  }
+
+  // ─── API ─────────────────────────────────
+  private async getSaldo(): Promise<void> {
+    const url = `${environment.apiUrl}/Wallet/GetBalance/${this.username}`;
+    try {
+      const response: any = await firstValueFrom(this.http.get(url));
+      this.saldo = Number(response) || 0;
+    } catch (error: any) {
+      console.error('Error al obtener balance:', error);
     }
-    
-  
-  
+  }
+
+  // ─── Input Handling ──────────────────────
+  onAmountInput(value: string): void {
+    // Strip everything except digits
+    const digits = value.replace(/\D/g, '');
+    this.rawAmount = digits ? parseInt(digits, 10) : 0;
+
+    // Format display with commas
+    this.displayAmount = digits !== '' ? Number(digits).toLocaleString('en-US') : '';
+  }
+
+  // ─── Preset Selection ────────────────────
+  selectAmount(num: number): void {
+    this.rawAmount = num;
+    this.displayAmount = num.toLocaleString('en-US');
+  }
 }

@@ -1,0 +1,416 @@
+// =========================================================
+// WITHDRAW — Apex Premium Withdrawal UI
+// =========================================================
+
+// Fonts loaded globally in index.html: Inter, Montserrat
+// Cinzel and Orbitron used via font-family fallback
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// ─── Variables ────────────────────────────────
+$bg-dark: #121415;
+$bg-slate: #1c1f21;
+$gold-base: #d4af37;
+$gold-light: #f9f06b;
+$gold-gradient: linear-gradient(135deg, #a67c00 0%, #d4af37 25%, #f9f06b 50%, #d4af37 75%, #a67c00 100%);
+$green-neon: #00ff88;
+$green-glow: rgba(0, 255, 136, 0.4);
+$red-alert: #ff3333;
+$glass-border: rgba(212, 175, 55, 0.25);
+
+// ─── Ambient Orbs ─────────────────────────────
+.ambient-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.15;
+  z-index: -1;
+  animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.orb-gold {
+  width: 300px;
+  height: 300px;
+  background: $gold-base;
+  top: -10%;
+  left: -10%;
+}
+
+.orb-green {
+  width: 250px;
+  height: 250px;
+  background: $green-neon;
+  bottom: -10%;
+  right: -10%;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 30px) scale(1.1); }
+}
+
+// ─── App Container ────────────────────────────
+.app-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+  animation: appEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+@keyframes appEntry {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// ─── Nav Header ──────────────────────────────
+.nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn {
+  color: $gold-base;
+  font-weight: 800;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+  text-decoration: none;
+
+  &:hover { opacity: 0.8; }
+}
+
+.security-badge {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  color: $green-neon;
+  border: 1px solid $green-neon;
+  padding: 3px 8px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px $green-glow;
+}
+
+// ─── Balance Card ─────────────────────────────
+.balance-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%), $bg-slate;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 24px;
+  padding: 18px 20px;
+  border: 1px solid $glass-border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 15px 35px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    animation: sweep 4s infinite linear;
+  }
+}
+
+@keyframes sweep {
+  100% { left: 200%; }
+}
+
+.balance-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.balance-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+}
+
+.balance-amount {
+  font-family: 'Cinzel', serif;
+  font-size: 26px;
+  font-weight: 800;
+  background: $gold-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.currency {
+  font-size: 14px;
+  -webkit-text-fill-color: $gold-base;
+}
+
+.status-pill {
+  font-size: 9px;
+  background: rgba(0, 255, 136, 0.1);
+  color: $green-neon;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-align: center;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+// ─── Inputs ───────────────────────────────────
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-label {
+  font-size: 10px;
+  color: $gold-base;
+  font-weight: 700;
+  margin-left: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.apex-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 18px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+
+  &::placeholder { color: rgba(255, 255, 255, 0.2); font-weight: 400; }
+  &:focus { background: rgba(255, 255, 255, 0.05); }
+
+  &.invalid {
+    border-color: $red-alert;
+    box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.1), 0 0 10px rgba(255, 51, 51, 0.1);
+  }
+
+  &.valid {
+    border-color: $green-neon;
+    box-shadow: inset 0 0 10px rgba(0, 255, 136, 0.1), 0 0 10px rgba(0, 255, 136, 0.1);
+  }
+}
+
+.captcha-input {
+  text-align: center;
+  font-family: 'Orbitron', sans-serif !important;
+  font-size: 16px !important;
+  letter-spacing: 2px;
+}
+
+// ─── Combo Row (Method + Input) ──────────────
+.combo-row {
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+
+.method-block {
+  background: $gold-gradient;
+  color: #000;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.paste-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid $gold-base;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 800;
+  color: $gold-base;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: 0.2s;
+  z-index: 5;
+
+  &:active {
+    background: $gold-base;
+    color: #000;
+  }
+}
+
+// ─── Captcha ─────────────────────────────────
+.captcha-container {
+  display: flex;
+  gap: 10px;
+}
+
+.captcha-plate {
+  background: linear-gradient(145deg, #2a2d32, #181a1c);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 14px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  color: $gold-base;
+  letter-spacing: 6px;
+  box-shadow: inset 2px 2px 5px rgba(255, 255, 255, 0.05),
+              inset -3px -3px 5px rgba(0, 0, 0, 0.5),
+              0 5px 10px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s;
+  user-select: none;
+  min-width: 100px;
+
+  &:active { transform: scale(0.95); }
+
+  &.refreshing { animation: flip 0.4s ease-in-out; }
+}
+
+@keyframes flip {
+  50% { transform: rotateX(90deg); opacity: 0.5; }
+}
+
+// ─── Ledger Box ──────────────────────────────
+.ledger-box {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  padding: 12px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.ledger-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  align-items: center;
+  font-weight: 600;
+}
+
+.ledger-val {
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ledger-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.highlight-row {
+  color: $green-neon;
+  font-size: 13px;
+
+  span:first-child { font-weight: 800; }
+
+  .ledger-val { font-weight: 800; }
+}
+
+// ─── Submit Button ───────────────────────────
+.btn-apex {
+  background: $gold-gradient;
+  background-size: 200% auto;
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 18px;
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #121212;
+  opacity: 0.3;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(0.98);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+
+  &.unlocked {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    animation: pulse-glow 2s infinite;
+  }
+
+  &:active { transform: scale(0.95); }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@keyframes pulse-glow {
+  0%   { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+  50%  { box-shadow: 0 0 35px rgba(212, 175, 55, 0.6); }
+  100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+}
+
+// ─── Responsive ──────────────────────────────
+@media (max-width: 600px) {
+  .app-container {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .balance-amount {
+    font-size: 22px;
+  }
+
+  .method-block {
+    font-size: 10px;
+    padding: 0 12px;
+  }
+}

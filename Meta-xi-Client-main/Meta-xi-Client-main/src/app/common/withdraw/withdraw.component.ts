@@ -1,75 +1,221 @@
-import { Component, Input } from '@angular/core';
-import { BackHomeComponent } from '../../shared/back-home/back-home.component';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/products/notification.service';
 import { TelegramService } from '../../services/products/Telegram.service';
-import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-withdraw',
   standalone: true,
-  imports: [BackHomeComponent , FormsModule ,CommonModule],
+  imports: [RouterLink, FormsModule, CommonModule],
   templateUrl: './withdraw.component.html',
   styleUrl: './withdraw.component.scss',
 })
-export class WithdrawComponent {
+export class WithdrawComponent implements OnInit, OnDestroy {
   @Input('token') token: string = '';
+
+  // ─── Form Fields ───────────────────────────
   balance = '0.00';
-  username : string = localStorage.getItem('username') || '';
-  amount : number | null = null;
-  accountNumber : string = '';
-  password : string = '';
-  withdrawalFee : number = 0;
-  AmountToReceive : number = 0;
-  constructor(private http: HttpClient,
-    private notification : NotificationService,
-    private telegram : TelegramService,
-  ){}
-  ngOnInit(): void{
-    this.GetBalance();
+  username: string = localStorage.getItem('username') || '';
+  amount: number | null = null;
+  accountNumber: string = '';
+  password: string = '';
+  captchaInput: string = '';
+
+  // ─── Captcha ───────────────────────────────
+  activeCaptcha = '0000';
+  captchaFlipping = false;
+
+  // ─── Computed Displays ──────────────────────
+  withdrawalFee = 0;
+  amountToReceive = 0;
+  submitting = false;
+
+  // ─── Validation State ──────────────────────
+  amountValid = false;
+  insuficient = false;
+  amountInvalid = false;
+  amountHintColor = 'rgba(255,255,255,0.3)';
+  canSubmit = false;
+
+  // ─── Constants ─────────────────────────────
+  private readonly MIN_AMOUNT = 20000;
+  private readonly MAX_AMOUNT = 10000000;
+  private readonly FEE_RATE = 0.08; // 8% commission
+
+  constructor(
+    private http: HttpClient,
+    private notification: NotificationService,
+    private telegram: TelegramService
+  ) {}
+
+  ngOnInit(): void {
+    this.getBalance();
+    this.regenerateCaptcha();
   }
-  async GetBalance(){
-    const url = `${environment.apiUrl}/Wallet/GetBalance/`+this.username;
+
+  ngOnDestroy(): void {
+    // Cleanup handled by Angular
+  }
+
+  // ─── Getters ────────────────────────────────
+  get isNequi(): boolean {
+    return this.token === 'nequi';
+  }
+
+  get methodName(): string {
+    return this.isNequi ? 'NEQUI' : 'USDT';
+  }
+
+  get currency(): string {
+    return this.isNequi ? 'COP' : 'USDT';
+  }
+
+  get feePercent(): number {
+    return Math.round(this.FEE_RATE * 100);
+  }
+
+  get displayBalance(): string {
+    const num = parseFloat(this.balance);
+    if (isNaN(num)) return this.balance;
+    return num.toLocaleString('es-CO');
+  }
+
+  get displayFee(): string {
+    if (this.withdrawalFee === 0) return '0';
+    return Math.round(this.withdrawalFee).toLocaleString('es-CO');
+  }
+
+  get displayNet(): string {
+    if (this.amountToReceive === 0) return '0';
+    return Math.round(this.amountToReceive).toLocaleString('es-CO');
+  }
+
+  // ─── Balance API ────────────────────────────
+  private async getBalance(): Promise<void> {
+    const url = `${environment.apiUrl}/Wallet/GetBalance/${this.username}`;
     try {
-      const response : any = await firstValueFrom(this.http.get(url));
-      console.log(response);
+      const response: any = await firstValueFrom(this.http.get(url));
       this.balance = response;
-    } catch (error : any) {
-      let Message = error.error.message;
-      console.log(Message);
+    } catch (error: any) {
+      console.error('Error al obtener balance:', error);
     }
   }
-  CalculateFees(){
-    if(this.amount && this.amount >= 20000 && this.amount <= 10000000){
-      this.withdrawalFee = this.amount * 0.06;
-      this.AmountToReceive = this.amount - this.withdrawalFee;
+
+  // ─── Captcha ────────────────────────────────
+  regenerateCaptcha(): void {
+    this.captchaFlipping = true;
+    const chars = '0123456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    else{
+    this.activeCaptcha = code;
+    this.captchaInput = '';
+    setTimeout(() => {
+      this.captchaFlipping = false;
+      this.validate();
+    }, 400);
+  }
+
+  // ─── Paste from Clipboard ───────────────────
+  async pasteFromClipboard(): Promise<void> {
+    try {
+      const text = await navigator.clipboard.readText();
+      this.accountNumber = text;
+      this.validate();
+    } catch {
+      // Fallback: prompt user to paste manually
+      this.notification.errorMessage('Mantén presionado el campo para pegar.');
+    }
+  }
+
+  // ─── Validation Engine ──────────────────────
+  validate(): void {
+    const amt = this.amount ?? 0;
+
+    // Amount validation
+    if (this.amount !== null && this.amount !== undefined && String(this.amount).length > 0) {
+      if (amt < this.MIN_AMOUNT) {
+        this.amountValid = false;
+        this.amountInvalid = true;
+        this.insuficient = false;
+        this.amountHintColor = 'var(--red-alert, #ff3333)';
+      }
+      if(Number(this.balance) < amt ){
+        this.amountValid = false;
+        this.amountInvalid = true;
+        this.insuficient = true;
+        this.amountHintColor = 'var(--red-alert, #ff3333)';
+
+      } else {
+        this.amountValid = true;
+        this.amountInvalid = false;
+        this.insuficient = false;
+        this.amountHintColor = 'var(--green-neon, #00ff88)';
+      }
+    } else {
+      this.amountValid = false;
+      this.amountInvalid = false;
+      this.insuficient = false;
+      this.amountHintColor = 'rgba(255,255,255,0.3)';
+    }
+
+    // Ledger calculation
+    if (amt > 0 && amt >= this.MIN_AMOUNT && amt <= this.MAX_AMOUNT) {
+      this.withdrawalFee = amt * this.FEE_RATE;
+      this.amountToReceive = amt - this.withdrawalFee;
+    } else {
       this.withdrawalFee = 0;
-      this.AmountToReceive = 0;
+      this.amountToReceive = 0;
     }
+
+    // Captcha validation
+    const capValid = this.captchaInput === this.activeCaptcha;
+    if (this.captchaInput.length > 0) {
+      // Dynamic validation handled by CSS classes in template
+    }
+
+    // Button unlock logic
+    const allFilled = String(this.amount ?? '').length > 0
+      && this.accountNumber.length > 0
+      && this.password.length > 0
+      && this.captchaInput.length > 0;
+
+    this.canSubmit = allFilled && amt >= this.MIN_AMOUNT && capValid;
   }
-  async RequestWithdrawal(){
-    const isVerified = await this.VerifyPassword();
-    if(isVerified){
-      const message = `Withdrawal request:\n\nUsername: ${this.username}\nAccount: ${this.accountNumber}\nAmount: ${this.amount}\nFee: ${this.withdrawalFee}\nAmoutToReceive: ${this.AmountToReceive}\nToken: ${this.token}`;
+
+  // ─── Withdrawal Request ─────────────────────
+  async requestWithdrawal(): Promise<void> {
+    if (!this.canSubmit || this.submitting) return;
+
+    this.submitting = true;
+
+    const isVerified = await this.verifyPassword();
+    if (isVerified) {
+      const message = `Withdrawal request:\n\nUsername: ${this.username}\nAccount: ${this.accountNumber}\nAmount: ${this.amount}\nFee: ${Math.round(this.withdrawalFee)}\nAmountToReceive: ${Math.round(this.amountToReceive)}\nToken: ${this.token}`;
       this.telegram.sendMessage(message);
       this.notification.correct('Solicitud de retiro enviada correctamente');
     }
+
+    this.submitting = false;
   }
-  async VerifyPassword(): Promise<boolean> {
+
+  private async verifyPassword(): Promise<boolean> {
     const url = `${environment.apiUrl}/User/VerifyPassword`;
-    const body = {username :this.username, password : this.password};
+    // The app stores phone number in localStorage as 'username'
+    // API supports both Email and PhoneNumber lookup
+    const body = { Email: this.username, Password: this.password ,PhoneNumber:this.username};
     try {
-      const response : any = await firstValueFrom(this.http.post(url, body));
-      console.log(response);
+      await firstValueFrom(this.http.post(url, body));
       return true;
-    } catch (error : any) {
-      const response = error.error.message;
-      this.notification.errorMessage(response);
+    } catch (error: any) {
+      const msg = error?.error?.message || error?.error || 'Error al verificar contraseña';
+      this.notification.errorMessage(typeof msg === 'string' ? msg : 'Error al verificar contraseña');
       return false;
     }
   }
