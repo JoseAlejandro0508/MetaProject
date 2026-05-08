@@ -111,5 +111,21 @@ public class UserPlansController : ControllerBase
             return Ok(benefit);
         }
     }
+    public class RequestGetTasks
+    {
+        public string Username { get; set; }
+    }
+    [HttpPost("GetTasks")]
+    public async Task<IActionResult> GetTasks([FromBody] RequestGetTasks request){
+        
+        var user = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == request.Username);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+        var tasks = await context.TaskRegisters.Where(option => option.UID == user.Id).ToListAsync();
+
+        return Ok(tasks);
+    }
 
 }

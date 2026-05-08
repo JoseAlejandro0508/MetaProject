@@ -14,7 +14,7 @@ export class AppComponent {
   notifyCreation() {
     this.notificationService.showCustomMessage(
       'En proceso de creación ⚒',
-      '#6a0dad', // Color morado o el color oscuro deseado
+      'success',
     );
   }
 }

@@ -1,0 +1,97 @@
+// ─── Top Notification — Liquid Glass Premium ───
+
+:host {
+  --glass-bg: rgba(30, 34, 38, 0.75);
+  --green-claim: #00b09b;
+  --red-timer: #e52d27;
+}
+
+.top-notification {
+  position: fixed;
+  top: -100px;   // Hidden by default
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  transition: top 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;   // tap to dismiss
+
+  // ── Slide in ──
+  &.show {
+    top: 25px;
+  }
+
+  // ── Error variant ──
+  &.error .notif-icon {
+    background: var(--red-timer);
+    box-shadow: 0 0 15px rgba(229, 45, 39, 0.5);
+  }
+}
+
+// ─── Icon Circle ───
+.notif-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--green-claim);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(0, 176, 155, 0.4);
+  font-size: 16px;
+}
+
+// ─── Content ───
+.notif-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-status {
+  font-size: 11px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.notif-msg {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
+
+// ─── Responsive ───
+@media (max-width: 400px) {
+  .top-notification {
+    width: 95%;
+    padding: 12px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+
+  .notif-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .notif-msg {
+    font-size: 13px;
+  }
+}

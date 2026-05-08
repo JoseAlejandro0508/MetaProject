@@ -52,9 +52,10 @@ export class NavComponent implements OnInit {
       console.error(error);
       this.address = 'assets/new/AddText_09-22-05.29.16.png';
       this.isClaimed = true;
-      this.text = 'Misiones';
+      this.text = 'Tareas';
     }
   }
+  
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
@@ -62,7 +63,7 @@ export class NavComponent implements OnInit {
   }
   toggleModal(){
     if(this.isClaimed){
-      this.router.navigate(['/vip']);
+      this.router.navigate(['/task']);
     }else{
       this.showModal = !this.showModal;
     }

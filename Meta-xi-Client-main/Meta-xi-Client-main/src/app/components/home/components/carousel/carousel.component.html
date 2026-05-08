@@ -7,15 +7,17 @@
       <div class="progress-bar" [style.width]="progressWidth" [style.transition]="progressTransition"></div>
     </div>
 
-    <!-- Track -->
+     <!--Track -->
     <div class="track" [style.transform]="'translateX(-' + currentIndex * 100 + '%)'">
       @for (slide of slides; track slide.id) {
         <div class="slide">
           <img [src]="slide.image" [alt]="slide.title" (error)="handleImgError($event)">
+          <!--
           <div class="content">
             <h3>{{ slide.title }}</h3>
             <p>{{ slide.subtitle }}</p>
           </div>
+          -->
         </div>
       }
     </div>

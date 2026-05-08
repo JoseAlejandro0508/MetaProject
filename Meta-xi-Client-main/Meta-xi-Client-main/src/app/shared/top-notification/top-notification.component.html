@@ -1,0 +1,10 @@
+<div class="top-notification"
+     [class.show]="visible"
+     [class.error]="data?.type === 'error'"
+     (click)="dismiss()">
+  <div class="notif-icon">{{ icon }}</div>
+  <div class="notif-content">
+    <div class="notif-status">{{ statusLabel }}</div>
+    <div class="notif-msg">{{ data?.message }}</div>
+  </div>
+</div>

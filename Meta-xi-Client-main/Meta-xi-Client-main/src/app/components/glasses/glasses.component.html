@@ -1,51 +1,147 @@
-<div class="w-full bg-blue-950 flex justify-center flex-col gap-3 items-center px-8 py-4 rounded-lg">
-    <div class="w-full flex items-center gap-3 border-b-[0.1px] border-gray-500 pb-2 text-base">
-        <button class="w-1/2 flex flex-col items-center">
-            <p>Ganancias obtenidas hoy</p>
-            <span class="text-2xl">{{todayProfits}}</span>
-        </button>
-        <button class="w-1/2 flex flex-col items-center">
-            <p>Todas las ganancias</p>
-            <span class="text-2xl">{{profits}}</span>
-        </button>
+<!-- Dashboard Card -->
+<div class="dashboard-card">
+  <div class="stat-box">
+    <div class="stat-label">Ganado Hoy</div>
+    <div class="stat-value">{{formatCOP(todayProfits)}} <span>COP</span></div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Total Ganancias</div>
+    <div class="stat-value">{{formatCOP(profits)}} <span>COP</span></div>
+  </div>
+  <div class="balance-section">
+    <div>
+      <div class="stat-label">Balance Total</div>
+      <div class="stat-value balance-amount">{{balance}} <span style="color:var(--gold)">COP</span></div>
     </div>
-    <div class="w-full flex items-center">
-        <article class="w-1/2 flex flex-col ">
-            {{balance}}
-            <p class="text-slate-400">Balance Total</p>
-        </article>
-        <div class="w-1/2 flex justify-end">
-            <button [routerLink]="['/recharge']" class="bg-black py-1 px-4 rounded-xl text-sm">
-                Recargar
-            </button>
-        </div>
-    </div>
-</div>
-<div class="flex items-center bg-blue-950 mt-7 rounded-xl shadow-xl">
-    <button (click)="gafasVR()" class="w-1/2 py-3 rounded-xl transition-opacity duration-200 easy-in-out hover:opacity-80"
-        [ngClass]="{'bg-[#301E67] shadow-xl font-semibold': mine}">
-        Gafas VR
-    </button>
-    <button (click)="myGafas()" class="w-1/2 py-3 rounded-xl transition-opacity duration-200 easy-in-out hover:opacity-80"
-        [ngClass]="{'bg-[#301E67] shadow-xl font-semibold': !mine}">
-        Mis GAFAS
-    </button>
+    <a [routerLink]="['/recharge']" class="btn-gold-shimmer btn-recar">RECARGAR</a>
+  </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3 mx-auto pb-20">
-    <ng-container *ngFor="let gafa of list;">
-      <app-card 
-        *ngIf="gafa.maxQuantity > 0 && gafa.daysActive > 0"
-        [data]="gafa" 
-        [mine]="mine" 
-        (onBuy)="buyPlan($event)">
-      </app-card>
-      <app-card 
-        *ngIf="!mine"
-        [data]="gafa" 
-        [mine]="mine" 
-        (onBuy)="buyPlan($event)">
-      </app-card>
-    </ng-container>
+<!-- Tabs Navigation -->
+<div class="tabs-container">
+  <div class="tab" [class.active]="mine" (click)="gafasVR()">Propiedades Disponibles</div>
+  <div class="tab" [class.active]="!mine" (click)="myGafas()">Mis Propiedades</div>
+</div>
+
+<!-- Available Properties (mine = true) -->
+<div *ngIf="mine" class="property-grid">
+  <ng-container *ngFor="let gafa of list; index as i">
+    <div class="property-card" *ngIf="gafa.maxQuantity > 0 && gafa.daysActive > 0">
+      <div class="property-img">
+        <div class="vip-badge" *ngIf="gafa.idPlan === 1">VIP ASSET</div>
+        <img [src]="'assets/glasses/tinified/vr' + gafa.idPlan + '.png'" alt="gafa" class="property-image"
+          (error)="handleImageError($event)" />
+      </div>
+      <div class="property-info">
+        <h3 class="prop-title">{{gafa.name}}</h3>
+        <span class="prop-location">Plan #{{gafa.idPlan}} &bull; {{gafa.daysActive}} días activos</span>
+        <div class="prop-stats">
+          <div class="prop-stat-item">
+            <span>Costo</span>
+            <b>{{formatCOP(gafa.price)}} COP</b>
+          </div>
+          <div class="prop-stat-item gain">
+            <span>Diario</span>
+            <b>+ {{formatCOP(gafa.dailyBenefit)}} COP</b>
+          </div>
+        </div>
+        <button class="btn-gold-shimmer btn-buy" (click)="openBuyModal(gafa)">INVERTIR AHORA</button>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- My Properties (mine = false) -->
+<div *ngIf="!mine" class="my-props-section">
+  <ng-container *ngFor="let gafa of list; index as i">
+    <div class="my-prop-card">
+      <div>
+        <div class="my-prop-name">{{gafa.name}}</div>
+        <div class="my-prop-status">Estado: Activo &bull; Generando Ganancias</div>
+      </div>
+      <button class="btn-details" (click)="openDetailsModal(gafa)">VER DETALLES</button>
+    </div>
+  </ng-container>
+
+  <!-- Empty state -->
+  <div *ngIf="list.length === 0" class="empty-state">
+    <p>Aún no tienes propiedades activas</p>
+    <p class="empty-hint">Adquiere tu primera propiedad en la pestaña "Propiedades Disponibles"</p>
   </div>
-  
+</div>
+
+<!-- Buy Modal -->
+<div *ngIf="showBuyModal" class="modal" (click)="onModalBackdropClick($event)">
+  <div class="modal-content">
+    <div class="modal-img-header">
+      <img *ngIf="selectedPlan" [src]="'assets/glasses/tinified/vr' + selectedPlan.idPlan + '.png'" alt="property" class="modal-property-image"
+        (error)="handleImageError($event)" />
+    </div>
+    <h2 class="modal-title" *ngIf="selectedPlan">{{selectedPlan.name}}</h2>
+    <p class="modal-location" *ngIf="selectedPlan">Plan #{{selectedPlan.idPlan}} &bull; {{selectedPlan.daysActive}} días de actividad</p>
+
+    <div class="prop-stats modal-stats" *ngIf="selectedPlan">
+      <div class="prop-stat-item">
+        <span>Diario</span>
+        <b>+ {{formatCOP(selectedPlan.dailyBenefit)}}</b>
+      </div>
+      <div class="prop-stat-item gain">
+        <span>Mensual</span>
+        <b>+ {{formatCOP(selectedPlanMonthlyEarnings)}}</b>
+      </div>
+      <div class="prop-stat-item gain">
+        <span>Total</span>
+        <b>+ {{formatCOP(selectedPlan.totalBenefit)}}</b>
+      </div>
+    </div>
+
+    <div class="modal-price-tag" *ngIf="selectedPlan">
+      Inversión: <span>{{formatCOP(selectedPlan.price)}} COP</span>
+    </div>
+
+    <button class="btn-gold-shimmer btn-buy" (click)="buyPlan(selectedPlan.name)" style="font-size: 16px; padding: 20px;">
+      CONFIRMAR Y ACTIVAR
+    </button>
+    <button class="btn-close" (click)="closeBuyModal()">CANCELAR</button>
+  </div>
+</div>
+
+<!-- Details Modal -->
+<div *ngIf="showDetailsModal" class="modal" (click)="onModalBackdropClick($event)">
+  <div class="modal-content">
+    <div class="details-check-icon">
+      &#10003;
+    </div>
+    <h2 class="modal-title modal-title-center" *ngIf="selectedMyPlan">{{selectedMyPlan.name}}</h2>
+    <p class="modal-location modal-location-center" *ngIf="selectedMyPlan">Activo &bull; {{selectedMyPlan.daysRemaining}} días restantes</p>
+
+    <div class="prop-stats modal-stats" *ngIf="selectedMyPlan">
+      <div class="prop-stat-item">
+        <span>Por Hora</span>
+        <b>+ {{formatCOP(selectedMyPlan.hourBenefit)}}</b>
+      </div>
+      <div class="prop-stat-item gain">
+        <span>Diario</span>
+        <b>+ {{formatCOP(selectedMyPlan.dailyBenefit)}}</b>
+      </div>
+      <div class="prop-stat-item gain">
+        <span>Total</span>
+        <b>+ {{formatCOP(selectedMyPlan.totalBenefit)}}</b>
+      </div>
+    </div>
+
+    <div class="daily-earnings-box" *ngIf="selectedMyPlan">
+      <span class="daily-earnings-label">Tu Ganancia Diaria Actual</span>
+      <b class="daily-earnings-value">{{formatCOP(selectedMyPlan.dailyBenefit)}}</b> <span class="daily-earnings-currency">COP</span>
+    </div>
+
+    <div class="progress-section" *ngIf="selectedMyPlan">
+      <span class="progress-label">Progreso: {{selectedMyPlan.percentage}}%</span>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="selectedMyPlan.percentage"></div>
+      </div>
+    </div>
+
+    <button class="btn-close" (click)="closeDetailsModal()">CERRAR DETALLES</button>
+  </div>
+</div>

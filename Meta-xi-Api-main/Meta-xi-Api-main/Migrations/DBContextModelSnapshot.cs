@@ -119,6 +119,29 @@ namespace Meta_xi.Migrations
                     b.ToTable("ReferLevel3s");
                 });
 
+            modelBuilder.Entity("Meta_xi.Application.TaskRegister", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("ActivateAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TaskRegisters");
+                });
+
             modelBuilder.Entity("Meta_xi.Application.UpdatePlansForUser", b =>
                 {
                     b.Property<int>("IDUpdatePlansForUser")
@@ -147,6 +170,9 @@ namespace Meta_xi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Code")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")

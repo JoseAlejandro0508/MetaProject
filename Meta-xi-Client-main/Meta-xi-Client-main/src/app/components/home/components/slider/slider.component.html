@@ -1,15 +1,16 @@
 <div class="stage">
-  @for (card of cards; track card.id) {
-    <div class="card"
-         [class.active]="getPosition(card.id) === 'active'"
-         [class.back-right]="getPosition(card.id) === 'back-right'"
-         [class.back-left]="getPosition(card.id) === 'back-left'">
-      <div class="gold-sweep"></div>
-      <div class="img-glow"></div>
-      <img [src]="card.image" [alt]="card.label" (error)="handleImgError($event)">
-      <div class="buy-container">
-        <button class="btn-buy" (click)="onBuy(card.id)">{{ card.label }}</button>
-      </div>
+  <div class="card"
+       *ngFor="let card of cards; index as i"
+       [class.active]="getPosition(card.id) === 'active'"
+       [class.back-right]="getPosition(card.id) === 'back-right'"
+       [class.back-left]="getPosition(card.id) === 'back-left'">
+    <div class="info-oval oval-left">{{ card.name }}</div>
+    <div class="info-oval oval-right">{{ card.price }}</div>
+    <div class="gold-sweep"></div>
+    <div class="img-glow"></div>
+    <img [src]="card.image" [alt]="card.name" (error)="handleImgError($event)">
+    <div class="buy-container">
+      <button class="btn-buy" (click)="onBuy(card.id)">COMPRAR</button>
     </div>
-  }
+  </div>
 </div>

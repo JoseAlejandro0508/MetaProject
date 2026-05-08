@@ -17,9 +17,12 @@ interface SlideData {
 })
 export class CarouselComponent implements OnDestroy {
   slides: SlideData[] = [
-    { id: 0, image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800', title: 'Experiencia Exclusiva', subtitle: 'Membresía Platinum' },
-    { id: 1, image: 'https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?q=80&w=800', title: 'Inversiones Premium', subtitle: 'Acceso Anticipado' },
-    { id: 2, image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800', title: 'Tecnología Élite', subtitle: 'Hardware Pro' },
+    { id: 0, image: 'assets/carousel/01.webp', title: 'Experiencia Exclusiva', subtitle: 'Membresía Platinum' },
+    { id: 1, image: 'assets/carousel/02.webp', title: 'Inversiones Premium', subtitle: 'Acceso Anticipado' },
+    { id: 2, image: 'assets/carousel/03.webp', title: 'Tecnología Élite', subtitle: 'Hardware Pro' },
+    { id: 3, image: 'assets/carousel/04.webp', title: 'Experiencia Exclusiva', subtitle: 'Membresía Platinum' },
+    { id: 4, image: 'assets/carousel/05.webp', title: 'Inversiones Premium', subtitle: 'Acceso Anticipado' },
+    { id: 5, image: 'assets/carousel/06.webp', title: 'Tecnología Élite', subtitle: 'Hardware Pro' },
     
   ];
 

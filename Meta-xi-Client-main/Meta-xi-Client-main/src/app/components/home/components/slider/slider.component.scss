@@ -1,5 +1,5 @@
 // =========================================================
-// SLIDER — VIP Ultra-Premium 3D Card Carousel
+// SLIDER — VIP Ultra-Premium 3D Card Carousel (nuevacarta2)
 // =========================================================
 
 :host {
@@ -24,15 +24,14 @@
   position: absolute;
   width: 240px;
   height: 360px;
-  border-radius: 22px;
+  border-radius: 24px;
   background: #000;
   transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border: 1px solid #d4af37;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
-              0 0 15px rgba(212, 175, 55, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
 
   img {
     position: absolute;
@@ -40,46 +39,45 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.7;
-    transition: opacity 0.8s;
+    opacity: 0.6;
+    transition: 0.8s;
     z-index: 1;
-    filter: saturate(1.1) brightness(0.9);
+    filter: saturate(1.2) brightness(0.8);
   }
 }
 
 // ─── Card Position: ACTIVE (center) ──────────
 .card.active {
-  transform: translateZ(300px) rotateY(0deg) translateY(-10px);
+  transform: translateZ(320px) rotateY(0deg) translateY(-10px);
   z-index: 100;
   opacity: 1;
-  filter: brightness(1.1);
-  border-width: 2px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8),
-              0 0 30px rgba(212, 175, 55, 0.5);
+  border-color: var(--gold-main, #d4af37);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.6);
 
   img {
     opacity: 0.9;
+    filter: saturate(1.3) brightness(1);
   }
 
   .gold-sweep {
-    animation: sweepMove 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: sweepMove 5s infinite;
   }
 }
 
 // ─── Card Position: BACK-RIGHT ───────────────
 .card.back-right {
-  transform: translateX(250px) translateZ(-150px) rotateY(-35deg) rotateX(5deg);
+  transform: translateX(260px) translateZ(-180px) rotateY(-35deg);
   z-index: 50;
-  opacity: 0.5;
-  filter: brightness(0.4) blur(1.5px);
+  opacity: 0.4;
+  filter: blur(2px) grayscale(0.3);
 }
 
 // ─── Card Position: BACK-LEFT ────────────────
 .card.back-left {
-  transform: translateX(-250px) translateZ(-150px) rotateY(35deg) rotateX(5deg);
+  transform: translateX(-260px) translateZ(-180px) rotateY(35deg);
   z-index: 50;
-  opacity: 0.5;
-  filter: brightness(0.4) blur(1.5px);
+  opacity: 0.4;
+  filter: blur(2px) grayscale(0.3);
 }
 
 // ─── Gold Sweep Sheen ────────────────────────
@@ -87,26 +85,17 @@
   position: absolute;
   top: 0;
   left: -150%;
-  width: 120%;
+  width: 150%;
   height: 100%;
-  background: linear-gradient(
-    105deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 215, 0, 0.3) 50%,
-    rgba(255, 255, 255, 0.1) 52%,
-    rgba(255, 215, 0, 0.3) 54%,
-    rgba(255, 255, 255, 0) 60%,
-    transparent 80%
-  );
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.15) 50%, transparent 70%);
   z-index: 5;
   pointer-events: none;
-  transform: skewX(-25deg);
+  transform: skewX(-20deg);
 }
 
 @keyframes sweepMove {
   0% { left: -150%; }
-  40% { left: 150%; }
+  30% { left: 150%; }
   100% { left: 150%; }
 }
 
@@ -114,42 +103,93 @@
 .img-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, transparent 30%, rgba(212, 175, 55, 0.1) 100%);
+  background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
   z-index: 2;
   pointer-events: none;
+}
+
+// ─── Info Ovals (Liquid Glass + Thread) ───────
+.info-oval {
+  position: absolute;
+  top: 14px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 20;
+  font-size: 0.6rem;
+  color: #fff;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+
+  // Rotating incandescent thread border
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    padding: 1.5px;
+    border-radius: 30px;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      transparent 60%,
+      var(--thread-color, #d4af37) 90%,
+      #fff 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: rotateThread 2.5s linear infinite;
+    filter: drop-shadow(0 0 3px var(--thread-color, #d4af37));
+  }
+
+  &.oval-left {
+    left: 12px;
+    --thread-color: #d4af37;
+  }
+
+  &.oval-right {
+    right: 12px;
+    --thread-color: #00ff9d;
+  }
 }
 
 // ─── Buy Button ──────────────────────────────
 .buy-container {
   position: absolute;
-  bottom: 30px;
+  bottom: 25px;
   width: 100%;
-  padding: 0 30px;
+  padding: 0 25px;
   z-index: 10;
 }
 
 .btn-buy {
   width: 100%;
-  padding: 16px 0;
+  padding: 14px 0;
   background: linear-gradient(135deg, #b38728 0%, #f9e27f 50%, #b38728 100%);
   border: none;
-  border-radius: 12px;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  border-radius: 14px;
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4),
-              0 0 10px rgba(212, 175, 55, 0.5);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.6);
+  transition: all 0.3s ease;
   font-family: 'Inter', sans-serif;
 
   &:active {
-    transform: scale(0.92) translateY(2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    filter: brightness(0.9);
+    transform: scale(0.95);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -160,29 +200,25 @@
   }
 
   .card {
-    width: 180px;
-    height: 280px;
+    width: 190px;
+    height: 300px;
   }
 
   .card.back-right {
-    transform: translateX(90px) translateZ(-200px) rotateY(-30deg) scale(0.8);
+    transform: translateX(100px) translateZ(-250px) rotateY(-30deg);
   }
 
   .card.back-left {
-    transform: translateX(-90px) translateZ(-200px) rotateY(30deg) scale(0.8);
+    transform: translateX(-100px) translateZ(-250px) rotateY(30deg);
   }
 
   .card.active {
-    transform: translateZ(150px) translateY(-5px);
+    transform: translateZ(180px);
   }
 
-  .btn-buy {
-    font-size: 0.75rem;
-    padding: 12px 0;
-  }
-
-  .buy-container {
-    bottom: 20px;
-    padding: 0 20px;
+  .info-oval {
+    font-size: 0.5rem;
+    padding: 4px 10px;
+    top: 10px;
   }
 }

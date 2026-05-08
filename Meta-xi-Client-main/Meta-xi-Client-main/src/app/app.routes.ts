@@ -51,6 +51,14 @@ export const routes: Routes = [
       canActivate: [authGuard]
   },
   {
+    path: 'task',
+    loadComponent: () =>
+      import('./tasks/tasks.component').then(
+        (m) => m.TasksComponent
+      ),
+      canActivate: [authGuard]
+  },
+  {
     path: 'withdraw/:token',
     loadComponent: () =>
       import('./common/withdraw/withdraw.component').then(

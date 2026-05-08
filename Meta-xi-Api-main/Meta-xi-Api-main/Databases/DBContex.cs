@@ -15,6 +15,7 @@ public class DBContext : DbContext
     public required DbSet<Wallet> Wallets { get ; set ; }
     public required DbSet<UserPlans> UserPlans { get ; set ; }
     public required DbSet<UpdatePlansForUser> UpdatePlansForUser { get ; set ; }
+    public required DbSet<TaskRegister> TaskRegisters { get ; set ; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

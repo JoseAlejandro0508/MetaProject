@@ -1,0 +1,143 @@
+<section class="tasks-container">
+  <div class="bg-glow"></div>
+
+  <div [class.error]="error" [class.show]="notif" id="top-notification">
+    <div class="notif-icon" id="notif-img">{{ notifIcon }}</div>
+    <div>
+      <div
+        id="notif-status"
+        style="
+          font-size: 11px;
+          opacity: 0.8;
+          text-transform: uppercase;
+          font-weight: 900;
+        "
+      >
+        {{ notifStat }}
+      </div>
+      <div
+        id="notif-msg"
+        style="color: #fff; font-weight: 500; font-size: 14px"
+      >
+        {{ notifMsg }}
+      </div>
+    </div>
+  </div>
+
+  <header class="premium-header">
+    <div class="header-badge">Sistema de Recompensas</div>
+    <h1>Completa Tareas <br /><span>Y Gana Hoy</span></h1>
+    <p>
+      Actúa antes de que el temporizador llegue a cero para reclamar tu premio.
+    </p>
+    <div class="header-line"></div>
+  </header>
+
+  <div class="container" id="task-container">
+    <div *ngFor="let item of taskLevels">
+      <div class="task-card" id="task-card-{{ item.id }}">
+        <div class="task-title">
+          Tarea {{ item.id }}
+          <small
+            class="verified-label"
+            [class.active-task]="activeTask?.id === item.id"
+          >
+            {{ item.restTime > 0 ? "Activada" : "Disponible" }}
+          </small>
+        </div>
+        <div class="details-grid">
+          <div class="detail-item">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3.005 3.005 0 013.75-2.906z"
+              ></path>
+            </svg>
+            Objetivo:
+            <b
+              >Invitar {{ item.friends }}
+              {{ item.friends === 1 ? "amigo Activo" : "amigos Activos" }}</b
+            >
+          </div>
+          <div class="detail-item">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            Plazo: <b>{{ item.time }} Horas</b>
+          </div>
+          <div class="detail-item">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            Bono:
+            <b style="color: #ffdf00; text-shadow: 0 0 10px var(--gold-glow)"
+              >{{ item.prize }} COP</b
+            >
+          </div>
+          <div class="detail-item">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            Estado:
+            <b
+             *ngIf="item.restTime<=0"
+              class="status-indicator"
+              
+              style="color: var(--status-available)"
+              >{{ item.completed ? "Completada" : "Disponible" }}</b
+            >
+            <b
+             *ngIf="item.restTime>0"
+              class="status-indicator"
+              
+              style="color: var(--status-progress)"
+              >En Progreso</b
+            >
+          </div>
+        </div>
+        <button
+          *ngIf="!item.completed&&activeTask?.id!=item.id"
+          class="btn-action"
+          (click)="activateTask(item.id)"
+        >
+          Activar Tarea
+        </button>
+        <section *ngIf="activeTask!=null&&activeTask.id==item.id " class="btn-action timer-active">
+          <div style="text-align: left">
+            <div style="font-size: 9px; opacity: 0.8; font-weight: 700">
+              FINALIZA EN:
+            </div>
+            <div class="timer-val">
+              {{ Math.floor(activeTask.restTime / 3600) }}:{{ Math.floor((activeTask.restTime % 3600) / 60) }}:{{
+                activeTask.restTime % 60
+              }}
+            </div>
+          </div>
+          <div style="text-align: right">
+            <div class="referral-box">
+              REF: <span>{{ item.currentRefs }} / {{ item.friends }}</span>
+            </div>
+            <div class="progress-wrapper">
+              <div
+                [style.width.%]="(activeTask.currentRefs / activeTask.friends) * 100"
+              ></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+
+</section>

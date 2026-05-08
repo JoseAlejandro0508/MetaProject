@@ -49,6 +49,7 @@ builder.Services.AddTransient<UserService, UserService>();
 builder.Services.AddScoped<IGeneratedJwt, GeneratedJwt>();
 builder.Services.AddScoped<IRegisteredToReferLevel, RegisteredToReferLevels>();
 builder.Services.AddScoped<IUpdatePlansPerHour, UpdatePlans>();
+builder.Services.AddScoped<TaskService>();
 builder.Services.AddHostedService<UpdateServicePerHour>();
 
 // JWT Secret desde variable de entorno

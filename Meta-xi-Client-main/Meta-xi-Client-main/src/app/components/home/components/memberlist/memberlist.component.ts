@@ -45,7 +45,9 @@ export class MemberlistComponent implements OnDestroy {
   handleAvatarError(event: Event): void {
     const img = event.target as HTMLImageElement;
     if (img) {
+     
       img.src = `https://i.pravatar.cc/80?u=fallback${Math.floor(Math.random() * 100)}`;
+      img.src = `assets/avatars/${Math.floor(Math.random() * 100)%12}.webp`;
     }
   }
 
@@ -70,7 +72,7 @@ export class MemberlistComponent implements OnDestroy {
       phoneNumber: this.generatePhoneNumber(),
       amount,
       amountFormatted: this.formatAmount(amount),
-      avatarUrl: `assets/avatars/${avatarId}.png`,
+      avatarUrl: `assets/avatars/${avatarId}.webp`,
       isNew,
     };
   }
