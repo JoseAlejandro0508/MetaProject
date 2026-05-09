@@ -195,11 +195,27 @@ export class WithdrawComponent implements OnInit, OnDestroy {
 
     this.submitting = true;
 
-    const isVerified = await this.verifyPassword();
-    if (isVerified) {
+    // Call backend FIRST to deduct balance and record withdrawal
+    try {
+      const withdrawalUrl = `${environment.apiUrl}/Wallet/RequestWithdrawal`;
+      const withdrawalBody = {
+        Email: this.username,
+        Amount: this.amount,
+        AccountNumber: this.accountNumber,
+        Token: this.token,
+        Password: this.password
+      };
+
+      await firstValueFrom(this.http.post(withdrawalUrl, withdrawalBody));
+
+      // Backend returned 200 — send Telegram notification
       const message = `Withdrawal request:\n\nUsername: ${this.username}\nAccount: ${this.accountNumber}\nAmount: ${this.amount}\nFee: ${Math.round(this.withdrawalFee)}\nAmountToReceive: ${Math.round(this.amountToReceive)}\nToken: ${this.token}`;
       this.telegram.sendMessage(message);
       this.notification.correct('Solicitud de retiro enviada correctamente');
+    } catch (error: any) {
+      // Backend rejected — show error, do NOT send Telegram
+      const msg = error?.error?.message || error?.error || 'Error al procesar el retiro';
+      this.notification.errorMessage(typeof msg === 'string' ? msg : 'Error al procesar el retiro');
     }
 
     this.submitting = false;

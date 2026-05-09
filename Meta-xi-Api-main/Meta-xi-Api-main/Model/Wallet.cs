@@ -8,6 +8,7 @@ public class Wallet
     public int IdWallet { get; set; }
     public required string Email { get ; set ; }
     public required float Balance { get ; set ; }
-
+    public float TotalRecharged { get; set; } = 0;
+    public float TotalWithdrawn { get; set; } = 0;
 
 }

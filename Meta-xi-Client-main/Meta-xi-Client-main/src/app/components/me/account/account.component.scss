@@ -1,0 +1,122 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.premium-container {
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
+    background: linear-gradient(145deg, #25282a, #1c1f21);
+    border-radius: 24px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: #d4af37;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+
+    &:hover {
+        color: #f9f295;
+    }
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #d4af37;
+}
+
+.vip-badge {
+    background: linear-gradient(45deg, #d4af37, #f9f295, #d4af37);
+    color: #1c1f21;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-left: auto;
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+}
+
+.main-card {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(28, 31, 33, 0) 100%);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #d4af37;
+}
+
+.stat-group {
+    margin-bottom: 15px;
+}
+
+.label {
+    font-size: 13px;
+    color: #a0a0a0;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+
+    &.green {
+        color: #2ecc71;
+        text-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+    }
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 15px 0;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.small-stat {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.small-label {
+    font-size: 11px;
+    color: #888;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.small-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2ecc71;
+}
+
+.icon-gold {
+    color: #d4af37;
+    margin-right: 8px;
+}
