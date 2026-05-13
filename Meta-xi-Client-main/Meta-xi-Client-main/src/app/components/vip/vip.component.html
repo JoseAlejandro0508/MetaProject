@@ -40,7 +40,7 @@
       <div class="mission-item" [class.completed]="mission.progress >= mission.goal">
         <div class="m-text">
           <h4>{{ mission.title }}</h4>
-          <span class="m-reward">+ {{ mission.reward | number:'1.0-0':'es' }} COP</span>
+          <span class="m-reward">+ {{ mission.reward  }} COP</span>
         </div>
         @if (mission.progress >= mission.goal && !mission.claimed) {
           <button class="m-progress-pill claimable" (click)="claimMission(mission.id)">
@@ -72,7 +72,7 @@
       <div class="mission-item" [class.completed]="t.progress >= t.goal">
         <div class="m-text">
           <h4>{{ t.title }}</h4>
-          <span class="m-reward">+ {{ t.reward | number:'1.0-0':'es' }} COP</span>
+          <span class="m-reward">+ {{ t.reward  }} COP</span>
         </div>
         @if (t.progress >= t.goal && !t.claimed) {
           <button class="m-progress-pill claimable" (click)="claimTrend(t.id)">

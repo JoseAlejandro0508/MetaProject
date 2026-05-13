@@ -91,5 +91,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 app.UseCors("AllowAngularApp");
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.MapControllers();
 app.Run();

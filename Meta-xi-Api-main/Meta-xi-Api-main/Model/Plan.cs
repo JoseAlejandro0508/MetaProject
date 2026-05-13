@@ -11,5 +11,8 @@ public class Plan
     public required int DaysActive { get; set; }
     public required double DailyBenefit { get; set; }
     public required double TotalBenefit { get ; set ; }
+    public string? Description { get; set; }
+    public double? DailyProfitPercentage { get; set; }
+    public string? ImageUrl { get; set; }
     
 }

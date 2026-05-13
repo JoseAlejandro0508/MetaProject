@@ -8,4 +8,7 @@ public class MyPlan
     public required double DailyBenefit { get ; set ; }
     public required double TotalBenefit { get ; set ; }
     public required int IdPlan { get ; set ; }
+    public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
+    public double? DailyProfitPercentage { get; set; }
 }

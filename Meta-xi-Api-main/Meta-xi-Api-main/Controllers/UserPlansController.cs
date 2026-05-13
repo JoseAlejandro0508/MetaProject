@@ -14,7 +14,7 @@ public class UserPlansController : ControllerBase
     [HttpPost("UserBuyPlans")]
     public async Task<IActionResult> UserBuyPlans(BuyPlans buyPlans)
     {
-        var user = await context.Users.FirstOrDefaultAsync(option => option.Email == buyPlans.Username);
+        var user = await context.Users.FirstOrDefaultAsync(option =>  option.PhoneNumber == buyPlans.Username);
         if (user == null)
         {
             return NotFound(new { message = "Usuario no encontrado" });
@@ -24,14 +24,14 @@ public class UserPlansController : ControllerBase
         {
             return NotFound(new { message = "Plan no encontrado" });
         }
-        var userPlans = await context.UserPlans.Where(option => option.Username == user.Email && option.NamePlan == plan.Name).ToListAsync();
+        var userPlans = await context.UserPlans.Where(option => option.Username == user.PhoneNumber && option.NamePlan == plan.Name).ToListAsync();
         Console.WriteLine(userPlans.Count);
         if (userPlans.Count >= plan.MaxQuantity)
         {
             return NotFound(new { message = "El usuario ya tiene el maximo de compras para este plan" });
         }
         Console.WriteLine("Puede comprar un plan de este tipo");
-        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == buyPlans.Username);
+        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == user.PhoneNumber);
         if (wallet == null)
         {
             return NotFound(new { message = "Wallet no encontrada" });
@@ -41,7 +41,7 @@ public class UserPlansController : ControllerBase
             Console.WriteLine("Tiene saldo suficiente para comprar este plan");
             UserPlans userPlans1 = new UserPlans
             {
-                Username = buyPlans.Username,
+                Username = user.PhoneNumber,
                 NamePlan = plan.Name,
                 DatePlan = DateTime.UtcNow,
                 Percentage = 0
@@ -63,7 +63,7 @@ public class UserPlansController : ControllerBase
     [HttpGet("GetUserPlans/{username}")]
     public async Task<IActionResult> UserPlans(string username)
     {
-        var user = await context.Users.FirstOrDefaultAsync(option => option.Email == username || option.PhoneNumber == username);
+        var user = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == username);
         if (user == null)
         {
             return NotFound(new { message = "Usuario no encontrado" });
@@ -93,7 +93,10 @@ public class UserPlansController : ControllerBase
                         Percentage = i.Percentage,
                         TotalBenefit = j.TotalBenefit,
                         IdPlan = j.IDPlan,
-                        Name = j.Name
+                        Name = j.Name,
+                        Description = j.Description,
+                        ImageUrl = j.ImageUrl,
+                        DailyProfitPercentage = j.DailyProfitPercentage
                     };
                     myPlans.Add(myPlan);
                 }

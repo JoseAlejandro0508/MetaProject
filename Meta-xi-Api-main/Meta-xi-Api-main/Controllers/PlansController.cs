@@ -20,7 +20,10 @@ public class PlansController : ControllerBase{
             MaxQuantity = planRegister.MaxQuantity,
             DailyBenefit = planRegister.DailyBenefit,
             DaysActive = planRegister.DaysActive,
-            TotalBenefit = planRegister.TotalBenefit
+            TotalBenefit = planRegister.TotalBenefit,
+            Description = planRegister.Description,
+            DailyProfitPercentage = planRegister.DailyProfitPercentage,
+            ImageUrl = planRegister.ImageUrl
         };
         await context.Plans.AddAsync(plan);
         await context.SaveChangesAsync();
@@ -47,5 +50,47 @@ public class PlansController : ControllerBase{
             }
         }
         return Ok(oldplans);
+    }
+    //Endpoint para obtener todos los planes sin filtro de usuario
+    [HttpGet]
+    public async Task<IActionResult> GetAllPlans()
+    {
+        var plans = await context.Plans.ToListAsync();
+        return Ok(plans);
+    }
+    //Endpoint para actualizar un plan existente
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdatePlan(int id, [FromBody] PlanRegister planRegister)
+    {
+        var plan = await context.Plans.FirstOrDefaultAsync(p => p.IDPlan == id);
+        if (plan == null)
+        {
+            return NotFound(new { message = "Plan no encontrado" });
+        }
+        plan.Name = planRegister.Name;
+        plan.Price = planRegister.Price;
+        plan.MaxQuantity = planRegister.MaxQuantity;
+        plan.DaysActive = planRegister.DaysActive;
+        plan.DailyBenefit = planRegister.DailyBenefit;
+        plan.TotalBenefit = planRegister.TotalBenefit;
+        plan.Description = planRegister.Description;
+        plan.DailyProfitPercentage = planRegister.DailyProfitPercentage;
+        plan.ImageUrl = planRegister.ImageUrl;
+        context.Entry(plan).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+        return Ok(plan);
+    }
+    //Endpoint para eliminar un plan
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePlan(int id)
+    {
+        var plan = await context.Plans.FirstOrDefaultAsync(p => p.IDPlan == id);
+        if (plan == null)
+        {
+            return NotFound(new { message = "Plan no encontrado" });
+        }
+        context.Plans.Remove(plan);
+        await context.SaveChangesAsync();
+        return Ok(new { message = "Plan eliminado correctamente" });
     }
 }

@@ -20,6 +20,10 @@ export class TasksComponent implements OnInit {
   list: any[] = [];
   mine = true;
 
+  // API base URL for serving images (strips /api suffix from apiUrl)
+  apiUrl = environment.apiUrl;
+  apiBaseUrl = environment.apiUrl.replace('/api', '');
+
   // Modal state
   showBuyModal = false;
   showDetailsModal = false;
@@ -180,6 +184,13 @@ export class TasksComponent implements OnInit {
   handleImageError(event: Event) {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/glasses/tinified/vr1.png';
+  }
+
+  getImageSrc(plan: any): string {
+    if (plan.imageUrl) {
+      return this.apiBaseUrl + plan.imageUrl;
+    }
+    return 'assets/glasses/tinified/vr' + plan.idPlan + '.png';
   }
 
   onModalBackdropClick(event: Event) {

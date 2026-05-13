@@ -29,11 +29,12 @@
     <div class="property-card" *ngIf="gafa.maxQuantity > 0 && gafa.daysActive > 0">
       <div class="property-img">
         <div class="vip-badge" *ngIf="gafa.idPlan === 1">VIP ASSET</div>
-        <img [src]="'assets/glasses/tinified/vr' + gafa.idPlan + '.png'" alt="gafa" class="property-image"
+        <img [src]="getImageSrc(gafa)" alt="gafa" class="property-image"
           (error)="handleImageError($event)" />
       </div>
       <div class="property-info">
         <h3 class="prop-title">{{gafa.name}}</h3>
+        <p class="prop-description" *ngIf="gafa.description">{{gafa.description}}</p>
         <span class="prop-location">Plan #{{gafa.idPlan}} &bull; {{gafa.daysActive}} días activos</span>
         <div class="prop-stats">
           <div class="prop-stat-item">
@@ -43,6 +44,10 @@
           <div class="prop-stat-item gain">
             <span>Diario</span>
             <b>+ {{formatCOP(gafa.dailyBenefit)}} COP</b>
+          </div>
+          <div class="prop-stat-item gain" *ngIf="gafa.dailyProfitPercentage">
+            <span>Rendimiento</span>
+            <b>{{gafa.dailyProfitPercentage}}% diario</b>
           </div>
         </div>
         <button class="btn-gold-shimmer btn-buy" (click)="openBuyModal(gafa)">INVERTIR AHORA</button>
@@ -74,16 +79,21 @@
 <div *ngIf="showBuyModal" class="modal" (click)="onModalBackdropClick($event)">
   <div class="modal-content">
     <div class="modal-img-header">
-      <img *ngIf="selectedPlan" [src]="'assets/glasses/tinified/vr' + selectedPlan.idPlan + '.png'" alt="property" class="modal-property-image"
+      <img *ngIf="selectedPlan" [src]="getImageSrc(selectedPlan)" alt="property" class="modal-property-image"
         (error)="handleImageError($event)" />
     </div>
     <h2 class="modal-title" *ngIf="selectedPlan">{{selectedPlan.name}}</h2>
+    <p class="prop-description" *ngIf="selectedPlan && selectedPlan.description">{{selectedPlan.description}}</p>
     <p class="modal-location" *ngIf="selectedPlan">Plan #{{selectedPlan.idPlan}} &bull; {{selectedPlan.daysActive}} días de actividad</p>
 
     <div class="prop-stats modal-stats" *ngIf="selectedPlan">
       <div class="prop-stat-item">
         <span>Diario</span>
         <b>+ {{formatCOP(selectedPlan.dailyBenefit)}}</b>
+      </div>
+      <div class="prop-stat-item gain" *ngIf="selectedPlan.dailyProfitPercentage">
+        <span>Rendimiento</span>
+        <b>{{selectedPlan.dailyProfitPercentage}}% diario</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Mensual</span>
@@ -113,7 +123,14 @@
       &#10003;
     </div>
     <h2 class="modal-title modal-title-center" *ngIf="selectedMyPlan">{{selectedMyPlan.name}}</h2>
+    <p class="prop-description" *ngIf="selectedMyPlan && selectedMyPlan.description">{{selectedMyPlan.description}}</p>
     <p class="modal-location modal-location-center" *ngIf="selectedMyPlan">Activo &bull; {{selectedMyPlan.daysRemaining}} días restantes</p>
+
+    <div *ngIf="selectedMyPlan && selectedMyPlan.imageUrl" class="modal-img-header" style="margin-bottom: 16px;">
+      <img [src]="apiBaseUrl + selectedMyPlan.imageUrl" alt="property" class="modal-property-image"
+        style="max-height: 160px; border-radius: 12px;"
+        (error)="handleImageError($event)" />
+    </div>
 
     <div class="prop-stats modal-stats" *ngIf="selectedMyPlan">
       <div class="prop-stat-item">
@@ -123,6 +140,10 @@
       <div class="prop-stat-item gain">
         <span>Diario</span>
         <b>+ {{formatCOP(selectedMyPlan.dailyBenefit)}}</b>
+      </div>
+      <div class="prop-stat-item gain" *ngIf="selectedMyPlan.dailyProfitPercentage">
+        <span>Rendimiento</span>
+        <b>{{selectedMyPlan.dailyProfitPercentage}}% diario</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Total</span>

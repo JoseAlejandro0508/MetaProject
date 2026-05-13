@@ -3,6 +3,7 @@ using System;
 using Meta_xi.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Meta_xi.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20260512055644_AddPlanDetailsAndSeed")]
+    partial class AddPlanDetailsAndSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
@@ -40,143 +43,6 @@ namespace Meta_xi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DepositHistories");
-                });
-
-            modelBuilder.Entity("Meta_xi.Application.Mission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("Gift")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Ref")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Missions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Gift = 1000f,
-                            ImageUrl = "/missions/invite-5.webp",
-                            Ref = 5,
-                            Title = "Invita 5 nuevos amigos",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Gift = 3000f,
-                            ImageUrl = "/missions/invite-15.webp",
-                            Ref = 15,
-                            Title = "Invita 15 nuevos amigos",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Gift = 4000f,
-                            ImageUrl = "/missions/invite-20.webp",
-                            Ref = 20,
-                            Title = "Invita 20 nuevos amigos",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Gift = 6000f,
-                            ImageUrl = "/missions/invite-30.webp",
-                            Ref = 30,
-                            Title = "Invita 30 nuevos amigos",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Gift = 8000f,
-                            ImageUrl = "/missions/invite-40.webp",
-                            Ref = 40,
-                            Title = "Invita 40 nuevos amigos",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Gift = 10000f,
-                            ImageUrl = "/missions/invite-50.webp",
-                            Ref = 50,
-                            Title = "Invita 50 nuevos amigos",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Gift = 2000f,
-                            ImageUrl = "/missions/invite-10p.webp",
-                            Ref = 10,
-                            Title = "Invita 10 nuevos amigos",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Gift = 30000f,
-                            ImageUrl = "/missions/invite-100.webp",
-                            Ref = 100,
-                            Title = "Invita 100 nuevos amigos",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Gift = 40000f,
-                            ImageUrl = "/missions/invite-250.webp",
-                            Ref = 250,
-                            Title = "Invita 250 nuevos amigos",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Gift = 60000f,
-                            ImageUrl = "/missions/invite-350.webp",
-                            Ref = 350,
-                            Title = "Invita 350 nuevos amigos",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Gift = 80000f,
-                            ImageUrl = "/missions/invite-450.webp",
-                            Ref = 450,
-                            Title = "Invita 450 nuevos amigos",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Gift = 100000f,
-                            ImageUrl = "/missions/invite-500.webp",
-                            Ref = 500,
-                            Title = "Invita 500 nuevos amigos",
-                            Type = 1
-                        });
                 });
 
             modelBuilder.Entity("Meta_xi.Application.Plan", b =>
@@ -476,32 +342,6 @@ namespace Meta_xi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Meta_xi.Application.UserMission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset?>("ClaimedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MissionId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MissionId");
-
-                    b.HasIndex("Email", "MissionId")
-                        .IsUnique();
-
-                    b.ToTable("UserMissions");
-                });
-
             modelBuilder.Entity("Meta_xi.Application.UserPlans", b =>
                 {
                     b.Property<int>("IDBuyPlan")
@@ -626,17 +466,6 @@ namespace Meta_xi.Migrations
                         .HasForeignKey("WalletIdWallet");
 
                     b.Navigation("Wallet");
-                });
-
-            modelBuilder.Entity("Meta_xi.Application.UserMission", b =>
-                {
-                    b.HasOne("Meta_xi.Application.Mission", "Mission")
-                        .WithMany()
-                        .HasForeignKey("MissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Mission");
                 });
 
             modelBuilder.Entity("Meta_xi.Application.User", b =>
