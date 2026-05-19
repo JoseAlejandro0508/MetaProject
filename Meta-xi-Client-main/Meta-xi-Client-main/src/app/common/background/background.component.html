@@ -1,6 +1,6 @@
 <app-top-notification />
-<app-nav/>
+<app-nav *ngIf="!hideNavAndButtons"/>
 <main class="my-16 px-4 box-border mb-20 ">
   <router-outlet />
 </main>
-<app-buttons/>
+<app-buttons *ngIf="!hideNavAndButtons"/>
