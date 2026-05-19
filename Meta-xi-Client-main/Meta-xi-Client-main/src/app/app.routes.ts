@@ -106,6 +106,14 @@ export const routes: Routes = [
       canActivate: [authGuard]
   },
   {
+    path: 'breb/:token',
+    loadComponent: () =>
+      import('./common/deposit/breb/breb-confirmation/breb-confirmation.component').then(
+        (m) => m.BrebConfirmationComponent
+      ),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full',

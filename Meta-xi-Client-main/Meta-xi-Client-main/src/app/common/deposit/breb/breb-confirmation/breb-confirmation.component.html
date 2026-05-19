@@ -1,0 +1,66 @@
+<div class="card">
+
+    <!-- PANTALLA 1: PAGO -->
+    <div id="payment-screen" [style.display]="showSuccess || showExpired ? 'none' : 'block'">
+        <div class="logo-section">
+            <div class="logo-diamond"></div>
+            <div class="logo-text">Bre-B</div>
+        </div>
+
+        <div class="label-gray">Numero de pedido</div>
+        <div class="order-number">{{ orderNumber }}</div>
+
+        <div class="amount-text">{{ displayAmount }}</div>
+        <div class="timer-text" id="countdown">{{ displayTime }}</div>
+
+        <hr class="divider">
+        <div class="qr-instruction">Escanee el codigo QR para realizar el pago.</div>
+
+        <div class="qr-placeholder">
+            <img [src]="qrUrl" alt="Codigo QR Bre-B" (error)="handleQrError($event)">
+        </div>
+
+        <div class="reference-container">
+            <label>Referencia</label>
+            <input type="text" placeholder="Por favor ingrese la referencia" [(ngModel)]="reference">
+        </div>
+
+        <button class="btn-green" [disabled]="!canConfirm" (click)="onConfirm()">
+            <span *ngIf="!submitting">He Pagado</span>
+            <span *ngIf="submitting">Enviando...</span>
+        </button>
+
+        <div class="attention-card">
+            <div class="attention-title">Atencion</div>
+            <ul class="attention-list">
+                <li>1. Escanee el codigo QR para realizar el pago.</li>
+                <li>2. Pague y copie su numero de referencia.</li>
+                <li>3. Regrese aqui, pegue la referencia y complete la recarga antes de que termine el tiempo.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: ESPERE POR FAVOR -->
+    <div id="verification-screen" [style.display]="showSuccess ? 'block' : 'none'">
+        <div class="clock-icon"></div>
+        <h2 class="waiting-title">Espere por favor</h2>
+        <p class="waiting-text">Su pedido esta siendo verificado.</p>
+
+        <div class="order-number" style="margin-bottom: 30px;">
+            Numero de pedido: {{ orderNumber }}
+        </div>
+
+        <button class="btn-back" (click)="closePage()">Volver</button>
+    </div>
+
+</div>
+
+<!-- Overlay de sesion expirada (fuera de la tarjeta) -->
+<div class="expired-overlay" *ngIf="showExpired">
+    <div class="expired-card">
+        <div class="expired-icon">!</div>
+        <p class="expired-title">Sesion Expirada</p>
+        <p class="expired-text">Su sesion ha expirado.<br>Por favor inicie una nueva recarga.</p>
+        <button class="btn-back" routerLink="/home">Volver al Inicio</button>
+    </div>
+</div>

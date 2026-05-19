@@ -31,33 +31,57 @@
 </div>
 -->
 <div class="vip-container">
-
   <nav class="nav-header">
-    <button class="back-link"  [routerLink]="['/home']">
-      <svg viewBox="0 0 24 24" class="gold-icon"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    <button class="back-link" [routerLink]="['/home']">
+      <svg viewBox="0 0 24 24" class="gold-icon">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
       <span>Atrás</span>
     </button>
   </nav>
 
   <div class="options-grid">
-    
-    <div class="glass-item border-gold" [routerLink]="['/deposit','nequi']">
+    <div class="glass-item border-gold" [routerLink]="['/deposit', 'nequi']">
       <div class="icon-box">
-        <div class="inner-glow glow-gold"></div>
-        <img  src="assets/token/nequi-account.png" alt="Nequi">
+        <div class="inner-glow glow-white"></div>
+        <img src="assets/token/nequi-account.png" alt="Nequi" />
       </div>
       <span class="method-name">Nequi</span>
       <div class="chevron-gold"></div>
     </div>
-
+    <div
+      class="glass-item border-green"
+      [routerLink]="['/deposit', 'usdt-bep20']"
+    >
+      <div class="icon-box">
+        <div class="inner-glow glow-green"></div>
+        <img src="assets/token/usdt-bep20.jpg" alt="USDT" />
+      </div>
+      <span class="method-name">USDT-BEP20</span>
+      <div class="chevron-gold"></div>
+    </div>
+    <div
+      class="glass-item border-blue"
+      [routerLink]="['/deposit', 'breb']"
+    >
+      <div class="icon-box">
+        <div class="inner-glow glow-blue"></div>
+        <img src="assets/token/breb.jpg" alt="Bre-b" />
+      </div>
+      <span class="method-name">Bre-b</span>
+      <div class="chevron-gold"></div>
+    </div>
+    <!--
     <div class="glass-item border-red" [routerLink]="['/deposit','trx']">
       <div class="icon-box">
         <div class="inner-glow glow-red"></div>
         <img src="assets/token/trx.webp" alt="TRX">
       </div>
+
       <span class="method-name">TRX (Tron)</span>
       <div class="chevron-gold"></div>
     </div>
+   
 
     <div class="glass-item border-green" [routerLink]="['/deposit','usdt-trc20']">
       <div class="icon-box">
@@ -94,6 +118,6 @@
       <span class="method-name">Detg</span>
       <div class="chevron-gold"></div>
     </div>
-
+     -->
   </div>
 </div>

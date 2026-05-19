@@ -1,0 +1,316 @@
+// =========================================================
+// BRE-B CHECKOUT — Exact replica of nuevareplica2.html
+// =========================================================
+
+:host {
+  background-color: #84e8a8;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+// ─── Card ──────────────────────────────────
+.card {
+  background-color: #ffffff;
+  width: 92%;
+  max-width: 380px;
+  border-radius: 25px;
+  padding: 25px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+// ─── PANTALLA 1: PAGO ────────────────────
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.logo-diamond {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #1c003e 0%, #ff1e56 100%);
+  border-radius: 6px;
+  transform: rotate(45deg);
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #240046;
+  letter-spacing: 1.5px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.label-gray {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.order-number {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.amount-text {
+  color: #d32f2f;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.timer-text {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #eeeeee;
+  margin-bottom: 10px;
+}
+
+.qr-instruction {
+  font-size: 10px;
+  color: #b0b0b0;
+  margin-bottom: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.qr-placeholder {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 20px auto;
+  border: 1px solid #f0f0f0;
+  padding: 5px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// ─── Reference Input ──────────────────────
+.reference-container {
+  background-color: #1c1f21;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.reference-container label {
+  color: #ffffff;
+  font-size: 14px;
+  margin-right: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  white-space: nowrap;
+}
+
+.reference-container input {
+  background: transparent;
+  border: none;
+  color: #888;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+// ─── Buttons ──────────────────────────────
+.btn-green {
+  background-color: #00c853;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: 0.3s;
+
+  &:disabled {
+    background-color: #999;
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+.btn-back {
+  background-color: #00c853;
+  color: white;
+  border: none;
+  padding: 12px 60px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: 0.3s;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ─── Attention Card ────────────────────────
+.attention-card {
+  border: 1px solid #ffd8cf;
+  background-color: #fff9f8;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: left;
+}
+
+.attention-title {
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.attention-list {
+  list-style: none;
+  font-size: 12px;
+  color: #444;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+
+  li {
+    margin-bottom: 8px;
+  }
+}
+
+// ─── PANTALLA 2: ESPERE POR FAVOR ────────
+#verification-screen {
+  padding: 40px 10px;
+}
+
+.clock-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #38b6ff;
+  border-radius: 50%;
+  margin: 0 auto 30px auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::after {
+    content: '';
+    width: 15px;
+    height: 2px;
+    background: white;
+    position: absolute;
+    transform-origin: left;
+    transform: rotate(-90deg);
+    top: 30px;
+    left: 30px;
+  }
+
+  &::before {
+    content: '';
+    width: 10px;
+    height: 2px;
+    background: white;
+    position: absolute;
+    transform-origin: left;
+    top: 30px;
+    left: 30px;
+  }
+}
+
+.waiting-title {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.waiting-text {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+// ─── Expired Overlay ──────────────────────
+.expired-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.expired-card {
+  background: #fff;
+  border-radius: 25px;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 90%;
+  max-width: 380px;
+}
+
+.expired-icon {
+  width: 80px;
+  height: 80px;
+  background: #ff4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.expired-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.expired-text {
+  color: #666;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}

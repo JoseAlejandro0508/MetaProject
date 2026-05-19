@@ -6,16 +6,16 @@ import { TelegramService } from '../../../../services/products/Telegram.service'
 import { NotificationService } from '../../../../services/products/notification.service';
 
 @Component({
-  selector: 'app-nequi-confirmation',
+  selector: 'app-breb-confirmation',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './nequi-confirmation.component.html',
-  styleUrl: './nequi-confirmation.component.scss',
+  templateUrl: './breb-confirmation.component.html',
+  styleUrl: './breb-confirmation.component.scss',
 })
-export class NequiConfirmationComponent implements OnInit {
-  // Amount from query params (set by NequiComponent)
+export class BrebConfirmationComponent implements OnInit {
+  // Amount from query params (set by BrebComponent)
   montoRecarga = 0;
-  // Unique order number
+  // Unique order number with BRE prefix
   orderNumber = '';
   // User input: transaction reference
   reference = '';
@@ -27,6 +27,13 @@ export class NequiConfirmationComponent implements OnInit {
   submitting = false;
   // Username from localStorage
   username = '';
+  // Bre-b account number
+  brebAccount = '94520204';
+  // Timer (20 minutes)
+  private readonly TIMER_SECONDS = 20 * 60;
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+  timeRemaining = this.TIMER_SECONDS;
+  showExpired = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,7 +47,7 @@ export class NequiConfirmationComponent implements OnInit {
       this.montoRecarga = Number(params['cantidad']) || 0;
     });
 
-    // Generate a unique order number
+    // Generate a unique order number with BRE prefix
     this.orderNumber = this.generateOrderNumber();
 
     // Generate QR with payment info
@@ -48,6 +55,9 @@ export class NequiConfirmationComponent implements OnInit {
 
     // Read username from localStorage
     this.username = localStorage.getItem('username') || '';
+
+    // Start 20-minute timer
+    this.startTimer();
   }
 
   get displayAmount(): string {
@@ -55,11 +65,17 @@ export class NequiConfirmationComponent implements OnInit {
   }
 
   get canConfirm(): boolean {
-    return this.reference.trim().length > 0 && !this.submitting;
+    return this.reference.trim().length > 0 && !this.submitting && !this.showExpired;
+  }
+
+  get displayTime(): string {
+    const m = Math.floor(this.timeRemaining / 60);
+    const s = this.timeRemaining % 60;
+    return `${m} Minutos ${s < 10 ? '0' : ''}${s} Segundos`;
   }
 
   onConfirm(): void {
-    if (this.submitting) return;
+    if (this.submitting || this.showExpired) return;
     this.submitting = true;
 
     const message = this.buildMessage();
@@ -68,10 +84,11 @@ export class NequiConfirmationComponent implements OnInit {
       next: () => {
         this.showSuccess = true;
         this.submitting = false;
+        this.stopTimer();
       },
       error: () => {
         this.notificationService.errorMessage(
-          'Error al enviar el mensaje. Inténtalo nuevamente.'
+          'Error al enviar el mensaje. Intentalo nuevamente.'
         );
         this.submitting = false;
       },
@@ -81,13 +98,29 @@ export class NequiConfirmationComponent implements OnInit {
   handleQrError(event: Event): void {
     const img = event.target as HTMLImageElement;
     if (img) {
-      img.src = 'assets/token/nequi.png';
+      img.src = 'assets/token/breb.jpg';
     }
   }
 
   closePage(): void {
-    // Try to navigate back to home, fallback to close
     window.close();
+  }
+
+  private startTimer(): void {
+    this.timerInterval = setInterval(() => {
+      this.timeRemaining--;
+      if (this.timeRemaining <= 0) {
+        this.stopTimer();
+        this.showExpired = true;
+      }
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
   }
 
   private generateOrderNumber(): string {
@@ -95,17 +128,17 @@ export class NequiConfirmationComponent implements OnInit {
     const random = Math.floor(Math.random() * 10000)
       .toString()
       .padStart(4, '0');
-    return `NEQ${timestamp}${random}`;
+    return `BRE${timestamp}${random}`;
   }
 
   private buildQrUrl(): string {
-    const paymentData = `NequiPago:${this.montoRecarga}:${this.orderNumber}`;
+    const paymentData = `BreBPago:${this.montoRecarga}:${this.orderNumber}`;
     return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(paymentData)}`;
   }
 
   private buildMessage(): string {
     const user = this.username || 'N/A';
-    return `⬇️ Nueva Recarga:\n● Moneda: USDT\n● Cantidad: ${this.displayAmount} USDT\n● Usuario: ${user}\n⚠️ Orden: ${this.orderNumber}\n⚠️ Referencia: ${this.reference.trim()}`;
-
+    const ref = this.reference.trim();
+    return `⬇️ Nueva Recarga:\n\n● Moneda: Bre-B\n● Cantidad: ${this.displayAmount}\n● Usuario: ${user}\n⚠️ Referencia: ${ref}\n⚠️ Orden: ${this.orderNumber}`;
   }
 }

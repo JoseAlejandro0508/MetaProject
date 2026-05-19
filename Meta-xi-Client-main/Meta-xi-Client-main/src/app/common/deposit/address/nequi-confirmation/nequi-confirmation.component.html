@@ -1,4 +1,5 @@
 <!-- Background -->
+
 <div class="bg-container">
   <div class="bg-yellow-diagonal"></div>
   <div class="bg-red-diamond"></div>
@@ -16,26 +17,36 @@
   <p class="amount">{{ displayAmount }}</p>
 
   <div class="qr-box">
-    <img [src]="qrUrl" alt="Código QR Nequi" (error)="handleQrError($event)">
+    <!--<img [src]="qrUrl" alt="Código QR Nequi" (error)="handleQrError($event)" />-->
+    <img src="assets/qr/Nequi.jpg" alt="Código QR Nequi" (error)="handleQrError($event)" />
+
+
   </div>
 
   <p class="qr-footer-text">Código QR de NEQUI</p>
 
-  <input type="text"
-         class="input-ref"
-         placeholder="Por favor ingrese una referencia"
-         [(ngModel)]="reference">
+  <input
+    type="text"
+    class="input-ref"
+    placeholder="Por favor ingrese una referencia"
+    [(ngModel)]="reference"
+  />
 
   <div class="instructions">
     <b>1. Scan the QR code to make payment</b>
-    <b>2. Enter the transaction serial number after the transaction is completed.</b>
+    <b
+      >2. Enter the transaction serial number after the transaction is
+      completed.</b
+    >
   </div>
 
-  <button class="btn btn-blue"
-          [disabled]="!canConfirm"
-          [attr.aria-busy]="submitting"
-          [attr.aria-disabled]="!canConfirm"
-          (click)="onConfirm()">
+  <button
+    class="btn btn-blue"
+    [disabled]="!canConfirm"
+    [attr.aria-busy]="submitting"
+    [attr.aria-disabled]="!canConfirm"
+    (click)="onConfirm()"
+  >
     <span *ngIf="!submitting">Confirmar</span>
     <span *ngIf="submitting">Enviando...</span>
   </button>
@@ -50,8 +61,10 @@
 
   <div class="check-icon"></div>
 
-  <p class="final-text">El pedido está en revisión,<br>espere</p>
-  <p class="final-text" style="font-size: 20px; margin-top: 10px;">Por favor cierre esta pagina</p>
+  <p class="final-text">El pedido está en revisión,<br />espere</p>
+  <p class="final-text" style="font-size: 20px; margin-top: 10px">
+    Por favor cierre esta pagina
+  </p>
 
   <button class="btn btn-white" (click)="closePage()">Cerrar</button>
 </div>

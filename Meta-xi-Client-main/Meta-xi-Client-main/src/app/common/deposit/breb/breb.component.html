@@ -1,13 +1,12 @@
-
 <div class="deposit-wrap">
     <!-- Back Nav -->
     <a routerLink="/home" class="back-nav">
-        <div class="arrow-gold"></div>
+        <div class="arrow-green"></div>
         <span class="nav-label">Volver</span>
     </a>
 
-    <!-- Gold Master Card Frame -->
-    <div class="master-card">
+    <!-- Green Card Frame -->
+    <div class="green-card">
         <div class="inner-container">
 
             <!-- Balance -->
@@ -34,21 +33,21 @@
                 }
             </div>
 
-            <!-- Payment Method (Nequi fijo) -->
+            <!-- Payment Method (Bre-b) -->
             <div class="payment-method-row">
-                <div class="icon-box-vip">
-                    <div class="inner-glow-emu"></div>
-                    <img src="assets/token/nequi.png" class="method-img" alt="Nequi">
+                <div class="icon-box-bre">
+                    <div class="inner-glow-bre"></div>
+                    <img src="assets/token/breb.jpg" class="method-img" alt="Bre-B">
                 </div>
-                <span class="method-name-text">Nequi Digital</span>
-                <div class="chevron-gold"></div>
+                <span class="method-name-text">Bre-B</span>
+                <div class="chevron-green"></div>
             </div>
 
             <!-- Confirm Button -->
             <button class="btn-confirm"
                     [class.active]="rawAmount >= MIN_AMOUNT"
                     [disabled]="rawAmount < MIN_AMOUNT"
-                    [routerLink]="['/nequi', 'nequi']"
+                    [routerLink]="['/breb', 'breb']"
                     [queryParams]="{cantidad: rawAmount}">
                 Confirmar Recarga
             </button>
@@ -58,8 +57,8 @@
 
     <!-- Legal Info -->
     <div class="legal-info">
-        1. Recarga mínima: <b class="emerald">50,000 COP</b> para activar botón.<br>
-        2. Al confirmar, capture su Código QR generado.<br>
-        3. Acreditación automática en <b class="emerald">1-10 minutos</b>.
+        1. Recarga minima: <b class="green-text">50,000 COP</b> para activar boton.<br>
+        2. Al confirmar, escanee el codigo QR generado.<br>
+        3. Acreditacion automatica en <b class="green-text">1-10 minutos</b>.
     </div>
 </div>

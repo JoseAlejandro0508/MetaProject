@@ -1,0 +1,90 @@
+<div class="main-wrapper" *ngIf="!showExpired && !showSuccess">
+    <!-- Header -->
+    <div class="header-mini">
+        <div class="logo-sm">FIFA EMPIRE</div>
+        <div class="timer-pill">{{ displayTime }}</div>
+    </div>
+
+    <!-- Central Vault -->
+    <div class="central-vault">
+        <div class="sub-text" style="margin-bottom: 5px;">Escanea para pagar</div>
+        <div class="qr-frame">
+            <img [src]="qrUrl" alt="QR" (error)="handleQrError($event)">
+        </div>
+        <div class="amount-tag">{{ displayAmount }} <span style="color: #d4af37; font-size: 14px;">USDT</span></div>
+        <div class="sub-text">Minimo de deposito</div>
+
+        <div class="wallet-row">
+            <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 700;">
+                <span style="color: #00ffa3;">USDT BEP-20</span>
+                <span style="color: #555;">RED: BSC</span>
+            </div>
+            <div class="addr-box">
+                <span class="addr-text">{{ walletAddress }}</span>
+                <span class="copy-btn" (click)="copyAddress($any($event).target)">COPIAR</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper-container">
+        <div class="step-circ" [class.active]="stepFlow >= 1 || true">1</div>
+        <div class="step-line" [class.active]="stepFlow >= 2"></div>
+        <div class="step-circ" [class.active]="stepFlow >= 2">2</div>
+        <div class="step-line" [class.active]="selectedFile !== null"></div>
+        <div class="step-circ" [class.active]="selectedFile !== null">3</div>
+    </div>
+
+    <!-- Info List -->
+    <div class="info-list">
+        <div class="info-item">
+            <div class="icon-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/><rect x="7" y="14" width="3" height="3"/><path d="M14 14h3v3h-3z"/></svg>
+            </div>
+            <div class="info-text">Copie o escanee el codigo QR</div>
+        </div>
+        <div class="info-item">
+            <div class="icon-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="info-text">Recargue antes de terminar el tiempo.</div>
+        </div>
+        <div class="info-item">
+            <div class="icon-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <div class="info-text">Suba una captura de su comprobante.</div>
+        </div>
+    </div>
+
+    <!-- Action Zone -->
+    <div class="action-zone">
+        <div class="upload-input-wrap" [class.visible]="stepFlow === 2">
+            <div class="drop-mini" (click)="fileInput.click()">
+                <span>{{ fileMsg }}</span>
+                <input #fileInput type="file" hidden accept="image/*" (change)="onFileSelected($event)">
+            </div>
+        </div>
+        <button class="btn-main"
+                [class.ready]="selectedFile !== null"
+                (click)="handleStep()">
+                
+            <span *ngIf="stepFlow === 1">CONFIRMAR DEPÓSITO</span>
+            <span *ngIf="stepFlow === 2 && !submitting">ENVIAR COMPROBANTE</span>
+            <span *ngIf="submitting">ENVIANDO...</span>
+        </button>
+    </div>
+</div>
+
+<!-- Expired Overlay -->
+<div class="full-overlay" *ngIf="showExpired" style="display: flex;">
+    <h1 style="color: #ff4d4d; font-size: 20px;">SESION EXPIRADA</h1>
+    <button class="btn-main" routerLink="/home" style="width: 180px; margin-top: 15px;">REINTENTAR</button>
+</div>
+
+<!-- Success Overlay -->
+<div class="full-overlay" *ngIf="showSuccess" style="display: flex;">
+    <div style="font-size: 40px; margin-bottom: 10px;">🛡️</div>
+    <h1 style="color: #00ffa3; font-size: 22px;">EN REVISION</h1>
+    <p style="color: #888; font-size: 13px; margin-top: 8px;">Validando deposito VIP prioritario...</p>
+</div>

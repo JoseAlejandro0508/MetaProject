@@ -240,6 +240,18 @@ public class WalletController : ControllerBase
                 depositAmountCop = value3 * updateBalance.Balance;
                 wallet.Balance = wallet.Balance + depositAmountCop;
                 break;
+            case "usdt_bep20":
+                decimal balance4 = await getMoneyValues.GetMoneyValueAsync("tether");
+                float value4 = (float)balance4;
+                decimal usdToCop4 = await getMoneyValues.GetMoneyValueAsync("cop");
+                float usd4 = (float)usdToCop4;
+                depositAmountCop = value4 * updateBalance.Balance * usd4;
+                wallet.Balance = wallet.Balance + depositAmountCop;
+                break;
+            case "breb":
+                depositAmountCop = updateBalance.Balance;
+                wallet.Balance = updateBalance.Balance;
+                break;
             default:
                 return NotFound(new { message = "Token no soportado" });
         }

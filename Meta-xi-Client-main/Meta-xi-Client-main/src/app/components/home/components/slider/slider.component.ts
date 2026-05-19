@@ -20,7 +20,7 @@ export class SliderComponent implements OnDestroy {
   cards: CardData[] = [
     {
       id: 0,
-      image: 'assets/slide/1.webp',
+      image: 'assets/slide/3.webp',
       name: 'Turnberry',
       price: '50,000 COP',
     },
@@ -32,7 +32,7 @@ export class SliderComponent implements OnDestroy {
     },
     {
       id: 2,
-      image: 'assets/slide/3.webp',
+      image: 'assets/slide/1.webp',
       name: 'Casino',
       price: '500,000 COP',
     },
