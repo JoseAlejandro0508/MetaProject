@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap');
+
+:host {
+  --bg-color: #1c1f21;
+  --gold: #D4AF37;
+  --blue: #2196F3;
+  --green: #00E676;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text-main: #ffffff;
+
+  display: block;
+  width: 100%;
+  background-color: var(--bg-color);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-main);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.section-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 18px;
+  background-color: var(--gold);
+  margin-right: 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-main);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--gold), var(--blue), var(--green));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.span-3 { grid-column: span 3; }
+.span-2 { grid-column: span 2; }
+.span-1 { grid-column: span 1; }
+
+.icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .icon-box {
+  transform: scale(1.08);
+}
+
+.card-text {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.theme-blue {
+  background: rgba(33, 150, 243, 0.1);
+  color: var(--blue);
+  box-shadow: 0 0 12px rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+}
+
+.theme-gold {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.theme-green {
+  background: rgba(0, 230, 118, 0.1);
+  color: var(--green);
+  box-shadow: 0 0 12px rgba(0, 230, 118, 0.2);
+  border: 1px solid rgba(0, 230, 118, 0.15);
+}
+
+@media (max-width: 480px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .span-3, .span-2, .span-1 {
+    grid-column: span 1;
+  }
+}
