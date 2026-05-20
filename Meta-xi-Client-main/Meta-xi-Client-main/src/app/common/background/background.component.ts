@@ -21,7 +21,8 @@ export class BackgroundComponent implements OnInit {
     'withdraw/usdt-trc20',
     'nequi/nequi',
     'deposit/usdt-bep20',
-    'deposit/breb'
+    'deposit/breb',
+    'deposit/nequi'
   ];
 
   constructor(private router: Router) {}
