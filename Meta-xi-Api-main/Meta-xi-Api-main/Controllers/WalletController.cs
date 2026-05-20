@@ -281,6 +281,44 @@ public class WalletController : ControllerBase
         return Ok(wallet.Balance);
     }
 
+    // ── POST: api/Wallet/AdminUpdateBalance ─────────────────────────────
+    [HttpPost("AdminUpdateBalance")]
+    public async Task<IActionResult> AdminUpdateBalance([FromBody] AdminUpdateBalanceDTO request){
+        // Validate API Key (simple header check)
+        var apiKey = Request.Headers["X-Api-Key"].FirstOrDefault();
+        if(string.IsNullOrEmpty(apiKey) || apiKey != Environment.GetEnvironmentVariable("ADMIN_API_KEY")){
+            return Unauthorized(new { message = "API Key invalida" });
+        }
+
+        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == request.PhoneOrEmail);
+        if(wallet == null){
+            return NotFound(new { message = "No existe ninguna cartera con ese usuario" });
+        }
+
+        // Update balance (add or subtract)
+        wallet.Balance += request.Amount;
+        
+        // Ensure balance doesn't go negative
+        if(wallet.Balance < 0){
+            return BadRequest(new { message = "Saldo insuficiente para realizar esta operacion" });
+        }
+
+        context.Entry(wallet).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+
+        return Ok(new { 
+            message = "Balance actualizado correctamente",
+            newBalance = wallet.Balance 
+        });
+    }
+
+    // ── DTO for AdminUpdateBalance ──────────────────────────────────────
+    public class AdminUpdateBalanceDTO
+    {
+        public string PhoneOrEmail { get; set; } = string.Empty;
+        public float Amount { get; set; }
+    }
+
     //Obtener balance en COP y USD
     [HttpGet("GetBalanceUsdAndCop/{username}")]
     public async Task<IActionResult> GetBalanceUsdAndCop(string username){

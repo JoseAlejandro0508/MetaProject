@@ -347,4 +347,51 @@ public class UserController : ControllerBase
 
         return Ok(new { message = "Sesión cerrada correctamente" });
     }
+
+    // ── GET: api/User/AdminGetUserInfo/{phone} ──────────────────────────
+    [HttpGet("AdminGetUserInfo/{phone}")]
+    public async Task<IActionResult> AdminGetUserInfo(string phone)
+    {
+        // Validate API Key
+        var apiKey = Request.Headers["X-Api-Key"].FirstOrDefault();
+        if(string.IsNullOrEmpty(apiKey) || apiKey != Environment.GetEnvironmentVariable("ADMIN_API_KEY"))
+        {
+            return Unauthorized(new { message = "API Key invalida" });
+        }
+
+        var user = await context.Users.FirstOrDefaultAsync(option => option.PhoneNumber == phone || option.Email == phone);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == phone || option.Email == user.Email);
+        
+        // Get referrals level 1
+        var referralsCount = await context.ReferLevel1s
+            .Where(r => r.IDUserReferrer == user.Id)
+            .CountAsync();
+
+        // Get active investments
+        var activeInvestments = await context.UpdatePlansForUser
+            .Where(p => p.Username == phone || p.Username == user.Email)
+            .ToListAsync();
+
+        var investmentsList = activeInvestments.Select(i => new {
+            id = i.IDUpdatePlansForUser,
+            accumulatedBenefit = i.AcumulatedTotalBenefit
+        }).ToList();
+
+        var userInfo = new
+        {
+            referralsLevel1 = referralsCount,
+            balance = wallet?.Balance ?? 0,
+            totalDeposited = wallet?.TotalRecharged ?? 0,
+            totalWithdrawn = wallet?.TotalWithdrawn ?? 0,
+            joinDate = user.CreatedAt.ToString("yyyy-MM-dd"),
+            activeInvestments = investmentsList
+        };
+
+        return Ok(userInfo);
+    }
 }

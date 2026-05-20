@@ -12,6 +12,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - ASPNETCORE_URLS=${ASPNETCORE_URLS:-http://+:5071}
       - JwtSettings__Secret=${JWT_SECRET:-super secret key for new project with the 512 bytes patreon , thanks for user my app}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-default-api-key-change-me}
     volumes:
       - sqlite-data:/app/Data
     ports:
@@ -32,6 +33,25 @@ services:
       - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+    networks:
+      - meta-xi-net
+
+  # ==========================================
+  # Telegram Bot (Python)
+  # ==========================================
+  bot:
+    build:
+      context: ./Bot
+      dockerfile: Dockerfile
+    container_name: meta-xi-bot
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - ADMIN_IDS=${ADMIN_IDS}
+      - API_BASE_URL=http://api:5071
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
     depends_on:
       - api
     networks:
