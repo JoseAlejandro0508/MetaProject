@@ -5,7 +5,7 @@ import { AddressComponent } from './address/address.component';
 import { InfoComponent } from './info/info.component';
 import { NequiComponent } from './nequi/nequi.component';
 import { UsdtBep20Component } from './usdt-bep20/usdt-bep20.component';
-import { BrebComponent } from './breb/breb.component';
+import { BrebComponent } from  './breb/breb.component';
 
 @Component({
   selector: 'app-deposit',

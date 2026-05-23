@@ -42,10 +42,20 @@ export class WithdrawComponent implements OnInit, OnDestroy {
   amountHintColor = 'rgba(255,255,255,0.3)';
   canSubmit = false;
 
-  // ─── Constants ─────────────────────────────
-  private readonly MIN_AMOUNT = 20000;
-  private readonly MAX_AMOUNT = 10000000;
-  private readonly FEE_RATE = 0.08; // 8% commission
+  // ─── Constants (base values in COP) ──────────
+  private readonly MIN_AMOUNT_COP = 20000;
+  private readonly MAX_AMOUNT_COP = 10000000;
+  private readonly USDT_CONVERSION_RATE = 3600; // COP to USDT
+  private readonly FEE_RATE = 0.12; // 8% commission
+
+  // ─── Computed Min/Max based on currency ──────
+  get MIN_AMOUNT(): number {
+    return this.isNequi ? this.MIN_AMOUNT_COP : this.MIN_AMOUNT_COP / this.USDT_CONVERSION_RATE;
+  }
+
+  get MAX_AMOUNT(): number {
+    return this.isNequi ? this.MAX_AMOUNT_COP : this.MAX_AMOUNT_COP / this.USDT_CONVERSION_RATE;
+  }
 
   constructor(
     private http: HttpClient,
@@ -79,25 +89,36 @@ export class WithdrawComponent implements OnInit, OnDestroy {
     return Math.round(this.FEE_RATE * 100);
   }
 
+  private formatAmount(value: number): string {
+    if (this.isNequi) {
+      // COP: no decimals, Colombian format
+      return Math.round(value).toLocaleString('es-CO');
+    } else {
+      // USDT: 2 decimals, international format
+      return value.toFixed(2);
+    }
+  }
+
   get displayBalance(): string {
     const num = parseFloat(this.balance);
     if (isNaN(num)) return this.balance;
-    return num.toLocaleString('es-CO');
+    return this.formatAmount(num);
   }
 
   get displayFee(): string {
     if (this.withdrawalFee === 0) return '0';
-    return Math.round(this.withdrawalFee).toLocaleString('es-CO');
+    return this.formatAmount(this.withdrawalFee);
   }
 
   get displayNet(): string {
     if (this.amountToReceive === 0) return '0';
-    return Math.round(this.amountToReceive).toLocaleString('es-CO');
+    return this.formatAmount(this.amountToReceive);
   }
 
   // ─── Balance API ────────────────────────────
   private async getBalance(): Promise<void> {
-    const url = `${environment.apiUrl}/Wallet/GetBalance/${this.username}`;
+    const coin = this.isNequi ? 'COP' : 'USDT';
+    const url = `${environment.apiUrl}/Wallet/GetBalance/${this.username}?coin=${coin}`;
     try {
       const response: any = await firstValueFrom(this.http.get(url));
       this.balance = response;
@@ -195,12 +216,17 @@ export class WithdrawComponent implements OnInit, OnDestroy {
 
     this.submitting = true;
 
+    // Convert amount to COP for backend if currency is USDT
+    const amountToSend = this.isNequi 
+      ? (this.amount ?? 0) 
+      : ((this.amount ?? 0) * this.USDT_CONVERSION_RATE);
+
     // Call backend FIRST to deduct balance and record withdrawal
     try {
       const withdrawalUrl = `${environment.apiUrl}/Wallet/RequestWithdrawal`;
       const withdrawalBody = {
         Email: this.username,
-        Amount: this.amount,
+        Amount: amountToSend,
         AccountNumber: this.accountNumber,
         Token: this.token,
         Password: this.password
@@ -209,7 +235,7 @@ export class WithdrawComponent implements OnInit, OnDestroy {
       await firstValueFrom(this.http.post(withdrawalUrl, withdrawalBody));
 
       // Backend returned 200 — send Telegram notification
-      const message = `Withdrawal request:\n\nUsername: ${this.username}\nAccount: ${this.accountNumber}\nAmount: ${this.amount}\nFee: ${Math.round(this.withdrawalFee)}\nAmountToReceive: ${Math.round(this.amountToReceive)}\nToken: ${this.token}`;
+      const message = `⬆️ Nuevo Retiro:\n\n● Moneda: ${this.token}\n● Cantidad a enviar: ${Math.round(this.amountToReceive)}\n●Ususario: ${this.username}\n\n⚠️ Cuenta: ${this.accountNumber}`;
       this.telegram.sendMessage(message);
       this.notification.correct('Solicitud de retiro enviada correctamente');
     } catch (error: any) {

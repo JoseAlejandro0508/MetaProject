@@ -22,7 +22,8 @@ export class BackgroundComponent implements OnInit {
     'nequi/nequi',
     'deposit/usdt-bep20',
     'deposit/breb',
-    'deposit/nequi'
+    'deposit/nequi',
+    'welcome'
   ];
 
   constructor(private router: Router) {}

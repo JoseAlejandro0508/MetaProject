@@ -264,6 +264,7 @@
 .prop-stats {
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
   background: rgba(0, 0, 0, 0.4);
   padding: 18px;
   border-radius: 20px;
@@ -273,13 +274,15 @@
 }
 
 .prop-stat-item {
+  padding-bottom: 2%;
   span {
-    display: block;
+  
     font-size: 10px;
     color: #888;
     text-transform: uppercase;
     margin-bottom: 6px;
     letter-spacing: 1px;
+    padding-right: 5%;
   }
 
   b {

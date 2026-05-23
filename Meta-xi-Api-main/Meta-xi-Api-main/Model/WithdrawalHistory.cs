@@ -12,5 +12,6 @@ public class WithdrawalHistory
     public required float NetAmount { get; set; }
     public required string Token { get; set; }
     public required string AccountNumber { get; set; }
+    public string Status { get; set; } = "Completado";
     public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 }

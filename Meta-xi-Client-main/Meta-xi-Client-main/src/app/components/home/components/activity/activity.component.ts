@@ -13,7 +13,7 @@ export class ActivityComponent {
   }
 
   support(){
-    window.open('https://chat.whatsapp.com/KEG1x6n65s2D2jnmBHKVq9?mode=gi_t', '_blank');
+    window.open('https://t.me/TrumpInvesting', '_blank');
   }
 
   canal(){

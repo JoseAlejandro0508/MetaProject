@@ -4,10 +4,10 @@
     'nav-background transition-colors duration-500': !isMeRoute && isScrolled,
     'bg-transparent transition-colors duration-500': !isMeRoute && !isScrolled
   }"
-  class="fixed top-0 z-20 w-full flex items-center justify-between box-border py-3 px-4"
+  class="fixed top-0 z-20 w-full flex items-center justify-between box-border nav-bar px-4"
 >
   <div class="flex items-center gap-2">
-    <img src="assets/icons/logo.webp" alt="nequi" class="w-7 rounded-full" />
+    <img src="assets/icons/logo.webp" alt="nequi" class="logo rounded-full" />
     <section class="log-cont">
       <div class="logo-container">
         <svg viewBox="0 0 1100 150">
@@ -27,6 +27,8 @@
   </button>
   -->
 
+  <!-- Welcome Bonus button removed — now handled by /welcome blocking screen -->
+
   <div
     class="premium-btn-wrapper flex items-center rounded-full gap-2 px-3 py-1 text-sm btn-alt"
     (click)="toggleModal()"
@@ -37,6 +39,7 @@
       {{ text }}
     </button>
   </div>
+
 </nav>
 
 <!-- Modal -->

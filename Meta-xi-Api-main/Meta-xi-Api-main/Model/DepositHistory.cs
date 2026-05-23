@@ -9,5 +9,6 @@ public class DepositHistory
     public required string Email { get; set; }
     public required float Amount { get; set; }
     public required string Token { get; set; }
+    public string Status { get; set; } = "Éxito";
     public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 }

@@ -2,55 +2,81 @@
 <div class="dashboard-card">
   <div class="stat-box">
     <div class="stat-label">Ganado Hoy</div>
-    <div class="stat-value">{{formatCOP(todayProfits)}} <span>COP</span></div>
+    <div class="stat-value">{{ formatCOP(todayProfits) }} <span>COP</span></div>
   </div>
   <div class="stat-box">
     <div class="stat-label">Total Ganancias</div>
-    <div class="stat-value">{{formatCOP(profits)}} <span>COP</span></div>
+    <div class="stat-value">{{ formatCOP(profits) }} <span>COP</span></div>
   </div>
   <div class="balance-section">
     <div>
       <div class="stat-label">Balance Total</div>
-      <div class="stat-value balance-amount">{{balance}} <span style="color:var(--gold)">COP</span></div>
+      <div class="stat-value balance-amount">
+        {{ balance }} <span style="color: var(--gold)">COP</span>
+      </div>
     </div>
-    <a [routerLink]="['/recharge']" class="btn-gold-shimmer btn-recar">RECARGAR</a>
+    <a [routerLink]="['/recharge']" class="btn-gold-shimmer btn-recar"
+      >RECARGAR</a
+    >
   </div>
 </div>
 
 <!-- Tabs Navigation -->
 <div class="tabs-container">
-  <div class="tab" [class.active]="mine" (click)="gafasVR()">Propiedades Disponibles</div>
-  <div class="tab" [class.active]="!mine" (click)="myGafas()">Mis Propiedades</div>
+  <div class="tab" [class.active]="mine" (click)="gafasVR()">
+    Propiedades Disponibles
+  </div>
+  <div class="tab" [class.active]="!mine" (click)="myGafas()">
+    Mis Propiedades
+  </div>
 </div>
 
 <!-- Available Properties (mine = true) -->
 <div *ngIf="mine" class="property-grid">
   <ng-container *ngFor="let gafa of list; index as i">
-    <div class="property-card" *ngIf="gafa.maxQuantity > 0 && gafa.daysActive > 0">
+    <div
+      class="property-card"
+      *ngIf="gafa.maxQuantity > 0 && gafa.daysActive > 0"
+    >
       <div class="property-img">
         <div class="vip-badge" *ngIf="gafa.idPlan === 1">VIP ASSET</div>
-        <img [src]="getImageSrc(gafa)" alt="gafa" class="property-image"
-          (error)="handleImageError($event)" />
+        <img
+          [src]="getImageSrc(gafa)"
+          alt="gafa"
+          class="property-image"
+          (error)="handleImageError($event)"
+        />
       </div>
       <div class="property-info">
-        <h3 class="prop-title">{{gafa.name}}</h3>
-        <p class="prop-description" *ngIf="gafa.description">{{gafa.description}}</p>
-        <span class="prop-location">Plan #{{gafa.idPlan}} &bull; {{gafa.daysActive}} días activos</span>
+        <h3 class="prop-title">{{ gafa.name }}</h3>
+        <p class="prop-description" *ngIf="gafa.description">
+          {{ gafa.description }}
+        </p>
+
         <div class="prop-stats">
           <div class="prop-stat-item">
             <span>Costo</span>
-            <b>{{formatCOP(gafa.price)}} COP</b>
+            <b>{{ formatCOP(gafa.price) }} COP</b>
           </div>
           <div class="prop-stat-item gain">
             <span>Diario</span>
-            <b>+ {{formatCOP(gafa.dailyBenefit)}} COP</b>
+            <b>+ {{ formatCOP(gafa.dailyBenefit) }} COP</b>
           </div>
-          <div class="prop-stat-item gain" *ngIf="gafa.dailyProfitPercentage">
+          <!--
+          
+                    <div class="prop-stat-item gain" *ngIf="gafa.dailyProfitPercentage">
             <span>Rendimiento</span>
             <b>{{gafa.dailyProfitPercentage}}% diario</b>
           </div>
+          -->
+          <div class="prop-stat-item gain">
+            <span>Total</span>
+            <b>+ {{ formatCOP(gafa.dailyBenefit*30) }}</b>
+          </div>
         </div>
-        <button class="btn-gold-shimmer btn-buy" (click)="openBuyModal(gafa)">INVERTIR AHORA</button>
+        <button class="btn-gold-shimmer btn-buy" (click)="openBuyModal(gafa)">
+          INVERTIR AHORA
+        </button>
       </div>
     </div>
   </ng-container>
@@ -61,17 +87,23 @@
   <ng-container *ngFor="let gafa of list; index as i">
     <div class="my-prop-card">
       <div>
-        <div class="my-prop-name">{{gafa.name}}</div>
-        <div class="my-prop-status">Estado: Activo &bull; Generando Ganancias</div>
+        <div class="my-prop-name">{{ gafa.name }}</div>
+        <div class="my-prop-status">
+          Estado: Activo &bull; Generando Ganancias
+        </div>
       </div>
-      <button class="btn-details" (click)="openDetailsModal(gafa)">VER DETALLES</button>
+      <button class="btn-details" (click)="openDetailsModal(gafa)">
+        VER DETALLES
+      </button>
     </div>
   </ng-container>
 
   <!-- Empty state -->
   <div *ngIf="list.length === 0" class="empty-state">
     <p>Aún no tienes propiedades activas</p>
-    <p class="empty-hint">Adquiere tu primera propiedad en la pestaña "Propiedades Disponibles"</p>
+    <p class="empty-hint">
+      Adquiere tu primera propiedad en la pestaña "Propiedades Disponibles"
+    </p>
   </div>
 </div>
 
@@ -79,37 +111,53 @@
 <div *ngIf="showBuyModal" class="modal" (click)="onModalBackdropClick($event)">
   <div class="modal-content">
     <div class="modal-img-header">
-      <img *ngIf="selectedPlan" [src]="getImageSrc(selectedPlan)" alt="property" class="modal-property-image"
-        (error)="handleImageError($event)" />
+      <img
+        *ngIf="selectedPlan"
+        [src]="getImageSrc(selectedPlan)"
+        alt="property"
+        class="modal-property-image"
+        (error)="handleImageError($event)"
+      />
     </div>
-    <h2 class="modal-title" *ngIf="selectedPlan">{{selectedPlan.name}}</h2>
-    <p class="prop-description" *ngIf="selectedPlan && selectedPlan.description">{{selectedPlan.description}}</p>
-    <p class="modal-location" *ngIf="selectedPlan">Plan #{{selectedPlan.idPlan}} &bull; {{selectedPlan.daysActive}} días de actividad</p>
+    <h2 class="modal-title" *ngIf="selectedPlan">{{ selectedPlan.name }}</h2>
+    <p
+      class="prop-description"
+      *ngIf="selectedPlan && selectedPlan.description"
+    >
+      {{ selectedPlan.description }}
+    </p>
 
     <div class="prop-stats modal-stats" *ngIf="selectedPlan">
       <div class="prop-stat-item">
         <span>Diario</span>
-        <b>+ {{formatCOP(selectedPlan.dailyBenefit)}}</b>
+        <b>+ {{ formatCOP(selectedPlan.dailyBenefit) }}</b>
       </div>
+   
       <div class="prop-stat-item gain" *ngIf="selectedPlan.dailyProfitPercentage">
-        <span>Rendimiento</span>
-        <b>{{selectedPlan.dailyProfitPercentage}}% diario</b>
+        <span>Semanal</span>
+        <b>+ {{ formatCOP(selectedPlanMonthlyEarnings/4) }}</b>
       </div>
+  
+
       <div class="prop-stat-item gain">
         <span>Mensual</span>
-        <b>+ {{formatCOP(selectedPlanMonthlyEarnings)}}</b>
+        <b>+ {{ formatCOP(selectedPlanMonthlyEarnings) }}</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Total</span>
-        <b>+ {{formatCOP(selectedPlan.totalBenefit)}}</b>
+        <b>+ {{ formatCOP(selectedPlan.totalBenefit) }}</b>
       </div>
     </div>
 
     <div class="modal-price-tag" *ngIf="selectedPlan">
-      Inversión: <span>{{formatCOP(selectedPlan.price)}} COP</span>
+      Inversión: <span>{{ formatCOP(selectedPlan.price) }} COP</span>
     </div>
 
-    <button class="btn-gold-shimmer btn-buy" (click)="buyPlan(selectedPlan.name)" style="font-size: 16px; padding: 20px;">
+    <button
+      class="btn-gold-shimmer btn-buy"
+      (click)="buyPlan(selectedPlan.name)"
+      style="font-size: 16px; padding: 20px"
+    >
       CONFIRMAR Y ACTIVAR
     </button>
     <button class="btn-close" (click)="closeBuyModal()">CANCELAR</button>
@@ -117,52 +165,84 @@
 </div>
 
 <!-- Details Modal -->
-<div *ngIf="showDetailsModal" class="modal" (click)="onModalBackdropClick($event)">
+<div
+  *ngIf="showDetailsModal"
+  class="modal"
+  (click)="onModalBackdropClick($event)"
+>
   <div class="modal-content">
-    <div class="details-check-icon">
-      &#10003;
-    </div>
-    <h2 class="modal-title modal-title-center" *ngIf="selectedMyPlan">{{selectedMyPlan.name}}</h2>
-    <p class="prop-description" *ngIf="selectedMyPlan && selectedMyPlan.description">{{selectedMyPlan.description}}</p>
-    <p class="modal-location modal-location-center" *ngIf="selectedMyPlan">Activo &bull; {{selectedMyPlan.daysRemaining}} días restantes</p>
+    <div class="details-check-icon">&#10003;</div>
+    <h2 class="modal-title modal-title-center" *ngIf="selectedMyPlan">
+      {{ selectedMyPlan.name }}
+    </h2>
+    <p
+      class="prop-description"
+      *ngIf="selectedMyPlan && selectedMyPlan.description"
+    >
+      {{ selectedMyPlan.description }}
+    </p>
+    <p class="modal-location modal-location-center" *ngIf="selectedMyPlan">
+      Activo &bull; {{ selectedMyPlan.daysRemaining }} días restantes
+    </p>
 
-    <div *ngIf="selectedMyPlan && selectedMyPlan.imageUrl" class="modal-img-header" style="margin-bottom: 16px;">
-      <img [src]="apiBaseUrl + selectedMyPlan.imageUrl" alt="property" class="modal-property-image"
-        style="max-height: 160px; border-radius: 12px;"
-        (error)="handleImageError($event)" />
+    <div
+      *ngIf="selectedMyPlan && selectedMyPlan.imageUrl"
+      class="modal-img-header"
+      style="margin-bottom: 16px"
+    >
+      <img
+        [src]="apiBaseUrl + selectedMyPlan.imageUrl"
+        alt="property"
+        class="modal-property-image"
+        style="max-height: 160px; border-radius: 12px"
+        (error)="handleImageError($event)"
+      />
     </div>
 
     <div class="prop-stats modal-stats" *ngIf="selectedMyPlan">
       <div class="prop-stat-item">
         <span>Por Hora</span>
-        <b>+ {{formatCOP(selectedMyPlan.hourBenefit)}}</b>
+        <b>+ {{ formatCOP(selectedMyPlan.hourBenefit) }}</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Diario</span>
-        <b>+ {{formatCOP(selectedMyPlan.dailyBenefit)}}</b>
+        <b>+ {{ formatCOP(selectedMyPlan.dailyBenefit) }}</b>
       </div>
-      <div class="prop-stat-item gain" *ngIf="selectedMyPlan.dailyProfitPercentage">
+      <div
+        class="prop-stat-item gain"
+        *ngIf="selectedMyPlan.dailyProfitPercentage"
+      >
         <span>Rendimiento</span>
-        <b>{{selectedMyPlan.dailyProfitPercentage}}% diario</b>
+        <b>{{ selectedMyPlan.dailyProfitPercentage }}% diario</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Total</span>
-        <b>+ {{formatCOP(selectedMyPlan.totalBenefit)}}</b>
+        <b>+ {{ formatCOP(selectedMyPlan.totalBenefit) }}</b>
       </div>
     </div>
 
     <div class="daily-earnings-box" *ngIf="selectedMyPlan">
       <span class="daily-earnings-label">Tu Ganancia Diaria Actual</span>
-      <b class="daily-earnings-value">{{formatCOP(selectedMyPlan.dailyBenefit)}}</b> <span class="daily-earnings-currency">COP</span>
+      <b class="daily-earnings-value">{{
+        formatCOP(selectedMyPlan.dailyBenefit)
+      }}</b>
+      <span class="daily-earnings-currency">COP</span>
     </div>
 
     <div class="progress-section" *ngIf="selectedMyPlan">
-      <span class="progress-label">Progreso: {{selectedMyPlan.percentage}}%</span>
+      <span class="progress-label"
+        >Progreso: {{ selectedMyPlan.percentage }}%</span
+      >
       <div class="progress-bar-bg">
-        <div class="progress-bar-fill" [style.width.%]="selectedMyPlan.percentage"></div>
+        <div
+          class="progress-bar-fill"
+          [style.width.%]="selectedMyPlan.percentage"
+        ></div>
       </div>
     </div>
 
-    <button class="btn-close" (click)="closeDetailsModal()">CERRAR DETALLES</button>
+    <button class="btn-close" (click)="closeDetailsModal()">
+      CERRAR DETALLES
+    </button>
   </div>
 </div>

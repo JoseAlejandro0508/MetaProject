@@ -1,0 +1,22 @@
+<div class="welcome-page">
+  <!-- Floating Notification -->
+  <div class="notification" [class.show]="showNotification">
+    <span class="notification-icon">👑</span>
+    <span>Recibió 5,000 COP a su balance</span>
+  </div>
+
+  <!-- VIP Card Container -->
+  <div class="vip-card-container">
+    <div class="photo-frame">
+      <img src="assets/icons/BonodeBienvenida.webp" alt="Bono de Bienvenida VIP">
+    </div>
+
+    <button 
+      class="btn-premium" 
+      (click)="claimBonus()"
+      [disabled]="isClaiming"
+    >
+      {{ isClaiming ? 'Reclamando...' : 'Recibir 5,000 COP' }}
+    </button>
+  </div>
+</div>

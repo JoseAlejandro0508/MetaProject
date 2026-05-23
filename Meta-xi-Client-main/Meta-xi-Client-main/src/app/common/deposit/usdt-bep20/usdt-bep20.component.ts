@@ -1,34 +1,54 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { TelegramService } from '../../../services/products/Telegram.service';
 import { environment } from '../../../../environments/environment';
+
+interface PresetAmount {
+  value: number;
+  label: string;
+}
 
 @Component({
   selector: 'app-usdt-bep20',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './usdt-bep20.component.html',
   styleUrl: './usdt-bep20.component.scss',
 })
 export class UsdtBep20Component implements OnInit {
+  readonly MIN_AMOUNT = 10;
+  readonly CONVERSION_RATE = 3600; // USDT to COP
+
   // Wallet & User
   walletAddress = environment.usdtBep20WalletAddress;
   username = localStorage.getItem('username') || '';
+  saldo = 0;
 
-  // Amount (from query param or default minimum)
+  // Amount selection
+  rawAmount = 0;
+  displayAmount = '';
+
+  presets: PresetAmount[] = [
+    { value: 10, label: '10' },
+    { value: 15, label: '15' },
+    { value: 50, label: '50' },
+    { value: 80, label: '80' },
+    { value: 120, label: '120' },
+    { value: 200, label: '200' },
+  ];
+
+  // Flow: 'amount' = selector, 'payment' = QR screen
+  flowStep: 'amount' | 'payment' = 'amount';
+
+  // Payment screen data
   amount = 10;
-
-  // Order / Reference number
   orderNumber = '';
-
-  // QR
   qrUrl = '';
-
-  // Step flow: 1 = show QR, 2 = show upload
   stepFlow = 1;
-
-  // File upload
   selectedFile: File | null = null;
   fileMsg = '📸 Click para subir comprobante';
 
@@ -44,37 +64,66 @@ export class UsdtBep20Component implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private telegramService: TelegramService
+    private router: Router,
+    private telegramService: TelegramService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    // Read cantidad from query params (amount in USDT)
+    this.getSaldo();
+
+    // Check if amount is provided in query params
     this.route.queryParams.subscribe((params) => {
       const cantidad = Number(params['cantidad']);
-      if (cantidad && cantidad >= 10) {
+      if (cantidad && cantidad >= this.MIN_AMOUNT) {
         this.amount = cantidad;
+        this.rawAmount = cantidad;
+        this.displayAmount = cantidad.toString();
+        this.flowStep = 'payment';
+        this.initPayment();
       }
     });
+  }
 
-    // Generate order number
+  // ─── Amount Selection ───────────────────
+  get displayBalance(): string {
+    return this.saldo.toLocaleString('es-CO');
+  }
+
+  onAmountInput(value: string): void {
+    const digits = value.replace(/\D/g, '');
+    this.rawAmount = digits ? parseInt(digits, 10) : 0;
+    this.displayAmount = digits !== '' ? digits : '';
+  }
+
+  selectAmount(num: number): void {
+    this.rawAmount = num;
+    this.displayAmount = num.toString();
+  }
+
+  confirmAmount(): void {
+    if (this.rawAmount < this.MIN_AMOUNT) return;
+    // Navigate to same route with amount as query param
+    this.router.navigate(['/deposit', 'usdt-bep20'], {
+      queryParams: { cantidad: this.rawAmount },
+    });
+  }
+
+  // ─── Payment Screen ─────────────────────
+  private initPayment(): void {
     this.orderNumber = this.generateOrderNumber();
-
-    // Build QR URL
     this.qrUrl = this.buildQrUrl();
-
-    // Start timer
     this.startTimer();
   }
 
-  // ─── Display ────────────────────────────
   get displayTime(): string {
     const m = Math.floor(this.timeRemaining / 60);
     const s = this.timeRemaining % 60;
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   }
 
-  get displayAmount(): string {
-    return this.amount.toLocaleString('es-CO');
+  get displayPaymentAmount(): string {
+    return this.amount.toString();
   }
 
   // ─── Actions ──────────────────────────────
@@ -97,23 +146,17 @@ export class UsdtBep20Component implements OnInit {
 
   handleStep(): void {
     if (this.stepFlow === 1) {
-      // Advance to step 2: show upload area
       this.stepFlow = 2;
     } else {
-      // Step 2: validate file and send
       if (!this.selectedFile) {
         alert('Sube la imagen del comprobante.');
         return;
       }
       this.submitting = true;
 
-      // Build caption from unified template
       const caption = this.buildCaption();
-
-      // Send photo to Telegram
       this.telegramService.sendPhoto(this.selectedFile, caption);
 
-      // Show success after short delay (matching template behavior)
       setTimeout(() => {
         this.showSuccess = true;
         this.submitting = false;
@@ -130,9 +173,19 @@ export class UsdtBep20Component implements OnInit {
   }
 
   // ─── Private ──────────────────────────────
+  private async getSaldo(): Promise<void> {
+    const url = `${environment.apiUrl}/Wallet/GetBalance/${this.username}?coin=COP`;
+    try {
+      const response: any = await firstValueFrom(this.http.get(url));
+      this.saldo = Number(response) || 0;
+    } catch (error: any) {
+      console.error('Error al obtener balance:', error);
+    }
+  }
+
   private buildCaption(): string {
     const user = this.username || 'N/A';
-    return `⬇️ Nueva Recarga:\n● Moneda: USDT\n● Cantidad: ${this.amount} USDT\n● Usuario: ${user}\n⚠️ Referencia: ${this.orderNumber}`;
+    return `⬇️ Nueva Recarga:\n● Moneda: USDT BEP-20\n● Cantidad: ${this.amount} USDT\n● Usuario: ${user}\n⚠️ Referencia: ${this.orderNumber}`;
   }
 
   private buildQrUrl(): string {

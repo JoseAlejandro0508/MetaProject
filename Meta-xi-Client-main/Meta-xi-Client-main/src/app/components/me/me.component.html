@@ -2,15 +2,17 @@
      VISTA PRINCIPAL (PERFIL)
      ============================================ -->
 <div class="me-container" *ngIf="currentView === 'main'">
-
   <!-- Header Profile -->
   <div class="card header-profile">
     <div class="avatar-ring">
-      <img src="assets/icons/avatar.webp" alt="Avatar">
+      <img src="assets/icons/avatar.webp" alt="Avatar" />
     </div>
     <div class="header-info">
       <h2>{{ username }}</h2>
       <p>Nivel Dorado</p>
+    </div>
+    <div class="band">
+      <img src="assets/icons/band.webp" alt="Band" />
     </div>
   </div>
 
@@ -19,6 +21,17 @@
     <div class="balance-row">
       <span class="balance-label">Balance Total (COP)</span>
       <span class="balance-value val-cop">{{ balanceCOP }}</span>
+    </div>
+    <div class="container">
+      <button [routerLink]="['/history']" class="neo-btn">
+        <div class="neo-btn-surface">
+          <div
+            class="icon-svg icon-history"
+            style="filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.5))"
+          ></div>
+          <span class="btn-tag">Historial</span>
+        </div>
+      </button>
     </div>
     <!--
     <div class="balance-row">
@@ -64,7 +77,10 @@
       <div class="menu-icon-box"><i data-lucide="key-round"></i></div>
       <span>Cambiar contraseña</span>
     </div>
-    <i data-lucide="chevron-right" style="color: var(--text-muted); width: 18px;"></i>
+    <i
+      data-lucide="chevron-right"
+      style="color: var(--text-muted); width: 18px"
+    ></i>
   </button>
 
   <!-- Menu: Cambiar Número -->
@@ -73,22 +89,53 @@
       <div class="menu-icon-box"><i data-lucide="smartphone"></i></div>
       <span>Cambiar número</span>
     </div>
-    <i data-lucide="chevron-right" style="color: var(--text-muted); width: 18px;"></i>
+    <i
+      data-lucide="chevron-right"
+      style="color: var(--text-muted); width: 18px"
+    ></i>
   </button>
 
   <!-- Menu: Link de Referido -->
-  <button class="menu-btn" (click)="copyReferralLink()" title="Copiar link de referido">
+  <button
+    class="menu-btn"
+    (click)="copyReferralLink()"
+    title="Copiar link de referido"
+  >
     <div class="menu-left">
       <div class="menu-icon-box"><i data-lucide="link"></i></div>
       <span>Link de referido</span>
     </div>
-    <i data-lucide="copy" style="color: var(--text-muted); width: 18px;"></i>
+    <i data-lucide="copy" style="color: var(--text-muted); width: 18px"></i>
   </button>
 
+  <!-- Menu: Historial -->
+  <a
+    [routerLink]="['/history']"
+    class="menu-btn"
+    title="Historial de transacciones"
+  >
+    <div class="menu-left">
+      <div class="menu-icon-box"><i data-lucide="clock"></i></div>
+      <span>Historial</span>
+    </div>
+    <i
+      data-lucide="chevron-right"
+      style="color: var(--text-muted); width: 18px"
+    ></i>
+  </a>
+
   <!-- Logout -->
-  <button class="menu-btn" style="justify-content: center; border-color: rgba(255, 71, 87, 0.2); margin-top: 20px;" (click)="logout()">
-    <div class="menu-left" style="color: var(--danger);">
-      <i data-lucide="log-out" style="width: 18px;"></i>
+  <button
+    class="menu-btn"
+    style="
+      justify-content: center;
+      border-color: rgba(255, 71, 87, 0.2);
+      margin-top: 20px;
+    "
+    (click)="logout()"
+  >
+    <div class="menu-left" style="color: var(--danger)">
+      <i data-lucide="log-out" style="width: 18px"></i>
       <span>Desconectar</span>
     </div>
   </button>
@@ -99,13 +146,14 @@
      ============================================ -->
 <div class="me-container form-view" *ngIf="currentView === 'pass'" [@slideIn]>
   <div class="form-header">
-    <button class="back-btn" (click)="switchView('main')"><i data-lucide="arrow-left"></i></button>
+    <button class="back-btn" (click)="switchView('main')">
+      <i data-lucide="arrow-left"></i>
+    </button>
     <h2>Seguridad</h2>
   </div>
 
   <div class="card">
     <form [formGroup]="passForm" (ngSubmit)="submitPassword()">
-
       <!-- Contraseña Anterior -->
       <div class="form-group">
         <label>Contraseña Anterior</label>
@@ -115,16 +163,66 @@
             [type]="passFieldTypeOld"
             formControlName="oldPassword"
             placeholder="Ingresa clave actual"
-            (input)="validatePassForm()">
-          <button type="button" class="toggle-pass" (click)="togglePassVisibility('old')">
-            <svg *ngIf="passFieldTypeOld === 'password'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg *ngIf="passFieldTypeOld === 'text'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            (input)="validatePassForm()"
+          />
+          <button
+            type="button"
+            class="toggle-pass"
+            (click)="togglePassVisibility('old')"
+          >
+            <svg
+              *ngIf="passFieldTypeOld === 'password'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg
+              *ngIf="passFieldTypeOld === 'text'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
+              />
+              <path
+                d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
+              />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
           </button>
         </div>
-        <div *ngIf="passForm.get('oldPassword')?.touched && passForm.get('oldPassword')?.hasError('required')" class="field-error">
+        <div
+          *ngIf="
+            passForm.get('oldPassword')?.touched &&
+            passForm.get('oldPassword')?.hasError('required')
+          "
+          class="field-error"
+        >
           La contraseña anterior es obligatoria
         </div>
-        <div *ngIf="passForm.get('oldPassword')?.touched && passForm.get('oldPassword')?.hasError('minlength')" class="field-error">
+        <div
+          *ngIf="
+            passForm.get('oldPassword')?.touched &&
+            passForm.get('oldPassword')?.hasError('minlength')
+          "
+          class="field-error"
+        >
           Mínimo 6 caracteres
         </div>
       </div>
@@ -138,20 +236,73 @@
             [type]="passFieldTypeNew"
             formControlName="newPassword"
             placeholder="Mínimo 6 caracteres"
-            (input)="validatePassForm()">
-          <button type="button" class="toggle-pass" (click)="togglePassVisibility('new')">
-            <svg *ngIf="passFieldTypeNew === 'password'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg *ngIf="passFieldTypeNew === 'text'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            (input)="validatePassForm()"
+          />
+          <button
+            type="button"
+            class="toggle-pass"
+            (click)="togglePassVisibility('new')"
+          >
+            <svg
+              *ngIf="passFieldTypeNew === 'password'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg
+              *ngIf="passFieldTypeNew === 'text'"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
+              />
+              <path
+                d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
+              />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
           </button>
         </div>
-        <div *ngIf="passForm.get('newPassword')?.touched && passForm.get('newPassword')?.hasError('required')" class="field-error">
+        <div
+          *ngIf="
+            passForm.get('newPassword')?.touched &&
+            passForm.get('newPassword')?.hasError('required')
+          "
+          class="field-error"
+        >
           La nueva contraseña es obligatoria
         </div>
-        <div *ngIf="passForm.get('newPassword')?.touched && passForm.get('newPassword')?.hasError('minlength')" class="field-error">
+        <div
+          *ngIf="
+            passForm.get('newPassword')?.touched &&
+            passForm.get('newPassword')?.hasError('minlength')
+          "
+          class="field-error"
+        >
           Mínimo 6 caracteres
         </div>
-        <div *ngIf="passForm.get('newPassword')?.hasError('passwordStrength')" class="field-error">
-          {{ passForm.get('newPassword')?.getError('passwordStrength') }}
+        <div
+          *ngIf="passForm.get('newPassword')?.hasError('passwordStrength')"
+          class="field-error"
+        >
+          {{ passForm.get("newPassword")?.getError("passwordStrength") }}
         </div>
       </div>
 
@@ -164,9 +315,16 @@
             [type]="passFieldTypeConfirm"
             formControlName="confirmPassword"
             placeholder="Confirma tu clave"
-            (input)="validatePassForm()">
+            (input)="validatePassForm()"
+          />
         </div>
-        <div *ngIf="passForm.hasError('passwordMismatch') && passForm.get('confirmPassword')?.touched" class="field-error">
+        <div
+          *ngIf="
+            passForm.hasError('passwordMismatch') &&
+            passForm.get('confirmPassword')?.touched
+          "
+          class="field-error"
+        >
           Las contraseñas no coinciden
         </div>
       </div>
@@ -176,17 +334,24 @@
         <label>Verificación de Seguridad</label>
         <div class="captcha-container">
           <div class="captcha-display">{{ captchaPass }}</div>
-          <div class="input-wrapper" style="flex: 1;">
+          <div class="input-wrapper" style="flex: 1">
             <input
               type="text"
               formControlName="captchaPass"
               class="captcha-input"
               placeholder="Código"
               maxlength="4"
-              (input)="validatePassForm()">
+              (input)="validatePassForm()"
+            />
           </div>
         </div>
-        <div *ngIf="passForm.get('captchaPass')?.touched && passForm.get('captchaPass')?.hasError('captchaMismatch')" class="field-error">
+        <div
+          *ngIf="
+            passForm.get('captchaPass')?.touched &&
+            passForm.get('captchaPass')?.hasError('captchaMismatch')
+          "
+          class="field-error"
+        >
           Código incorrecto
         </div>
       </div>
@@ -195,8 +360,9 @@
         type="submit"
         class="submit-btn"
         [class.vivid]="passFormValid"
-        [disabled]="!passFormValid || submitting">
-        {{ submitting ? 'ACTUALIZANDO...' : 'ACTUALIZAR CONTRASEÑA' }}
+        [disabled]="!passFormValid || submitting"
+      >
+        {{ submitting ? "ACTUALIZANDO..." : "ACTUALIZAR CONTRASEÑA" }}
       </button>
     </form>
   </div>
@@ -207,32 +373,46 @@
      ============================================ -->
 <div class="me-container form-view" *ngIf="currentView === 'phone'" [@slideIn]>
   <div class="form-header">
-    <button class="back-btn" (click)="switchView('main')"><i data-lucide="arrow-left"></i></button>
+    <button class="back-btn" (click)="switchView('main')">
+      <i data-lucide="arrow-left"></i>
+    </button>
     <h2>Contacto</h2>
   </div>
 
   <div class="card">
     <form [formGroup]="phoneForm" (ngSubmit)="submitPhone()">
-
       <!-- Número Anterior -->
       <div class="form-group">
         <label>Número Anterior</label>
         <div class="phone-input-group">
           <div class="prefix-box">+57</div>
-          <div class="input-wrapper" style="flex: 1;">
+          <div class="input-wrapper" style="flex: 1">
             <i data-lucide="phone"></i>
             <input
               type="tel"
               formControlName="oldPhone"
               placeholder="Número actual"
               maxlength="10"
-              (input)="validatePhoneForm()">
+              (input)="validatePhoneForm()"
+            />
           </div>
         </div>
-        <div *ngIf="phoneForm.get('oldPhone')?.touched && phoneForm.get('oldPhone')?.hasError('required')" class="field-error">
+        <div
+          *ngIf="
+            phoneForm.get('oldPhone')?.touched &&
+            phoneForm.get('oldPhone')?.hasError('required')
+          "
+          class="field-error"
+        >
           El número anterior es obligatorio
         </div>
-        <div *ngIf="phoneForm.get('oldPhone')?.touched && phoneForm.get('oldPhone')?.hasError('minlength')" class="field-error">
+        <div
+          *ngIf="
+            phoneForm.get('oldPhone')?.touched &&
+            phoneForm.get('oldPhone')?.hasError('minlength')
+          "
+          class="field-error"
+        >
           Mínimo 7 dígitos
         </div>
       </div>
@@ -242,20 +422,33 @@
         <label>Nuevo Número</label>
         <div class="phone-input-group">
           <div class="prefix-box">+57</div>
-          <div class="input-wrapper" style="flex: 1;">
+          <div class="input-wrapper" style="flex: 1">
             <i data-lucide="smartphone"></i>
             <input
               type="tel"
               formControlName="newPhone"
               placeholder="Nuevo número"
               maxlength="10"
-              (input)="validatePhoneForm()">
+              (input)="validatePhoneForm()"
+            />
           </div>
         </div>
-        <div *ngIf="phoneForm.get('newPhone')?.touched && phoneForm.get('newPhone')?.hasError('required')" class="field-error">
+        <div
+          *ngIf="
+            phoneForm.get('newPhone')?.touched &&
+            phoneForm.get('newPhone')?.hasError('required')
+          "
+          class="field-error"
+        >
           El nuevo número es obligatorio
         </div>
-        <div *ngIf="phoneForm.get('newPhone')?.touched && phoneForm.get('newPhone')?.hasError('minlength')" class="field-error">
+        <div
+          *ngIf="
+            phoneForm.get('newPhone')?.touched &&
+            phoneForm.get('newPhone')?.hasError('minlength')
+          "
+          class="field-error"
+        >
           Mínimo 7 dígitos
         </div>
       </div>
@@ -265,17 +458,24 @@
         <label>Verificación de Seguridad</label>
         <div class="captcha-container">
           <div class="captcha-display">{{ captchaPhone }}</div>
-          <div class="input-wrapper" style="flex: 1;">
+          <div class="input-wrapper" style="flex: 1">
             <input
               type="text"
               formControlName="captchaPhone"
               class="captcha-input"
               placeholder="Código"
               maxlength="4"
-              (input)="validatePhoneForm()">
+              (input)="validatePhoneForm()"
+            />
           </div>
         </div>
-        <div *ngIf="phoneForm.get('captchaPhone')?.touched && phoneForm.get('captchaPhone')?.hasError('captchaMismatch')" class="field-error">
+        <div
+          *ngIf="
+            phoneForm.get('captchaPhone')?.touched &&
+            phoneForm.get('captchaPhone')?.hasError('captchaMismatch')
+          "
+          class="field-error"
+        >
           Código incorrecto
         </div>
       </div>
@@ -284,8 +484,9 @@
         type="submit"
         class="submit-btn"
         [class.vivid]="phoneFormValid"
-        [disabled]="!phoneFormValid || submitting">
-        {{ submitting ? 'ACTUALIZANDO...' : 'VINCULAR TELÉFONO' }}
+        [disabled]="!phoneFormValid || submitting"
+      >
+        {{ submitting ? "ACTUALIZANDO..." : "VINCULAR TELÉFONO" }}
       </button>
     </form>
   </div>

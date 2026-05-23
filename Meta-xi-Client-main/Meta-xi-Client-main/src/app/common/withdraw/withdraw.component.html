@@ -25,7 +25,7 @@
   <div class="input-wrapper">
     <label class="input-label">
       Monto a retirar
-      <span [style.color]="amountHintColor">Min. 20.000</span>
+      <span [style.color]="amountHintColor">Min. {{ MIN_AMOUNT | number:'1.0-2' }} {{ currency }}</span>
 
     </label>
     <span [style.color]="amountHintColor" *ngIf="insuficient">Fondos insuficientes</span>
@@ -33,7 +33,7 @@
            class="apex-input"
            [class.valid]="amountValid"
            [class.invalid]="amountInvalid"
-           placeholder="0 COP"
+           [placeholder]="'0 ' + currency"
            [(ngModel)]="amount"
            (input)="validate()">
   </div>
@@ -47,7 +47,7 @@
         <input [type]="isNequi ? 'tel' : 'text'"
                class="apex-input"
                [ngStyle]="{ 'padding-right': '75px' }"
-               [placeholder]="isNequi ? '300 000 0000' : 'Dirección USDT-TRC20'"
+               [placeholder]="isNequi ? '300 000 0000' : 'Dirección USDT-BEP20'"
                [(ngModel)]="accountNumber"
                (input)="validate()">
         <button type="button" class="paste-btn" (click)="pasteFromClipboard()">PEGAR</button>

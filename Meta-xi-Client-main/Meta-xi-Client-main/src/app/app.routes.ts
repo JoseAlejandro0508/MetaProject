@@ -114,6 +114,21 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'history',
+    loadComponent: () =>
+      import('./components/me/history/history.component').then(
+        (m) => m.HistoryComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'welcome',
+    loadComponent: () =>
+      import('./components/welcome-bonus/welcome-bonus.component').then(
+        (m) => m.WelcomeBonusComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'login',
     pathMatch: 'full',

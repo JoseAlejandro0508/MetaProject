@@ -185,7 +185,8 @@ public class WalletController : ControllerBase
             Fee = fee,
             NetAmount = netAmount,
             Token = request.Token,
-            AccountNumber = request.AccountNumber
+            AccountNumber = request.AccountNumber,
+            Status = "Completado"
         };
         await context.WithdrawalHistories.AddAsync(withdrawal);
         await context.SaveChangesAsync();
@@ -264,7 +265,8 @@ public class WalletController : ControllerBase
         {
             Email = updateBalance.Email,
             Amount = depositAmountCop,
-            Token = token
+            Token = token,
+            Status = "Éxito"
         };
         await context.DepositHistories.AddAsync(deposit);
         await context.SaveChangesAsync();
@@ -273,12 +275,19 @@ public class WalletController : ControllerBase
     }
 
     [HttpGet("GetBalance/{username}")]
-    public async Task<IActionResult> GetBalance(string username){
+    public async Task<IActionResult> GetBalance(string username, [FromQuery] string coin = "COP"){
         var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == username);
         if(wallet == null){
             return NotFound(new { message = "El usuario no posee ninguna cartera"});
         }
-        return Ok(wallet.Balance);
+
+        float balance = wallet.Balance;
+
+        if(coin.ToUpper() == "USDT"){
+            balance = balance / 3600f;
+        }
+
+        return Ok(balance);
     }
 
     // ── POST: api/Wallet/AdminUpdateBalance ─────────────────────────────
@@ -319,6 +328,114 @@ public class WalletController : ControllerBase
         public float Amount { get; set; }
     }
 
+    // ── DTO for Transaction History ──────────────────────────────────────
+    public class TransactionHistoryDTO
+    {
+        public int Id { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public float Amount { get; set; }
+        public string SignedAmount { get; set; } = string.Empty;
+        public string Currency { get; set; } = "COP";
+        public string Date { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public float? Fee { get; set; }
+        public float? NetAmount { get; set; }
+    }
+
+    private string FormatRelativeDate(DateTimeOffset timestamp)
+    {
+        var now = DateTimeOffset.Now;
+        var diff = now - timestamp;
+
+        if (diff.TotalDays < 1 && timestamp.Date == now.Date)
+        {
+            return $"Hoy, {timestamp:hh:mm tt}";
+        }
+        else if (diff.TotalDays < 2 && timestamp.Date == now.Date.AddDays(-1))
+        {
+            return $"Ayer, {timestamp:hh:mm tt}";
+        }
+        else
+        {
+            return timestamp.ToString("dd/MM/yyyy");
+        }
+    }
+
+    private string CapitalizeToken(string token)
+    {
+        if (string.IsNullOrEmpty(token)) return token;
+        return char.ToUpper(token[0]) + token.Substring(1);
+    }
+
+    // ── GET: api/Wallet/History/{username} ──────────────────────────────
+    [HttpGet("History/{username}")]
+    public async Task<IActionResult> GetHistory(string username)
+    {
+        // Find user by email or phone
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == username || u.PhoneNumber == username);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        // Query deposits
+        var deposits = await context.DepositHistories
+            .Where(d => d.Email == username)
+            .ToListAsync();
+
+        // Query withdrawals
+        var withdrawals = await context.WithdrawalHistories
+            .Where(w => w.Email == username)
+            .ToListAsync();
+
+        // Map deposits to DTO
+        var depositDtos = deposits.Select(d => new TransactionHistoryDTO
+        {
+            Id = d.Id,
+            Type = "deposit",
+            Title = $"Recarga {CapitalizeToken(d.Token)}",
+            Amount = d.Amount,
+            SignedAmount = $"+ {d.Amount:N0} COP",
+            Currency = "COP",
+            Date = FormatRelativeDate(d.Timestamp),
+            Status = d.Status,
+            Fee = null,
+            NetAmount = null
+        });
+
+        // Map withdrawals to DTO
+        var withdrawalDtos = withdrawals.Select(w => new TransactionHistoryDTO
+        {
+            Id = w.Id,
+            Type = "withdrawal",
+            Title = "Retiro de Saldo",
+            Amount = w.Amount,
+            SignedAmount = $"- {w.Amount:N0} COP",
+            Currency = "COP",
+            Date = FormatRelativeDate(w.Timestamp),
+            Status = w.Status,
+            Fee = w.Fee,
+            NetAmount = w.NetAmount
+        });
+
+        // Combine and sort by date descending (using original timestamp for sorting)
+        var combined = depositDtos
+            .Concat(withdrawalDtos)
+            .OrderByDescending(t =>
+            {
+                // Find original timestamp for sorting
+                var deposit = deposits.FirstOrDefault(d => d.Id == t.Id && t.Type == "deposit");
+                if (deposit != null) return deposit.Timestamp;
+                var withdrawal = withdrawals.FirstOrDefault(w => w.Id == t.Id && t.Type == "withdrawal");
+                if (withdrawal != null) return withdrawal.Timestamp;
+                return DateTimeOffset.MinValue;
+            })
+            .ToList();
+
+        return Ok(combined);
+    }
+
     //Obtener balance en COP y USD
     [HttpGet("GetBalanceUsdAndCop/{username}")]
     public async Task<IActionResult> GetBalanceUsdAndCop(string username){
@@ -342,5 +459,80 @@ public class WalletController : ControllerBase
         }
 
         return Ok(new { balanceInCop, balanceInUsd });
+    }
+
+    // ── Welcome Bonus Endpoints ─────────────────────────────────────────
+
+    // GET: api/Wallet/CheckWelcomeBonus/{username}
+    [HttpGet("CheckWelcomeBonus/{username}")]
+    public async Task<IActionResult> CheckWelcomeBonus(string username)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == username || u.PhoneNumber == username);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        var alreadyClaimed = await context.DepositHistories
+            .AnyAsync(d => d.Email == username && d.Token == "welcome_bonus");
+
+        return Ok(new { claimed = alreadyClaimed });
+    }
+
+    // POST: api/Wallet/ClaimWelcomeBonus
+    [HttpPost("ClaimWelcomeBonus")]
+    public async Task<IActionResult> ClaimWelcomeBonus([FromBody] ClaimWelcomeBonusDTO request)
+    {
+        const float BONUS_AMOUNT = 5000f;
+
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email || u.PhoneNumber == request.Email);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        // Check if already claimed
+        var alreadyClaimed = await context.DepositHistories
+            .AnyAsync(d => d.Email == request.Email && d.Token == "welcome_bonus");
+
+        if (alreadyClaimed)
+        {
+            return Conflict(new { message = "Bono ya reclamado" });
+        }
+
+        // Find wallet
+        var wallet = await context.Wallets.FirstOrDefaultAsync(w => w.Email == request.Email);
+        if (wallet == null)
+        {
+            return NotFound(new { message = "Cartera no encontrada" });
+        }
+
+        // Credit bonus
+        wallet.Balance += BONUS_AMOUNT;
+        wallet.TotalRecharged += BONUS_AMOUNT;
+        context.Entry(wallet).State = EntityState.Modified;
+
+        // Create deposit history record
+        var deposit = new DepositHistory
+        {
+            Email = request.Email,
+            Amount = BONUS_AMOUNT,
+            Token = "welcome_bonus",
+            Status = "Éxito"
+        };
+        await context.DepositHistories.AddAsync(deposit);
+        await context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Bono reclamado exitosamente",
+            amount = BONUS_AMOUNT,
+            newBalance = wallet.Balance
+        });
+    }
+
+    public class ClaimWelcomeBonusDTO
+    {
+        public string Email { get; set; } = string.Empty;
     }
 }

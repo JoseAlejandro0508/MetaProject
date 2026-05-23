@@ -1,7 +1,73 @@
-<div class="main-wrapper" *ngIf="!showExpired && !showSuccess">
+<!-- ======================== AMOUNT SELECTOR ======================== -->
+<div class="deposit-wrap" *ngIf="flowStep === 'amount'">
+    <!-- Back Nav -->
+    <a routerLink="/home" class="back-nav">
+        <div class="arrow-green"></div>
+        <span class="nav-label">Volver</span>
+    </a>
+
+    <!-- Gold Card Frame -->
+    <div class="gold-card">
+        <div class="inner-container">
+
+            <!-- Balance -->
+            <div class="balance-header">
+                <span class="balance-title">Balance de cuenta</span>
+                <span class="balance-val">$ {{ displayBalance }} COP</span>
+            </div>
+
+            <!-- Input -->
+            <input type="text"
+                   class="input-box"
+                   placeholder="0"
+                   [ngModel]="displayAmount"
+                   (ngModelChange)="onAmountInput($event)">
+
+            <!-- Preset Amounts -->
+            <div class="amounts-grid">
+                @for (amt of presets; track amt.value) {
+                    <button class="amount-btn"
+                            [class.selected]="rawAmount === amt.value"
+                            (click)="selectAmount(amt.value)">
+                        ${{ amt.label }}
+                    </button>
+                }
+            </div>
+
+            <!-- Payment Method (USDT BEP-20) -->
+            <div class="payment-method-row">
+                <div class="icon-box-usdt">
+                    <div class="inner-glow-usdt"></div>
+                    <img src="assets/token/usdt-bep20.jpg" class="method-img" alt="USDT BEP-20">
+                </div>
+                <span class="method-name-text">USDT BEP-20</span>
+                <div class="chevron-green"></div>
+            </div>
+
+            <!-- Confirm Button -->
+            <button class="btn-confirm"
+                    [class.active]="rawAmount >= MIN_AMOUNT"
+                    [disabled]="rawAmount < MIN_AMOUNT"
+                    (click)="confirmAmount()">
+                Confirmar Depósito
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Legal Info -->
+    <div class="legal-info">
+        1. Depósito mínimo: <b class="green-text">10 USDT</b> para activar botón.<br>
+        2. Seleccione el monto y confirme para ver el código QR.<br>
+        3. Acreditación automática en <b class="green-text">1-10 minutos</b>.
+    </div>
+</div>
+
+<!-- ======================== PAYMENT SCREEN ======================== -->
+<div class="main-wrapper" *ngIf="flowStep === 'payment' && !showExpired && !showSuccess">
     <!-- Header -->
     <div class="header-mini">
-        <div class="logo-sm">FIFA EMPIRE</div>
+
         <div class="timer-pill">{{ displayTime }}</div>
     </div>
 
@@ -9,11 +75,10 @@
     <div class="central-vault">
         <div class="sub-text" style="margin-bottom: 5px;">Escanea para pagar</div>
         <div class="qr-frame">
-
              <img src="assets/qr/USDT.webp" alt="QR" (error)="handleQrError($event)" />
         </div>
-        <div class="amount-tag">{{ displayAmount }} <span style="color: #d4af37; font-size: 14px;">USDT</span></div>
-        <div class="sub-text">Minimo de deposito</div>
+        <div class="amount-tag">{{ displayPaymentAmount }} <span style="color: #d4af37; font-size: 14px;">USDT</span></div>
+        <div class="sub-text">Monto de depósito</div>
 
         <div class="wallet-row">
             <div style="display: flex; justify-content: space-between; font-size: 9px; font-weight: 700;">
@@ -42,7 +107,7 @@
             <div class="icon-wrap">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/><rect x="7" y="14" width="3" height="3"/><path d="M14 14h3v3h-3z"/></svg>
             </div>
-            <div class="info-text">Copie o escanee el codigo QR</div>
+            <div class="info-text">Copie o escanee el código QR</div>
         </div>
         <div class="info-item">
             <div class="icon-wrap">
