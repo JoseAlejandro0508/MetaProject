@@ -7,12 +7,12 @@
 
     <div class="main-card">
         <div class="stat-group">
-            <span class="label">Plata Ganada Total</span>
+            <span class="label">Ganancia Total</span>
             <span class="value green">{{ formatCurrency(totalEarned) }}</span>
         </div>
         <div class="stat-group" style="margin-top: 10px;">
-            <span class="label">Plata Invertida</span>
-            <span class="value" style="font-size: 18px; color: #d4af37;">{{ totalInvested }}</span>
+            <span class="label">Inversión</span>
+            <span class="value" style="font-size: 18px; color: #d4af37;">{{ formatCurrency(totalInvested) }}</span>
         </div>
     </div>
 
@@ -40,7 +40,7 @@
         </div>
         <div class="small-stat">
             <span class="small-label">Por Misiones</span>
-            <span class="small-value" style="color: rgba(255,255,255,0.4);">N/A</span>
+            <span class="small-value" style="color: #d4af37;">{{ formatCurrency(missionEarnings) }}</span>
         </div>
         <div class="small-stat" style="grid-column: span 2;">
             <span class="small-label">Por Referidos</span>

@@ -31,11 +31,12 @@ public class WalletController : ControllerBase
     public class AccountSummaryDTO
     {
         public float TotalEarned { get; set; }
-        public string TotalInvested { get; set; } = "N/A";
+        public float TotalInvested { get; set; }
         public float TotalRecharged { get; set; }
         public float TotalWithdrawn { get; set; }
         public float TaskEarnings { get; set; }
         public float PlanEarnings { get; set; }
+        public float MissionEarnings { get; set; }
         public float ReferralEarnings { get; set; }
         public string AccountStatus { get; set; } = "VERIFICADA";
     }
@@ -112,18 +113,48 @@ public class WalletController : ControllerBase
         var lvl3Deposits = await context.DepositHistories.Where(d => lvl3Emails.Contains(d.Email)).ToListAsync();
         referralEarnings += lvl3Deposits.Sum(d => d.Amount) * 0.01f;
 
-        // 6. Build response
+        // 6. Compute Total Invested from UserPlans
+        var userPlansPurchased = await context.UserPlans
+            .Where(up => up.Username == username)
+            .ToListAsync();
+        var planNames = userPlansPurchased.Select(up => up.NamePlan).ToList();
+        var plansInfo = await context.Plans
+            .Where(p => planNames.Contains(p.Name))
+            .ToListAsync();
+        float totalInvested = 0;
+        foreach (var up in userPlansPurchased)
+        {
+            var plan = plansInfo.FirstOrDefault(p => p.Name == up.NamePlan);
+            if (plan != null)
+            {
+                totalInvested += (float)plan.Price;
+            }
+        }
+
+        // 7. Compute Mission Earnings (VIP missions claimed)
+        var missionEarnings = await context.UserMissions
+            .Where(um => um.Email == user.Email && um.ClaimedAt != null)
+            .Join(
+                context.Missions,
+                um => um.MissionId,
+                m => m.Id,
+                (um, m) => m.Gift
+            )
+            .SumAsync();
+
+        // 8. Build response
         var summary = new AccountSummaryDTO
         {
             TaskEarnings = taskEarnings,
             PlanEarnings = planEarnings,
+            MissionEarnings = (float)missionEarnings,
             ReferralEarnings = referralEarnings,
             TotalRecharged = wallet.TotalRecharged,
             TotalWithdrawn = wallet.TotalWithdrawn,
-            TotalInvested = "N/A",
+            TotalInvested = totalInvested,
             AccountStatus = "VERIFICADA"
         };
-        summary.TotalEarned = summary.TaskEarnings + summary.PlanEarnings + summary.ReferralEarnings;
+        summary.TotalEarned = summary.TaskEarnings + summary.PlanEarnings + summary.MissionEarnings + summary.ReferralEarnings;
 
         return Ok(summary);
     }

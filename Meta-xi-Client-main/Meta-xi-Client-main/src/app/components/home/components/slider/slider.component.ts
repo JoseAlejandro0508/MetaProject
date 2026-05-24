@@ -1,12 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 interface CardData {
   id: number;
   image: string;
   name: string;
   price: string;
+  planId: number; // ID del plan de inversión correspondiente
 }
 
 @Component({
@@ -23,18 +24,21 @@ export class SliderComponent implements OnDestroy {
       image: 'assets/slide/3.webp',
       name: 'Turnberry',
       price: '50,000 COP',
+      planId: 1,
     },
     {
       id: 1,
       image: 'assets/slide/2.webp',
       name: 'Trump Tower',
       price: '150,000 COP',
+      planId: 2,
     },
     {
       id: 2,
       image: 'assets/slide/1.webp',
       name: 'Casino',
       price: '500,000 COP',
+      planId: 5,
     },
   ];
 
@@ -43,7 +47,7 @@ export class SliderComponent implements OnDestroy {
 
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  constructor() {
+  constructor(private router: Router) {
     this.startRotation();
   }
 
@@ -59,7 +63,10 @@ export class SliderComponent implements OnDestroy {
   }
 
   onBuy(cardId: number): void {
-    console.log(`Buy card ${cardId + 1}`);
+    const card = this.cards.find(c => c.id === cardId);
+    if (card) {
+      this.router.navigate(['/tasks'], { queryParams: { plan: card.planId } });
+    }
   }
 
   handleImgError(event: Event): void {

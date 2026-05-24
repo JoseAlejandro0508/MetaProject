@@ -16,7 +16,7 @@
     </div>
     <div class="divider"></div>
     <span class="stat-lbl">Balance Acumulado</span>
-    <div class="currency-display">{{ availableBalance | number:'1.2-2':'es' }} COP</div>
+    <div class="currency-display">{{ pendingMissionBalance}} COP</div>
     <button class="btn-claim" (click)="claimBalance()" [disabled]="claiming">
       {{ claiming ? 'RECLAMANDO...' : 'RECLAMAR AHORA' }}
     </button>

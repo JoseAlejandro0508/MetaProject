@@ -22,6 +22,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  padding-bottom: 3vh;
 }
 
 .logo-sm {
@@ -41,6 +43,9 @@
   color: #ff4d4d;
   font-weight: 700;
   font-size: 13px;
+  position: absolute;
+  right: 0;
+
   font-family: 'Space Grotesk', sans-serif;
 
 }
@@ -447,7 +452,8 @@ $gold-dark: #b8941d;
 }
 
 .method-img {
-  width: 60%;
+  width: 100%;
+  height: 100%;
   z-index: 1;
   position: relative;
 }

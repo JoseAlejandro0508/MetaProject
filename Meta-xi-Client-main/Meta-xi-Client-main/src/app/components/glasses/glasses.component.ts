@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NotificationService } from '../../services/products/notification.service';
 import { environment } from '../../../environments/environment';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-tasks',
@@ -34,8 +34,21 @@ export class TasksComponent implements OnInit {
   username = localStorage.getItem('username');
   private notificationService = inject(NotificationService);
 
+  constructor(private route: ActivatedRoute) {}
+
   ngOnInit(): void {
-    this.gafasVR();
+    this.gafasVR().then(() => {
+      // Check if there's a plan query param to auto-open
+      this.route.queryParams.subscribe(params => {
+        const planId = Number(params['plan']);
+        if (planId) {
+          const plan = this.list.find((p: any) => p.idPlan === planId);
+          if (plan) {
+            this.openBuyModal(plan);
+          }
+        }
+      });
+    });
     this.GetBenefits();
   }
 

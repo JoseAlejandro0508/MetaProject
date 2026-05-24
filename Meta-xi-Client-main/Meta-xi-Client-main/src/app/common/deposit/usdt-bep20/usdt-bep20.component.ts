@@ -158,7 +158,7 @@ export class UsdtBep20Component implements OnInit {
       this.telegramService.sendPhoto(this.selectedFile, caption);
 
       setTimeout(() => {
-        this.showSuccess = true;
+        //this.showSuccess = true;
         this.submitting = false;
         this.stopTimer();
       }, 1200);

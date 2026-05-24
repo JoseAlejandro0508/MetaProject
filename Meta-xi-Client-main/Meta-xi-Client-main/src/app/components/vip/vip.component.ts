@@ -63,6 +63,13 @@ export class VipComponent implements OnInit {
     }
   }
 
+  // ─── Computed: Pending Mission Balance ──────────────────────
+  get pendingMissionBalance(): number {
+    const pendingMissions = this.missions.filter(m => m.progress >= m.goal && !m.claimed);
+    const pendingTrends = this.trends.filter(t => t.progress >= t.goal && !t.claimed);
+    return [...pendingMissions, ...pendingTrends].reduce((sum, item) => sum + (item.reward || 0), 0);
+  }
+
   // ─── API: Load Stats ──────────────────────
   private async loadStats(): Promise<void> {
     const url = `${environment.apiUrl}/MisionsUser/GetDates/${this.username}`;
