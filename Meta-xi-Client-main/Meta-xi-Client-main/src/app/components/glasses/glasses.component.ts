@@ -175,6 +175,10 @@ export class TasksComponent implements OnInit {
 
   // --- Modal controls ---
   openBuyModal(plan: any) {
+    if(plan.idPlan>5){
+      this.notificationService.errorMessage("Este plan aun no esta disponible");
+      return;
+    }
     this.selectedPlan = plan;
     this.showBuyModal = true;
   }

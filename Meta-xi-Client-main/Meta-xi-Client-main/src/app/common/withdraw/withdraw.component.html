@@ -18,7 +18,7 @@
       <span class="balance-label">Capital Disponible</span>
       <span class="balance-amount">{{ displayBalance }} <span class="currency">{{ currency }}</span></span>
     </div>
-    <div class="status-pill">⚡ RETIRO 24H</div>
+    <div class="status-pill">⚡ Lun-Vie 8AM-10PM</div>
   </div>
 
   <!-- Amount Input -->
@@ -104,3 +104,52 @@
     {{ submitting ? 'ENCRIPTANDO...' : 'Confirmar Transacción' }}
   </button>
 </div>
+
+<!-- Schedule Modal (shown when outside business hours) -->
+@if (showScheduleModal) {
+<div class="schedule-overlay" (click)="showScheduleModal = false">
+  <div class="schedule-modal" (click)="$event.stopPropagation()">
+    <div class="schedule-header">
+      <div class="schedule-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 7V12L15 13.5" stroke="#f6d365" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#f6d365" stroke-width="2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="schedule-title">Horario de Retiros</div>
+        <div class="schedule-subtitle">Operaciones Financieras</div>
+      </div>
+    </div>
+
+    <div class="schedule-badge">
+      <div class="badge-dot"></div>
+      <span class="badge-text">Fuera de Horario Operativo</span>
+    </div>
+
+    <div class="schedule-grid">
+      <div class="grid-item">
+        <div class="grid-icon icon-blue">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+        <span class="grid-label">Días Hábiles</span>
+        <span class="grid-value">Lun a Vie</span>
+      </div>
+
+      <div class="grid-item">
+        <div class="grid-icon icon-green">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 15 13.5"></polyline></svg>
+        </div>
+        <span class="grid-label">Horario</span>
+        <span class="grid-value">8:00 AM - 10:00 PM</span>
+      </div>
+    </div>
+
+    <p class="schedule-info">
+      Para proteger sus fondos y cumplir con las normativas bancarias, las transacciones se pausaron temporalmente. Le esperamos en el próximo bloque de procesamiento.
+    </p>
+
+    <button class="schedule-btn" (click)="showScheduleModal = false">Entendido</button>
+  </div>
+</div>
+}

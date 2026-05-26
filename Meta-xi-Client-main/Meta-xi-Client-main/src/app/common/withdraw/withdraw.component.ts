@@ -42,6 +42,10 @@ export class WithdrawComponent implements OnInit, OnDestroy {
   amountHintColor = 'rgba(255,255,255,0.3)';
   canSubmit = false;
 
+  // ─── Schedule Modal ──────────────────────────
+  showScheduleModal = false;
+  scheduleInfo: any = null;
+
   // ─── Constants (base values in COP) ──────────
   private readonly MIN_AMOUNT_COP = 20000;
   private readonly MAX_AMOUNT_COP = 10000000;
@@ -210,9 +214,33 @@ export class WithdrawComponent implements OnInit, OnDestroy {
     this.canSubmit = allFilled && amt >= this.MIN_AMOUNT && capValid;
   }
 
+  // ─── Check Withdrawal Schedule ────────────────
+  private async checkWithdrawalHours(): Promise<boolean> {
+    try {
+      const url = `${environment.apiUrl}/Wallet/CanWithdraw`;
+      const response: any = await firstValueFrom(this.http.get(url));
+      if (!response.canWithdraw) {
+        this.scheduleInfo = response;
+        this.showScheduleModal = true;
+        return false;
+      }
+      return true;
+    } catch {
+      // If endpoint fails, allow withdrawal (backend will validate anyway)
+      return true;
+    }
+  }
+
   // ─── Withdrawal Request ─────────────────────
   async requestWithdrawal(): Promise<void> {
     if (!this.canSubmit || this.submitting) return;
+
+    // Check schedule first
+    const canWithdraw = await this.checkWithdrawalHours();
+    if (!canWithdraw) {
+      this.submitting = false;
+      return;
+    }
 
     this.submitting = true;
 
@@ -241,7 +269,13 @@ export class WithdrawComponent implements OnInit, OnDestroy {
     } catch (error: any) {
       // Backend rejected — show error, do NOT send Telegram
       const msg = error?.error?.message || error?.error || 'Error al procesar el retiro';
-      this.notification.errorMessage(typeof msg === 'string' ? msg : 'Error al procesar el retiro');
+      // Check if it's a schedule error
+      if (error?.status === 400 && msg.includes('horario')) {
+        this.scheduleInfo = error?.error?.schedule || null;
+        this.showScheduleModal = true;
+      } else {
+        this.notification.errorMessage(typeof msg === 'string' ? msg : 'Error al procesar el retiro');
+      }
     }
 
     this.submitting = false;

@@ -5,7 +5,12 @@
   --gold-light: #f9e29c;
   --gold: #d4af37;
   --gold-dark: #a68420;
-  --gold-gradient: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  --gold-gradient: linear-gradient(
+    135deg,
+    var(--gold-light) 0%,
+    var(--gold) 50%,
+    var(--gold-dark) 100%
+  );
   --green: #00e676;
   --white: #ffffff;
   --glass: rgba(255, 255, 255, 0.02);
@@ -16,27 +21,42 @@
 
   display: block;
   padding: 0 0 80px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   color: var(--white);
-  
+
   min-height: 100vh;
 }
 
 // --- Shimmer Animation ---
 @keyframes shimmer-sweep {
-  0% { transform: translateX(-150%) skewX(-25deg); }
-  15% { transform: translateX(250%) skewX(-25deg); }
-  100% { transform: translateX(250%) skewX(-25deg); }
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+  15% {
+    transform: translateX(250%) skewX(-25deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-25deg);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 // --- Gold Shimmer Button ---
@@ -53,10 +73,18 @@
   z-index: 1;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0; left: 0; width: 60%; height: 100%;
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
     transform: translateX(-150%) skewX(-25deg);
     animation: shimmer-sweep 3s infinite ease-in-out;
     z-index: 2;
@@ -85,9 +113,12 @@
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0; left: 10%; width: 80%; height: 1px;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
 }
@@ -165,7 +196,8 @@
     background: var(--glass-strong);
     color: var(--gold);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
+      inset 0 0 10px rgba(212, 175, 55, 0.1);
     text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
   }
 }
@@ -177,7 +209,11 @@
 }
 
 .property-card {
-  background: linear-gradient(160deg, rgba(45, 50, 53, 0.9), rgba(28, 31, 33, 0.95));
+  background: linear-gradient(
+    160deg,
+    rgba(45, 50, 53, 0.9),
+    rgba(28, 31, 33, 0.95)
+  );
   border-radius: 32px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
@@ -276,7 +312,6 @@
 .prop-stat-item {
   padding-bottom: 2%;
   span {
-  
     font-size: 10px;
     color: #888;
     text-transform: uppercase;
@@ -315,7 +350,11 @@
 }
 
 .my-prop-card {
-  background: linear-gradient(90deg, rgba(28, 31, 33, 0.8), rgba(45, 50, 53, 0.5));
+  background: linear-gradient(
+    90deg,
+    rgba(28, 31, 33, 0.8),
+    rgba(45, 50, 53, 0.5)
+  );
   border-left: 5px solid var(--green);
   padding: 22px;
   border-radius: 20px;
@@ -583,4 +622,12 @@
   .property-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+.lock-image {
+  position: absolute;
+  z-index: 1;
+  width: auto;
+}
+.locked{
+  opacity: 0.2;
 }

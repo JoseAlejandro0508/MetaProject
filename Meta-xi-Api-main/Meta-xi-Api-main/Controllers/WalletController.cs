@@ -50,6 +50,55 @@ public class WalletController : ControllerBase
         public string Password { get; set; } = string.Empty;
     }
 
+    public class WithdrawalScheduleDTO
+    {
+        public bool CanWithdraw { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Days { get; set; } = "Lunes a Viernes";
+        public string Hours { get; set; } = "8:00 AM - 10:00 PM";
+        public string TimeZone { get; set; } = "Hora de Cuba (CET)";
+    }
+
+    // ── Helper: Check if current time is within withdrawal hours (Cuba timezone) ──
+    private WithdrawalScheduleDTO GetWithdrawalStatus()
+    {
+        try
+        {
+            var cubaTz = TimeZoneInfo.FindSystemTimeZoneById("America/Havana");
+            var cubaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cubaTz);
+
+            // Check weekday (Monday = 1, Friday = 5)
+            var isWeekday = cubaTime.DayOfWeek >= DayOfWeek.Monday && cubaTime.DayOfWeek <= DayOfWeek.Friday;
+            // Check hours: 8 AM to 10 PM (22:00)
+            var isBusinessHours = cubaTime.Hour >= 8 && cubaTime.Hour < 22;
+
+            var canWithdraw = isWeekday && isBusinessHours;
+
+            return new WithdrawalScheduleDTO
+            {
+                CanWithdraw = canWithdraw,
+                Message = canWithdraw
+                    ? "Horario operativo activo"
+                    : "Fuera de horario operativo. Los retiros solo están disponibles de lunes a viernes, de 8:00 AM a 10:00 PM (hora de Cuba).",
+                Days = "Lunes a Viernes",
+                Hours = "8:00 AM - 10:00 PM",
+                TimeZone = "Hora de Cuba (CET)"
+            };
+        }
+        catch
+        {
+            // Fallback if timezone not found: allow withdrawals
+            return new WithdrawalScheduleDTO
+            {
+                CanWithdraw = true,
+                Message = "Horario operativo activo",
+                Days = "Lunes a Viernes",
+                Hours = "8:00 AM - 10:00 PM",
+                TimeZone = "Hora de Cuba (CET)"
+            };
+        }
+    }
+
     // ── GET: api/Wallet/GetAccountSummary/{username} ───────────────────
     [HttpGet("GetAccountSummary/{username}")]
     public async Task<IActionResult> GetAccountSummary(string username)
@@ -159,10 +208,25 @@ public class WalletController : ControllerBase
         return Ok(summary);
     }
 
+    // ── GET: api/Wallet/CanWithdraw ────────────────────────────────────
+    [HttpGet("CanWithdraw")]
+    public IActionResult CanWithdraw()
+    {
+        var status = GetWithdrawalStatus();
+        return Ok(status);
+    }
+
     // ── POST: api/Wallet/RequestWithdrawal ────────────────────────────
     [HttpPost("RequestWithdrawal")]
     public async Task<IActionResult> RequestWithdrawal([FromBody] WithdrawalRequestDTO request)
     {
+        // Check withdrawal hours (Cuba timezone)
+        var schedule = GetWithdrawalStatus();
+        if (!schedule.CanWithdraw)
+        {
+            return BadRequest(new { message = schedule.Message, schedule = new { schedule.Days, schedule.Hours, schedule.TimeZone } });
+        }
+
         // Validate amount limits
         if (request.Amount < 20000)
         {

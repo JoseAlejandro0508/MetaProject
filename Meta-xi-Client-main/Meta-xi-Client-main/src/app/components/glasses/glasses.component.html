@@ -39,10 +39,15 @@
       *ngIf="gafa.maxQuantity > 0 && gafa.daysActive > 0"
     >
       <div class="property-img">
-        <div class="vip-badge" *ngIf="gafa.idPlan === 1">VIP ASSET</div>
+        <img  *ngIf="gafa.idPlan>5"
+          src="assets/icons/lock.webp"
+          class="lock-image property-image"
+ 
+        />
         <img
           [src]="getImageSrc(gafa)"
           alt="gafa"
+          [class.locked]="gafa.idPlan>5"
           class="property-image"
           (error)="handleImageError($event)"
         />
@@ -71,7 +76,7 @@
           -->
           <div class="prop-stat-item gain">
             <span>Total</span>
-            <b>+ {{ formatCOP(gafa.dailyBenefit*30) }}</b>
+            <b>+ {{ formatCOP(gafa.dailyBenefit * 30) }} COP</b>
           </div>
         </div>
         <button class="btn-gold-shimmer btn-buy" (click)="openBuyModal(gafa)">
@@ -130,22 +135,24 @@
     <div class="prop-stats modal-stats" *ngIf="selectedPlan">
       <div class="prop-stat-item">
         <span>Diario</span>
-        <b>+ {{ formatCOP(selectedPlan.dailyBenefit) }}</b>
+        <b>+ {{ formatCOP(selectedPlan.dailyBenefit) }} COP</b>
       </div>
-   
-      <div class="prop-stat-item gain" *ngIf="selectedPlan.dailyProfitPercentage">
+
+      <div
+        class="prop-stat-item gain"
+        *ngIf="selectedPlan.dailyProfitPercentage"
+      >
         <span>Semanal</span>
-        <b>+ {{ formatCOP(selectedPlanMonthlyEarnings/4) }}</b>
+        <b>+ {{ formatCOP(selectedPlanMonthlyEarnings / 4) }} COP</b>
       </div>
-  
 
       <div class="prop-stat-item gain">
         <span>Mensual</span>
-        <b>+ {{ formatCOP(selectedPlanMonthlyEarnings) }}</b>
+        <b>+ {{ formatCOP(selectedPlanMonthlyEarnings) }} COP</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Total</span>
-        <b>+ {{ formatCOP(selectedPlan.totalBenefit) }}</b>
+        <b>+ {{ formatCOP(selectedPlan.totalBenefit) }} COP</b>
       </div>
     </div>
 
@@ -202,11 +209,11 @@
     <div class="prop-stats modal-stats" *ngIf="selectedMyPlan">
       <div class="prop-stat-item">
         <span>Por Hora</span>
-        <b>+ {{ formatCOP(selectedMyPlan.hourBenefit) }}</b>
+        <b>+ {{ formatCOP(selectedMyPlan.hourBenefit) }} COP</b>
       </div>
       <div class="prop-stat-item gain">
         <span>Diario</span>
-        <b>+ {{ formatCOP(selectedMyPlan.dailyBenefit) }}</b>
+        <b>+ {{ formatCOP(selectedMyPlan.dailyBenefit) }} COP</b>
       </div>
       <div
         class="prop-stat-item gain"
@@ -217,7 +224,7 @@
       </div>
       <div class="prop-stat-item gain">
         <span>Total</span>
-        <b>+ {{ formatCOP(selectedMyPlan.totalBenefit) }}</b>
+        <b>+ {{ formatCOP(selectedMyPlan.totalBenefit) }} COP</b>
       </div>
     </div>
 

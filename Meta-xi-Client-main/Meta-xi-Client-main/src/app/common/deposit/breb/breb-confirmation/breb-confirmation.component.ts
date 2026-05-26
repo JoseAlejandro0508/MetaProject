@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TelegramService } from '../../../../services/products/Telegram.service';
 import { NotificationService } from '../../../../services/products/notification.service';
-
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-breb-confirmation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './breb-confirmation.component.html',
-  styleUrl: './breb-confirmation.component.scss',
+  styleUrl: './breb-confirmation.component.scss'
+
 })
 export class BrebConfirmationComponent implements OnInit {
   // Amount from query params (set by BrebComponent)

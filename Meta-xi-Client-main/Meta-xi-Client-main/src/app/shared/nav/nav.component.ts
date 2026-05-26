@@ -38,7 +38,7 @@ export class NavComponent implements OnInit {
         }
       }
     });
-    this.ngBonusClaimed();
+
   }
   async ngBonusClaimed(){
     const url = `${environment.apiUrl}/Wallet/ClaimWelcomeBonus/`+this.username;
@@ -62,11 +62,9 @@ export class NavComponent implements OnInit {
     this.isScrolled = window.pageYOffset > 0;
   }
   toggleModal(){
-    if(this.isClaimed){
-      this.router.navigate(['/task']);
-    }else{
-      this.showModal = !this.showModal;
-    }
+
+    this.router.navigate(['/task']);
+
     
   }
   

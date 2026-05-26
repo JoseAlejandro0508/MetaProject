@@ -15,15 +15,22 @@ import { TopNotificationComponent } from '../../shared/top-notification/top-noti
 })
 export class BackgroundComponent implements OnInit {
   hideNavAndButtons = false;
+  noPadding = false;
 
   private readonly hideRoutes = [
     'withdraw/nequi',
-    'withdraw/usdt-trc20',
+    'withdraw/usdt-bep20',
     'nequi/nequi',
     'deposit/usdt-bep20',
     'deposit/breb',
+    'breb/breb',
     'deposit/nequi',
     'welcome'
+  ];
+    private readonly nonPadding = [
+
+    'breb/breb',
+
   ];
 
   constructor(private router: Router) {}
@@ -34,6 +41,9 @@ export class BackgroundComponent implements OnInit {
       .subscribe((event) => {
         const url = event.urlAfterRedirects || event.url;
         this.hideNavAndButtons = this.hideRoutes.some((route) =>
+          url.includes(route)
+        );
+        this.noPadding = this.nonPadding.some((route) =>
           url.includes(route)
         );
       });
