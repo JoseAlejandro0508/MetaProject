@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TelegramService } from '../../../../services/products/Telegram.service';
 import { NotificationService } from '../../../../services/products/notification.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-nequi-confirmation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './nequi-confirmation.component.html',
   styleUrl: './nequi-confirmation.component.scss',
 })
@@ -105,7 +106,7 @@ export class NequiConfirmationComponent implements OnInit {
 
   private buildMessage(): string {
     const user = this.username || 'N/A';
-    return `⬇️ Nueva Recarga:\n● Moneda: USDT\n● Cantidad: ${this.displayAmount} USDT\n● Usuario: ${user}\n⚠️ Orden: ${this.orderNumber}\n⚠️ Referencia: ${this.reference.trim()}`;
+    return `⬇️ Nueva Recarga:\n● Moneda: NEQUI\n● Cantidad: ${this.displayAmount} USDT\n● Usuario: ${user}\n⚠️ Orden: ${this.orderNumber}\n⚠️ Referencia: ${this.reference.trim()}`;
 
   }
 }

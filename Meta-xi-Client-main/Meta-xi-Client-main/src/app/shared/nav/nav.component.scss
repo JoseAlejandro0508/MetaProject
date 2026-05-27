@@ -24,20 +24,7 @@ $anim-speed: 1.5; // in seconds
     height: 100%;
     top: 0;
   }
-  &::before {
-    background: rgba(255, 255, 255, 0.774);
-    width: 100px;
-    left: 0;
-    filter: blur(30px);
-    animation: shine-alt1 #{$anim-duration}s ease-in-out infinite;
-  }
-  &::after {
-    background: rgba(255, 255, 255, 0.527);
-    width: 60px;
-    left: 60px;
-    filter: blur(5px);
-    animation: shine-alt2 #{$anim-duration}s ease-in-out infinite;
-  }
+
 }
 
 @keyframes shine-alt1 {

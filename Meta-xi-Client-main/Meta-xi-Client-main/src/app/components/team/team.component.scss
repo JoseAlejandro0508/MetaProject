@@ -3,12 +3,10 @@
 // =========================================================
 
 :host {
+  background: none;
   display: block;
   min-height: 100vh;
-  background: #1c1f21;
-  background-image:
-    radial-gradient(circle at 15% 50%, rgba(244, 208, 63, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+
   padding: 16px;
   padding-bottom: 100px; // space for bottom nav
 
