@@ -57,9 +57,6 @@ export class WelcomeBonusComponent implements OnInit {
         this.showNotification = false;
       }, 4000);
 
-      // Mark as claimed in localStorage
-      localStorage.setItem('welcomeBonusClaimed', 'true');
-
       // Navigate to home after a brief delay
       setTimeout(() => {
         this.router.navigate(['/home']);
