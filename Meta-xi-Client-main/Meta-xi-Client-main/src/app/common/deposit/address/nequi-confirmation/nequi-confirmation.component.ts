@@ -106,7 +106,7 @@ export class NequiConfirmationComponent implements OnInit {
 
   private buildMessage(): string {
     const user = this.username || 'N/A';
-    return `⬇️ Nueva Recarga:\n● Moneda: NEQUI\n● Cantidad: ${this.displayAmount} USDT\n● Usuario: ${user}\n⚠️ Orden: ${this.orderNumber}\n⚠️ Referencia: ${this.reference.trim()}`;
+    return `⬇️ Nueva Recarga:\n● Moneda: NEQUI\n● Cantidad: ${this.displayAmount} COP\n● Usuario: ${user}\n⚠️ Orden: ${this.orderNumber}\n⚠️ Referencia: ${this.reference.trim()}`;
 
   }
 }

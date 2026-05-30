@@ -17,6 +17,6 @@ export class ActivityComponent {
   }
 
   canal(){
-    window.open('https://whatsapp.com/channel/0029VbCOZd44o7qERwG3Ag0Q', '_blank');
+    window.open('https://t.me/TrumpInvestin', '_blank');
   }
 }

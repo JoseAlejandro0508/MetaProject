@@ -30,14 +30,14 @@ export class SliderComponent implements OnDestroy {
       id: 1,
       image: 'assets/slide/2.webp',
       name: 'Trump Tower',
-      price: '150,000 COP',
+      price: '100,000 COP',
       planId: 2,
     },
     {
       id: 2,
       image: 'assets/slide/1.webp',
       name: 'Casino',
-      price: '500,000 COP',
+      price: '350,000 COP',
       planId: 5,
     },
   ];

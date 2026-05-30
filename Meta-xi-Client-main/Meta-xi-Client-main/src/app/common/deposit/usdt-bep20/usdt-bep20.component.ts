@@ -33,12 +33,12 @@ export class UsdtBep20Component implements OnInit {
   displayAmount = '';
 
   presets: PresetAmount[] = [
-    { value: 10, label: '10' },
     { value: 15, label: '15' },
-    { value: 50, label: '50' },
+    { value: 30, label: '30' },
     { value: 80, label: '80' },
     { value: 120, label: '120' },
     { value: 200, label: '200' },
+    { value: 400, label: '400' },
   ];
 
   // Flow: 'amount' = selector, 'payment' = QR screen
