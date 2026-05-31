@@ -17,8 +17,9 @@ public class MisionsUserController : ControllerBase
     // ── Helper: Get referral count for a user ──────────────────────
     private async Task<int> GetReferralCountAsync(int userId)
     {
-        return await context.ReferLevel1s
-            .CountAsync(r => r.IDUserReferrer == userId);
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null) return 0;
+        return await context.Users.CountAsync(u => u.ReferCode == user.Code);
     }
 
     // ── Helper: Find user by email or phone ─────────────────────────

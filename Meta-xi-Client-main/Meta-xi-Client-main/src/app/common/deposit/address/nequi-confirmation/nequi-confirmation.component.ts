@@ -2,14 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { TelegramService } from '../../../../services/products/Telegram.service';
 import { NotificationService } from '../../../../services/products/notification.service';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-nequi-confirmation',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './nequi-confirmation.component.html',
   styleUrl: './nequi-confirmation.component.scss',
 })
@@ -31,6 +34,7 @@ export class NequiConfirmationComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private http: HttpClient,
     private telegramService: TelegramService,
     private notificationService: NotificationService
   ) {}
@@ -59,24 +63,38 @@ export class NequiConfirmationComponent implements OnInit {
     return this.reference.trim().length > 0 && !this.submitting;
   }
 
-  onConfirm(): void {
+  async onConfirm(): Promise<void> {
     if (this.submitting) return;
     this.submitting = true;
 
-    const message = this.buildMessage();
+    const updateBalancePayload = {
+      OrdenId: this.orderNumber,
+      Email: this.username,
+      Balance: this.montoRecarga,
+      Token: 'nequi',
+    };
 
-    this.telegramService.sendMessage$(message).subscribe({
-      next: () => {
-        this.showSuccess = true;
-        this.submitting = false;
-      },
-      error: () => {
-        this.notificationService.errorMessage(
-          'Error al enviar el mensaje. Inténtalo nuevamente.'
-        );
-        this.submitting = false;
-      },
-    });
+    try {
+      await firstValueFrom(
+        this.http.post(
+          `${environment.apiUrl}/Wallet/UpdateBalance`,
+          updateBalancePayload
+        )
+      );
+
+      const message = this.buildMessage();
+      await firstValueFrom(this.telegramService.sendMessage$(message));
+
+      this.showSuccess = true;
+    } catch {
+      this.notificationService.errorMessage(
+        'Error al actualizar el balance o enviar el mensaje. Inténtalo nuevamente.'
+      );
+    } finally {
+      this.submitting = false;
+    }
+
+
   }
 
   handleQrError(event: Event): void {
@@ -101,12 +119,17 @@ export class NequiConfirmationComponent implements OnInit {
 
   private buildQrUrl(): string {
     const paymentData = `NequiPago:${this.montoRecarga}:${this.orderNumber}`;
-    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(paymentData)}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+      paymentData
+    )}`;
   }
 
   private buildMessage(): string {
     const user = this.username || 'N/A';
-    return `⬇️ Nueva Recarga:\n● Moneda: NEQUI\n● Cantidad: ${this.displayAmount} COP\n● Usuario: ${user}\n⚠️ Orden: ${this.orderNumber}\n⚠️ Referencia: ${this.reference.trim()}`;
-
+    return `⬇️ Nueva Recarga:\n● Moneda: NEQUI\n● Cantidad: ${
+      this.displayAmount
+    } COP\n● Usuario: ${user}\n⚠️ Orden: ${
+      this.orderNumber
+    }\n⚠️ Referencia: ${this.reference.trim()}`;
   }
 }

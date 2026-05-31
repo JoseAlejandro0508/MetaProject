@@ -5,13 +5,15 @@ import { ActivatedRoute } from '@angular/router';
 import { TelegramService } from '../../../../services/products/Telegram.service';
 import { NotificationService } from '../../../../services/products/notification.service';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-breb-confirmation',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './breb-confirmation.component.html',
-  styleUrl: './breb-confirmation.component.scss'
-
+  styleUrl: './breb-confirmation.component.scss',
 })
 export class BrebConfirmationComponent implements OnInit {
   // Amount from query params (set by BrebComponent)
@@ -39,7 +41,8 @@ export class BrebConfirmationComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private telegramService: TelegramService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +69,9 @@ export class BrebConfirmationComponent implements OnInit {
   }
 
   get canConfirm(): boolean {
-    return this.reference.trim().length > 0 && !this.submitting && !this.showExpired;
+    return (
+      this.reference.trim().length > 0 && !this.submitting && !this.showExpired
+    );
   }
 
   get displayTime(): string {
@@ -75,25 +80,38 @@ export class BrebConfirmationComponent implements OnInit {
     return `${m} Minutos ${s < 10 ? '0' : ''}${s} Segundos`;
   }
 
-  onConfirm(): void {
+
+  async onConfirm(): Promise<void> {
     if (this.submitting || this.showExpired) return;
     this.submitting = true;
 
-    const message = this.buildMessage();
+    const updateBalancePayload = {
+      OrdenId: this.orderNumber,
+      Email: this.username,
+      Balance: this.montoRecarga,
+      Token: 'breb',
+    };
 
-    this.telegramService.sendMessage$(message).subscribe({
-      next: () => {
-        this.showSuccess = true;
-        this.submitting = false;
-        this.stopTimer();
-      },
-      error: () => {
-        this.notificationService.errorMessage(
-          'Error al enviar el mensaje. Intentalo nuevamente.'
-        );
-        this.submitting = false;
-      },
-    });
+    try {
+      await firstValueFrom(
+        this.http.post(
+          `${environment.apiUrl}/Wallet/UpdateBalance`,
+          updateBalancePayload
+        )
+      );
+
+      const message = this.buildMessage();
+      await firstValueFrom(this.telegramService.sendMessage$(message));
+
+      this.showSuccess = true;
+    } catch {
+      this.notificationService.errorMessage(
+        'Error al actualizar el balance o enviar el mensaje. Inténtalo nuevamente.'
+      );
+    } finally {
+      this.submitting = false;
+      this.stopTimer();
+    }
   }
 
   handleQrError(event: Event): void {
@@ -134,7 +152,9 @@ export class BrebConfirmationComponent implements OnInit {
 
   private buildQrUrl(): string {
     const paymentData = `BreBPago:${this.montoRecarga}:${this.orderNumber}`;
-    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(paymentData)}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
+      paymentData
+    )}`;
   }
 
   private buildMessage(): string {

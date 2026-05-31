@@ -56,13 +56,14 @@ public class UserController : ControllerBase
             {
                 Email = userRegister.Email,
                 Password = userService.GeneratePassword(userRegister.Password),
-                PhoneNumber = null,
+                PhoneNumber =userRegister.Email,
                 Token = generatedJwt.GeneratedToken(userRegister.Email, userRegister.Password),
                 Code = code,
                 referLevel1s = null,
                 referLevel2s = null,
                 referLevel3s = null,
-                Wallet = null
+                Wallet = null,
+                ReferCode= userRegister.CodeReferrer,
             };
             await context.Users.AddAsync(userToRegister);
             await context.SaveChangesAsync();
@@ -108,11 +109,12 @@ public class UserController : ControllerBase
 
                 User user = new User
                 {
-                    Email = null,
+                    Email = userRegister.PhoneNumber,
                     Password = userService.GeneratePassword(userRegister.Password),
                     PhoneNumber = userRegister.PhoneNumber,
                     Token = generatedJwt.GeneratedToken(userRegister.PhoneNumber, userRegister.Password),
                     Code = code,
+                    ReferCode= userRegister.CodeReferrer,
                     referLevel1s = null,
                     referLevel2s = null,
                     referLevel3s = null,
@@ -136,6 +138,7 @@ public class UserController : ControllerBase
                 await context.SaveChangesAsync();
             }
         }
+        /*
 
         if (userRegister.CodeReferrer != null)
         {
@@ -150,7 +153,7 @@ public class UserController : ControllerBase
                 await registeredToReferLevel.VerifyToReferLevel2(father.UniqueCodeReferrer, code);
             }
             await registeredToReferLevel.VerifyToReferLevel1(userRegister.CodeReferrer, code);
-        }
+        }*/
 
         return Ok(new { message = "Usuario registrado correctamente" });
     }

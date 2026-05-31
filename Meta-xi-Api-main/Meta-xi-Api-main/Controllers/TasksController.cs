@@ -12,6 +12,7 @@ public class TasksController : ControllerBase
 
     private readonly DBContext context;
     private readonly TaskService _taskService;
+    private readonly ReferService _refservice;
 
     private readonly List<TaskObject> tasks = new List<TaskObject>
     {
@@ -22,19 +23,24 @@ public class TasksController : ControllerBase
         new TaskObject{ TaskId = 5, friends = 15, time = 24, prize = 200000 },
         new TaskObject{ TaskId = 6, friends = 20, time = 48, prize = 300000 }
     };
-    public TasksController(DBContext dBContext, TaskService taskService)
+    public TasksController(DBContext dBContext, TaskService taskService,ReferService referService)
     {
         _taskService = taskService;
         context = dBContext;
+        _refservice = referService;
     }
-    public int getCurrentFriends(int idUser, int taskId)
+    public async Task<int> getCurrentFriends(int idUser, int taskId)
     {
         var registerOfTask = context.TaskRegisters.FirstOrDefault(option => option.UID == idUser && option.TaskId == taskId);
         if (registerOfTask == null)
         {
             return 0;
+
         }
-        var currentFriends = context.TaskRegisters.Where(option => option.ActivateAt > registerOfTask.ActivateAt && option.TaskId == taskId).Count();
+        var SelectedUser=await context.Users.FindAsync(idUser);
+        if (SelectedUser == null)return 0;
+        
+        var currentFriends = context.Users.Where(u =>u.ReferCode==SelectedUser.Code&&u.CreatedAt > registerOfTask.ActivateAt).Count();
         return currentFriends;
     }
 
@@ -88,7 +94,7 @@ public class TasksController : ControllerBase
                     await context.SaveChangesAsync();
                 }
             }
-            ResponseGetTasks RTObject = new ResponseGetTasks { id = task_.TaskId, friends = task_.friends, time = task_.time, prize = task_.prize, completed = completed, currentRefs = currentsFriends, RestTime = RestTime };
+            ResponseGetTasks RTObject = new ResponseGetTasks { id = task_.TaskId, friends = task_.friends, time = task_.time, prize = task_.prize, completed = completed, currentRefs = currentsFriends, RestTime = completed?0:RestTime };
             Response_.Add(RTObject);
         }
 

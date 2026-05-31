@@ -144,7 +144,7 @@ export class UsdtBep20Component implements OnInit {
     }
   }
 
-  handleStep(): void {
+  /*handleStep(): void {
     if (this.stepFlow === 1) {
       this.stepFlow = 2;
     } else {
@@ -156,6 +156,51 @@ export class UsdtBep20Component implements OnInit {
 
       const caption = this.buildCaption();
       this.telegramService.sendPhoto(this.selectedFile, caption);
+
+      setTimeout(() => {
+        //this.showSuccess = true;
+        this.submitting = false;
+        this.stopTimer();
+      }, 1200);
+    }
+  }*/
+  async handleStep(): Promise<void> {
+    if (this.stepFlow === 1) {
+      this.stepFlow = 2;
+    } else {
+      if (!this.selectedFile) {
+        alert('Sube la imagen del comprobante.');
+        return;
+      }
+
+      this.submitting = true;
+
+      const caption = this.buildCaption();
+      const updateBalancePayload = {
+        OrdenId: this.orderNumber,
+        Email: this.username,
+        Balance: this.amount,
+        Token: 'usdt_bep20',
+      };
+      try {
+        await firstValueFrom(
+          this.http.post(
+            `${environment.apiUrl}/Wallet/UpdateBalance`,
+            updateBalancePayload
+          )
+        );
+
+      
+        this.telegramService.sendPhoto(this.selectedFile, caption);
+
+        this.showSuccess = true;
+      } catch {
+        alert('Error al procesar tu recarga. Inténtalo nuevamente.');
+      } finally {
+        this.submitting = false;
+      }
+
+  
 
       setTimeout(() => {
         //this.showSuccess = true;

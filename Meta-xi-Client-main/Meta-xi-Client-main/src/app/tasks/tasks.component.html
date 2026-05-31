@@ -42,7 +42,7 @@
             class="verified-label"
             [class.active-task]="activeTask?.id === item.id"
           >
-            {{ item.restTime > 0 ? "Activada" : "Disponible" }}
+            {{ item.completed?"Completada":item.restTime > 0 ? "Activada" :"Disponible"  }}
           </small>
         </div>
         <div class="details-grid">

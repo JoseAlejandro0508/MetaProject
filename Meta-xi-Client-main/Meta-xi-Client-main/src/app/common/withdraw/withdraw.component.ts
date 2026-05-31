@@ -8,6 +8,15 @@ import { NotificationService } from '../../services/products/notification.servic
 import { TelegramService } from '../../services/products/Telegram.service';
 import { environment } from '../../../environments/environment';
 
+interface WithdrawResponse {
+  message: string;
+  amount: number;
+  fee: number;
+  netAmount: number;
+  token: string;
+  ordenId: string;
+}
+
 @Component({
   selector: 'app-withdraw',
   standalone: true,
@@ -233,16 +242,17 @@ export class WithdrawComponent implements OnInit, OnDestroy {
 
   // ─── Withdrawal Request ─────────────────────
   async requestWithdrawal(): Promise<void> {
-    if (!this.canSubmit || this.submitting) return;
+     if (!this.canSubmit || this.submitting) return;
 
     // Check schedule first
-    const canWithdraw = await this.checkWithdrawalHours();
+   const canWithdraw = await this.checkWithdrawalHours();
     if (!canWithdraw) {
       this.submitting = false;
       return;
     }
 
     this.submitting = true;
+    
 
     // Convert amount to COP for backend if currency is USDT
     const amountToSend = this.isNequi 
@@ -260,10 +270,13 @@ export class WithdrawComponent implements OnInit, OnDestroy {
         Password: this.password
       };
 
-      await firstValueFrom(this.http.post(withdrawalUrl, withdrawalBody));
+      const res = await firstValueFrom(this.http.post<WithdrawResponse>(withdrawalUrl, withdrawalBody));
+
+      // Parsear ordenId de forma defensiva (por si cambia mayúsculas/estructura)
+      const ordenId = (res as any)?.ordenId ?? (res as any)?.OrdenId ?? '';
 
       // Backend returned 200 — send Telegram notification
-      const message = `⬆️ Nuevo Retiro:\n\n● Moneda: ${this.token}\n● Cantidad a enviar: ${Math.round(this.amountToReceive)}\n●Ususario: ${this.username}\n\n⚠️ Cuenta: ${this.accountNumber}`;
+      const message = `⬆️ Nuevo Retiro:\n\n● Moneda: ${this.token}\n● Cantidad a enviar: ${Math.round(this.amountToReceive)}\n●Ususario: ${this.username}\n\n⚠️ Cuenta: ${this.accountNumber}\n\n⚠️ Orden ID: ${ordenId}`;
       this.telegram.sendMessage(message);
       this.notification.correct('Solicitud de retiro enviada correctamente');
     } catch (error: any) {

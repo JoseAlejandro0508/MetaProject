@@ -6,12 +6,13 @@ public class WithdrawalHistory
 {
     [Key]
     public int Id { get; set; }
+    public required string OrdenId { get; set; }
     public required string Email { get; set; }
     public required float Amount { get; set; }
     public required float Fee { get; set; }
     public required float NetAmount { get; set; }
     public required string Token { get; set; }
     public required string AccountNumber { get; set; }
-    public string Status { get; set; } = "Completado";
+    public string Status { get; set; } = "Pendiente";
     public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 }

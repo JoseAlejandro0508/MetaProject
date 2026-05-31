@@ -19,7 +19,7 @@ public class TaskService
         if (selectedUser==null){
             return false;
         }
-        bool HasDeposit=context.Wallets.Any(x => x.Email==selectedUser!.Email && x.Balance>0);
+        bool HasDeposit=context.Wallets.Any(x => x.Email==selectedUser!.PhoneNumber && x.TotalRecharged>0);
         return HasDeposit;
     }
 
@@ -37,7 +37,7 @@ public class TaskService
         }
         var selectedTask=TaskDB.FirstOrDefault(x => x.TaskId==TaskId);
 
-        int currentFriends=allUser.Where(x => isActiveUser(UID)&&x.Id==TaskId && x.CreatedAt.Subtract(selectedTaskRegister.ActivateAt).TotalSeconds > 0 &&x.CreatedAt.Subtract(selectedTaskRegister.ActivateAt).TotalSeconds<selectedTask!.time*3600).Count();
+        int currentFriends=allUser.Where(x => isActiveUser(x.Id)&&x.ReferCode==selectedUser.Code && x.CreatedAt.Subtract(selectedTaskRegister.ActivateAt).TotalSeconds > 0 &&x.CreatedAt.Subtract(selectedTaskRegister.ActivateAt).TotalSeconds<selectedTask!.time*3600).Count();
         return currentFriends;
     }
 }

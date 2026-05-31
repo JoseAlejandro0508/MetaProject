@@ -38,7 +38,7 @@ export class TeamComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadReferralData();
-    this.loadTeamStats();
+  
     this.loadLevelData();
   }
 
@@ -84,12 +84,16 @@ export class TeamComponent implements OnInit {
     const url = `${environment.apiUrl}/Refer/GetReferrer/${this.username}`;
     try {
       const response: any = await firstValueFrom(this.http.get(url));
-      this.lvl1Register = response.quantityRefersLevel1 || 0;
-      this.lvl1Income = response.level1Earnings || 0;
-      this.lvl2Register = response.quantityRefersLevel2 || 0;
-      this.lvl2Income = response.level2Earnings || 0;
-      this.lvl3Register = response.quantityRefersLevel3 || 0;
-      this.lvl3Income = response.level3Earnings || 0;
+      this.lvl1Register = response.countLVL1 || 0;
+      this.lvl1Income = response.earnLVL1 || 0;
+      this.lvl2Register = response.countLVL2 || 0;
+      this.lvl2Income = response.earnLVL2 || 0;
+      this.lvl3Register = response.countLVL3 || 0;
+      this.lvl3Income = response.earnLVL3 || 0;
+      this.teamSize = response.countTotal || 0;
+      this.newTeamToday = response.countToday || 0;
+      this.teamRecharge = response.teamRecharge || 0;
+      this.teamWithdraw = response.teamWithdraw || 0;
     } catch (error: any) {
       console.error('Error al obtener datos de niveles:', error);
     }
@@ -97,7 +101,12 @@ export class TeamComponent implements OnInit {
 
   // ─── Clipboard: Copy Code ───────────────────────
   async copyCode(): Promise<void> {
-    if (!this.referralCode || this.referralCode === '...' || this.referralCode === '---') return;
+    if (
+      !this.referralCode ||
+      this.referralCode === '...' ||
+      this.referralCode === '---'
+    )
+      return;
     try {
       await navigator.clipboard.writeText(this.referralCode);
       this.codeCopied = true;
@@ -111,7 +120,12 @@ export class TeamComponent implements OnInit {
 
   // ─── Clipboard: Copy Link ──────────────────────
   async copyLink(): Promise<void> {
-    if (!this.referralLink || this.referralLink === '...' || this.referralLink === '---') return;
+    if (
+      !this.referralLink ||
+      this.referralLink === '...' ||
+      this.referralLink === '---'
+    )
+      return;
     try {
       await navigator.clipboard.writeText(this.referralLink);
       this.linkCopied = true;

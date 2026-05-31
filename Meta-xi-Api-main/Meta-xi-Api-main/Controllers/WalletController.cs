@@ -10,10 +10,12 @@ public class WalletController : ControllerBase
 {
     private readonly DBContext context;
     private readonly UserService userService;
-    public WalletController(DBContext _context, UserService _userService)
+    private readonly ReferService referService;
+    public WalletController(DBContext _context, UserService _userService, ReferService _referService)
     {
         context = _context;
         userService = _userService;
+        referService = _referService;
     }
 
     // ── Hardcoded task definitions (mirrors TasksController) ──────────
@@ -43,6 +45,7 @@ public class WalletController : ControllerBase
 
     public class WithdrawalRequestDTO
     {
+        public string OrdenId { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public float Amount { get; set; }
         public string AccountNumber { get; set; } = string.Empty;
@@ -59,30 +62,30 @@ public class WalletController : ControllerBase
         public string TimeZone { get; set; } = "Hora de Cuba (CET)";
     }
 
-    // ── Helper: Check if current time is within withdrawal hours (Cuba timezone) ──
+    // ── Helper: Check if current time is within withdrawal hours (Colombia timezone) ──
     private WithdrawalScheduleDTO GetWithdrawalStatus()
     {
         try
         {
-            var cubaTz = TimeZoneInfo.FindSystemTimeZoneById("America/Havana");
-            var cubaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cubaTz);
+            var colombiaTz = TimeZoneInfo.FindSystemTimeZoneById("America/Bogota");
+            var colombiaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, colombiaTz);
 
             // Check weekday (Monday = 1, Friday = 5)
-            var isWeekday = cubaTime.DayOfWeek >= DayOfWeek.Monday && cubaTime.DayOfWeek <= DayOfWeek.Friday;
+            var isWeekday = colombiaTime.DayOfWeek >= DayOfWeek.Monday && colombiaTime.DayOfWeek <= DayOfWeek.Friday;
             // Check hours: 8 AM to 10 PM (22:00)
-            var isBusinessHours = cubaTime.Hour >= 8 && cubaTime.Hour < 22;
+            var isBusinessHours = colombiaTime.Hour >= 8 && colombiaTime.Hour < 22;
 
             var canWithdraw = isWeekday && isBusinessHours;
 
             return new WithdrawalScheduleDTO
             {
-                CanWithdraw = canWithdraw,
+                CanWithdraw = true,
                 Message = canWithdraw
                     ? "Horario operativo activo"
-                    : "Fuera de horario operativo. Los retiros solo están disponibles de lunes a viernes, de 8:00 AM a 10:00 PM (hora de Cuba).",
+                    : "Fuera de horario operativo. Los retiros solo están disponibles de lunes a viernes, de 8:00 AM a 10:00 PM (hora de Colombia).",
                 Days = "Lunes a Viernes",
                 Hours = "8:00 AM - 10:00 PM",
-                TimeZone = "Hora de Cuba (CET)"
+                TimeZone = "Hora de Colombia (COT)"
             };
         }
         catch
@@ -94,9 +97,27 @@ public class WalletController : ControllerBase
                 Message = "Horario operativo activo",
                 Days = "Lunes a Viernes",
                 Hours = "8:00 AM - 10:00 PM",
-                TimeZone = "Hora de Cuba (CET)"
+                TimeZone = "Hora de Colombia (COT)"
             };
         }
+    }
+
+    private async Task<string> GenerateOrderIdAsync(string token)
+    {
+        var t = (token ?? string.Empty).ToLower();
+        string prefix = "ORD";
+        if (t.Contains("nequi")) prefix = "NEQ";
+        else if (t.Contains("bep") || t.Contains("usdt")) prefix = "USDT";
+
+        var rng = new Random();
+        string candidate;
+        do
+        {
+            candidate = $"{prefix}{DateTime.UtcNow:yyyyMMddHHmmssfff}{rng.Next(1000, 9999)}";
+        }
+        while (await context.WithdrawalHistories.AnyAsync(w => w.OrdenId == candidate));
+
+        return candidate;
     }
 
     // ── GET: api/Wallet/GetAccountSummary/{username} ───────────────────
@@ -269,19 +290,26 @@ public class WalletController : ControllerBase
 
         // Deduct from wallet
         wallet.Balance -= request.Amount;
-        wallet.TotalWithdrawn += request.Amount;
+
         context.Entry(wallet).State = EntityState.Modified;
+
+        // Generate OrdenId if not provided
+        if (string.IsNullOrWhiteSpace(request.OrdenId))
+        {
+            request.OrdenId = await GenerateOrderIdAsync(request.Token);
+        }
 
         // Create withdrawal history record
         var withdrawal = new WithdrawalHistory
         {
+            OrdenId = request.OrdenId,
             Email = request.Email,
             Amount = request.Amount,
             Fee = fee,
             NetAmount = netAmount,
             Token = request.Token,
             AccountNumber = request.AccountNumber,
-            Status = "Completado"
+            Status = "Pendiente"
         };
         await context.WithdrawalHistories.AddAsync(withdrawal);
         await context.SaveChangesAsync();
@@ -292,25 +320,29 @@ public class WalletController : ControllerBase
             amount = request.Amount,
             fee = fee,
             netAmount = netAmount,
-            token = request.Token
+            token = request.Token,
+            ordenId = withdrawal.OrdenId
         });
     }
 
     // ── POST: api/Wallet/UpdateBalance (MODIFIED) ─────────────────────
     [HttpPost("UpdateBalance")]
-    public async Task<IActionResult> UpdateBalance(UpdateBalance updateBalance){
+    public async Task<IActionResult> UpdateBalance(UpdateBalance updateBalance)
+    {
         GetMoneyValues getMoneyValues = new GetMoneyValues();
         var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == updateBalance.Email);
-        if(wallet == null){
+        if (wallet == null)
+        {
             return NotFound(new { message = "No existe ninguna cartera con ese correo" });
         }
         string token = updateBalance.Token.ToLower();
         float depositAmountCop = 0;
 
-        switch (token){
+        switch (token)
+        {
             case "nequi":
                 depositAmountCop = updateBalance.Balance;
-                wallet.Balance = updateBalance.Balance;
+                //wallet.Balance += updateBalance.Balance;
                 break;
             case "trx":
                 decimal balance = await getMoneyValues.GetMoneyValueAsync("trx");
@@ -320,7 +352,7 @@ public class WalletController : ControllerBase
                 float usd = (float)usdToCop;
                 Console.WriteLine(usd);
                 depositAmountCop = value * updateBalance.Balance * usd;
-                wallet.Balance = wallet.Balance + depositAmountCop;
+                //wallet.Balance = wallet.Balance + depositAmountCop;
                 break;
             case "usdt_trc20":
                 decimal balance2 = await getMoneyValues.GetMoneyValueAsync("tether");
@@ -328,13 +360,13 @@ public class WalletController : ControllerBase
                 decimal usdToCop2 = await getMoneyValues.GetMoneyValueAsync("cop");
                 float usd2 = (float)usdToCop2;
                 depositAmountCop = value2 * updateBalance.Balance * usd2;
-                wallet.Balance = wallet.Balance + depositAmountCop;
+                //wallet.Balance = wallet.Balance + depositAmountCop;
                 break;
             case "paypal":
                 decimal balance3 = await getMoneyValues.GetMoneyValueAsync("cop");
                 float value3 = (float)balance3;
                 depositAmountCop = value3 * updateBalance.Balance;
-                wallet.Balance = wallet.Balance + depositAmountCop;
+                //wallet.Balance = wallet.Balance + depositAmountCop;
                 break;
             case "usdt_bep20":
                 decimal balance4 = await getMoneyValues.GetMoneyValueAsync("tether");
@@ -342,26 +374,25 @@ public class WalletController : ControllerBase
                 decimal usdToCop4 = await getMoneyValues.GetMoneyValueAsync("cop");
                 float usd4 = (float)usdToCop4;
                 depositAmountCop = value4 * updateBalance.Balance * usd4;
-                wallet.Balance = wallet.Balance + depositAmountCop;
+                //wallet.Balance = wallet.Balance + depositAmountCop;
                 break;
             case "breb":
                 depositAmountCop = updateBalance.Balance;
-                wallet.Balance = updateBalance.Balance;
+                //wallet.Balance += depositAmountCop;
                 break;
             default:
                 return NotFound(new { message = "Token no soportado" });
         }
 
-        // Update wallet tracking and create deposit history
-        wallet.TotalRecharged += depositAmountCop;
-        context.Entry(wallet).State = EntityState.Modified;
+
 
         var deposit = new DepositHistory
         {
+            OrdenId = updateBalance.OrdenId,
             Email = updateBalance.Email,
             Amount = depositAmountCop,
             Token = token,
-            Status = "Éxito"
+            Status = "Pendiente"
         };
         await context.DepositHistories.AddAsync(deposit);
         await context.SaveChangesAsync();
@@ -370,15 +401,18 @@ public class WalletController : ControllerBase
     }
 
     [HttpGet("GetBalance/{username}")]
-    public async Task<IActionResult> GetBalance(string username, [FromQuery] string coin = "COP"){
+    public async Task<IActionResult> GetBalance(string username, [FromQuery] string coin = "COP")
+    {
         var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == username);
-        if(wallet == null){
-            return NotFound(new { message = "El usuario no posee ninguna cartera"});
+        if (wallet == null)
+        {
+            return NotFound(new { message = "El usuario no posee ninguna cartera" });
         }
 
         float balance = wallet.Balance;
 
-        if(coin.ToUpper() == "USDT"){
+        if (coin.ToUpper() == "USDT")
+        {
             balance = balance / 3600f;
         }
 
@@ -387,32 +421,108 @@ public class WalletController : ControllerBase
 
     // ── POST: api/Wallet/AdminUpdateBalance ─────────────────────────────
     [HttpPost("AdminUpdateBalance")]
-    public async Task<IActionResult> AdminUpdateBalance([FromBody] AdminUpdateBalanceDTO request){
+    public async Task<IActionResult> AdminUpdateBalance([FromBody] AdminUpdateBalanceDTO request)
+    {
         // Validate API Key (simple header check)
         var apiKey = Request.Headers["X-Api-Key"].FirstOrDefault();
-        if(string.IsNullOrEmpty(apiKey) || apiKey != Environment.GetEnvironmentVariable("ADMIN_API_KEY")){
+        if (string.IsNullOrEmpty(apiKey) || apiKey != Environment.GetEnvironmentVariable("ADMIN_API_KEY"))
+        {
             return Unauthorized(new { message = "API Key invalida" });
         }
 
         var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == request.PhoneOrEmail);
-        if(wallet == null){
+
+        if (wallet == null)
+        {
             return NotFound(new { message = "No existe ninguna cartera con ese usuario" });
         }
 
-        // Update balance (add or subtract)
-        wallet.Balance += request.Amount;
-        
-        // Ensure balance doesn't go negative
-        if(wallet.Balance < 0){
+
+
+        if (wallet.Balance + request.Amount < 0)
+        {
             return BadRequest(new { message = "Saldo insuficiente para realizar esta operacion" });
         }
-
+        // Update balance (add or subtract)
+        wallet.Balance += request.Amount;
         context.Entry(wallet).State = EntityState.Modified;
+
+
         await context.SaveChangesAsync();
 
-        return Ok(new { 
+        return Ok(new
+        {
             message = "Balance actualizado correctamente",
-            newBalance = wallet.Balance 
+            newBalance = wallet.Balance
+        });
+    }
+    public class ConfirmTransaction
+    {
+        public string PhoneOrEmail { get; set; } = string.Empty;
+        public string OrdenId { get; set; } = string.Empty;
+        public string Type { get; set; } = "DEPOSIT";
+    }
+    [HttpPost("AdminConfirmTransaction")]
+    public async Task<IActionResult> AdminConfirmTransaction([FromBody] ConfirmTransaction request)
+    {
+
+        // Validate API Key (simple header check)
+        var apiKey = Request.Headers["X-Api-Key"].FirstOrDefault();
+        if (string.IsNullOrEmpty(apiKey) || apiKey == Environment.GetEnvironmentVariable("ADMIN_API_KEY"))
+        {
+            return Unauthorized(new { message = "API Key invalida" });
+        }
+
+        var user = await context.Users.FirstOrDefaultAsync(option => option.Email == request.PhoneOrEmail || option.PhoneNumber == request.PhoneOrEmail);
+        var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == request.PhoneOrEmail);
+        if (wallet == null)
+        {
+            return NotFound(new { message = "No existe ninguna cartera con ese usuario" });
+        }
+        if (request.Type.ToUpper() == "DEPOSIT")
+        {
+            var DepositRegister = await context.DepositHistories.FirstOrDefaultAsync(option => option.OrdenId == request.OrdenId && option.Email == request.PhoneOrEmail);
+
+            if (DepositRegister == null)
+            {
+                return NotFound(new { message = "No se encontró ningún registro de depósito para este usuario" });
+            }
+            DepositRegister.Status = "Éxito";
+            wallet.TotalRecharged += DepositRegister.Amount;
+            wallet.Balance += DepositRegister.Amount;
+            context.Entry(wallet).State = EntityState.Modified;
+
+
+            await context.SaveChangesAsync();
+            await referService.ReferEarnExecute(user!.Id, DepositRegister.Amount);
+        }
+        else
+        {
+
+            var WithdrawalRegister = await context.WithdrawalHistories.FirstOrDefaultAsync(option => option.OrdenId == request.OrdenId && option.Email == request.PhoneOrEmail);
+
+            if (WithdrawalRegister == null)
+            {
+                return NotFound(new { message = "No se encontró ningún registro de retiro para este usuario" });
+            }
+
+            WithdrawalRegister.Status = "Completado";
+            wallet.TotalWithdrawn += WithdrawalRegister.Amount;
+        }
+
+
+
+        // Update balance (add or subtract)
+
+        context.Entry(wallet).State = EntityState.Modified;
+
+
+        await context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Balance actualizado correctamente",
+            newBalance = wallet.Balance
         });
     }
 
@@ -422,6 +532,7 @@ public class WalletController : ControllerBase
         public string PhoneOrEmail { get; set; } = string.Empty;
         public float Amount { get; set; }
     }
+
 
     // ── DTO for Transaction History ──────────────────────────────────────
     public class TransactionHistoryDTO
@@ -533,22 +644,28 @@ public class WalletController : ControllerBase
 
     //Obtener balance en COP y USD
     [HttpGet("GetBalanceUsdAndCop/{username}")]
-    public async Task<IActionResult> GetBalanceUsdAndCop(string username){
+    public async Task<IActionResult> GetBalanceUsdAndCop(string username)
+    {
         var wallet = await context.Wallets.FirstOrDefaultAsync(option => option.Email == username);
-        if(wallet == null){
-            return NotFound(new { message = "El usuario no posee ninguna cartera"});
+        if (wallet == null)
+        {
+            return NotFound(new { message = "El usuario no posee ninguna cartera" });
         }
 
         float balanceInCop = wallet.Balance;
         float balanceInUsd = 0;
 
-        try {
+        try
+        {
             GetMoneyValues getMoneyValues = new GetMoneyValues();
             decimal usdToCop = await getMoneyValues.GetMoneyValueAsync("cop");
-            if(usdToCop > 0){
+            if (usdToCop > 0)
+            {
                 balanceInUsd = (float)Math.Round(balanceInCop / (float)usdToCop, 2);
             }
-        } catch (Exception) {
+        }
+        catch (Exception)
+        {
             // Si no se puede obtener la tasa, devolver 0
             balanceInUsd = 0;
         }
@@ -604,12 +721,13 @@ public class WalletController : ControllerBase
 
         // Credit bonus
         wallet.Balance += BONUS_AMOUNT;
-        wallet.TotalRecharged += BONUS_AMOUNT;
+
         context.Entry(wallet).State = EntityState.Modified;
 
         // Create deposit history record
         var deposit = new DepositHistory
         {
+            OrdenId = "None", // Unique ID for this bonus transaction    
             Email = request.Email,
             Amount = BONUS_AMOUNT,
             Token = "welcome_bonus",

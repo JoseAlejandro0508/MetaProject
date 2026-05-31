@@ -25,7 +25,8 @@ export class BackgroundComponent implements OnInit {
     'deposit/breb',
     'breb/breb',
     'deposit/nequi',
-    'welcome'
+    'welcome',
+    "login?"
   ];
     private readonly nonPadding = [
 

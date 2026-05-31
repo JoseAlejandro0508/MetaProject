@@ -10,6 +10,8 @@ public class User
     public required string Password { get; set; }
     public required string Token { get ; set ;}
     public required string? Code { get; set; }
+    public  string? ReferCode { get; set; }
+
     public required ICollection<ReferLevel1>? referLevel1s { get ; set ; }
     public required ICollection<ReferLevel2>? referLevel2s { get ; set ; }
     public required ICollection<ReferLevel3>? referLevel3s { get ; set ; }
