@@ -6,7 +6,6 @@ from pathlib import Path
 
 # ── Configuration from environment variables ─────────────────────────
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-TOKEN = "7792867781:AAEU4xnwAEpo6rrmcoORpvRR42VLIR0Knlw"
 ADMIN_IDS = os.environ.get("ADMIN_IDS", "").split(",")
 API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:5071")
 API_KEY = os.environ.get("ADMIN_API_KEY", "your-secret-api-key-here")
