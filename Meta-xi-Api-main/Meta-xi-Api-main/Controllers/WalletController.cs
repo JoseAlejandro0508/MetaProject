@@ -468,7 +468,7 @@ public class WalletController : ControllerBase
 
         // Validate API Key (simple header check)
         var apiKey = Request.Headers["X-Api-Key"].FirstOrDefault();
-        if (string.IsNullOrEmpty(apiKey) || apiKey == Environment.GetEnvironmentVariable("ADMIN_API_KEY"))
+        if (string.IsNullOrEmpty(apiKey) || apiKey != Environment.GetEnvironmentVariable("ADMIN_API_KEY"))
         {
             return Unauthorized(new { message = "API Key invalida" });
         }
