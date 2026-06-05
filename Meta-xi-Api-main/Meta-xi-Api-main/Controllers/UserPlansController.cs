@@ -36,7 +36,7 @@ public class UserPlansController : ControllerBase
         {
             return NotFound(new { message = "Wallet no encontrada" });
         }
-        if (wallet.Balance > plan.Price)
+        if (wallet.Balance >= plan.Price)
         {
             Console.WriteLine("Tiene saldo suficiente para comprar este plan");
             UserPlans userPlans1 = new UserPlans
